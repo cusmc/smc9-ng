@@ -1,0 +1,115 @@
+<form [formGroup]="form" class="flex max-h-[inherit] min-h-0 w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-white p-6 shadow-none ring-0">
+  <h2 class="mb-6 shrink-0 text-lg font-semibold text-ink">Student Appraisal</h2>
+
+  <div class="mb-6 flex shrink-0 flex-wrap gap-4">
+    <div class="min-w-[180px] flex-1">
+      <label class="mb-1 block text-sm text-ink-muted">Course</label>
+      <select
+        formControlName="Courseid"
+        (change)="onCourseChange()"
+        class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+      >
+        <option *ngFor="let c of courses" [ngValue]="c.Course_id">{{ c.Course_nm }}</option>
+      </select>
+    </div>
+
+    <div class="min-w-[180px] flex-1">
+      <label class="mb-1 block text-sm text-ink-muted">Student</label>
+      <select
+        formControlName="Studno"
+        (change)="onStudnoChange()"
+        class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+      >
+        <option *ngFor="let st of students" [ngValue]="st['No']">{{ st['Name'] }}</option>
+      </select>
+    </div>
+
+    <div class="min-w-[220px] flex-[2]">
+      <label class="mb-1 block text-sm text-ink-muted">Overall Comments</label>
+      <input
+        type="text"
+        formControlName="Remarks"
+        class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+      />
+    </div>
+  </div>
+
+  <div class="mt-4 min-h-0 flex-1 overflow-auto rounded-xl border border-border bg-surface">
+    <div class="grid grid-cols-[80px_1fr_120px_1fr] gap-2 border-b border-border bg-page px-4 py-3 text-sm font-medium text-ink-muted">
+      <span>Code</span>
+      <span>Description</span>
+      <span>Score</span>
+      <span>Comments</span>
+    </div>
+
+    <div formArrayName="Details">
+
+      <ng-container *ngFor="let ctrl of details.controls; let i=index" [formGroupName]="i">
+
+        <!-- Normal Row -->
+        <div *ngIf="ctrl.get('CanTag')?.value !== 'Y'"
+             class="grid grid-cols-[80px_1fr_120px_1fr] gap-2 px-4 py-2 border-b text-sm items-center transition"
+             [ngClass]="{
+               'bg-[#f3eadb] font-semibold text-[#6b4f2c]': ctrl.get('Isheader')?.value
+             }">
+
+          <!-- Code -->
+          <span class="text-[#666] font-medium">
+            {{ctrl.get('Code')?.value}}
+          </span>
+
+          <!-- Description -->
+          <span class="text-[#444]">
+            {{ctrl.get('Descr')?.value}}
+          </span>
+
+          <!-- Inputs (only if not header) -->
+          <ng-container *ngIf="!ctrl.get('Isheader')?.value">
+
+            <!-- Score -->
+            <input type="number"
+                   formControlName="Score"
+                   [attr.min]="0"
+                   [attr.max]="ctrl.get('Maxscore')?.value"
+                   [placeholder]="'Max: ' + (ctrl.get('Maxscore')?.value || '')"
+                   class="border border-[#e5e5e5] rounded px-2 py-1 text-sm w-full focus:ring-2 focus:ring-[#c8a96a] outline-none"/>
+
+            <!-- Comments -->
+            <input type="text"
+                   formControlName="Comments"
+                   maxlength="500"
+                   class="border border-[#e5e5e5] rounded px-2 py-1 text-sm w-full focus:ring-2 focus:ring-[#c8a96a] outline-none"/>
+
+          </ng-container>
+
+          <!-- Empty cells for header -->
+          <ng-container *ngIf="ctrl.get('Isheader')?.value">
+            <span></span>
+            <span></span>
+          </ng-container>
+
+        </div>
+
+      </ng-container>
+
+      <!-- No Data -->
+      <p *ngIf="visibleDetails.length === 0"
+         class="text-center text-[#999] py-6 text-sm">
+        Select a student to load parameters.
+      </p>
+
+    </div>
+  </div>
+
+  <div class="mt-6 flex shrink-0 justify-end gap-3">
+    <button type="button" (click)="cancel()" class="rounded-lg px-4 py-2 text-sm text-ink-muted transition hover:text-ink">Cancel</button>
+    <button
+      type="button"
+      (click)="save()"
+      [disabled]="form.invalid || saving"
+      class="rounded-lg bg-accent px-5 py-2 text-sm text-white transition hover:bg-accent-hover disabled:opacity-50"
+    >
+      Save
+    </button>
+  </div>
+</form>

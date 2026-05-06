@@ -1,0 +1,114 @@
+<div class="flex max-h-[inherit] w-full flex-col overflow-hidden rounded-2xl bg-white">
+  <div class="border-b border-[#f0ebe3] px-6 py-5">
+    <h2 class="text-lg font-semibold text-[#2a2622]">{{ exam ? 'Edit Exam' : 'Add Exam' }}</h2>
+  </div>
+  <div class="max-h-[65vh] overflow-y-auto px-6 py-4">
+    <form [formGroup]="form" class="flex flex-col gap-4">
+      <div>
+        <label class="mb-1 block text-sm text-[#6b6b6b]">Exam Name</label>
+        <input
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          formControlName="Exam_nm"
+          required
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm text-[#6b6b6b]">Course</label>
+        <select
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          formControlName="Course_id"
+          required
+          (change)="onCourseChange()"
+        >
+          <option value="">— Select —</option>
+          <option *ngFor="let course of courses" [ngValue]="course.Course_id">{{ course.Course_nm }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1 block text-sm text-[#6b6b6b]">Subject</label>
+        <select
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          formControlName="Subject_id"
+          (change)="onSubjectChange()"
+        >
+          <option value="">— Select —</option>
+          <option *ngFor="let subject of subjects" [ngValue]="subject.Subject_id">{{ subject.Subject_nm }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1 block text-sm text-[#6b6b6b]">Section</label>
+        <select
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          formControlName="Section_id"
+        >
+          <option value="">— Select —</option>
+          <option *ngFor="let section of sections" [ngValue]="section.Subgroup_id">{{ section.Subgroup_nm }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1 block text-sm text-[#6b6b6b]">Admin Year</label>
+        <input
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          formControlName="Admyear"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm text-[#6b6b6b]">Max Marks (Theory)</label>
+        <input
+          type="number"
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          formControlName="Maxmarkst"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm text-[#6b6b6b]">Min Marks (Theory)</label>
+        <input
+          type="number"
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          formControlName="Minmarkst"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm text-[#6b6b6b]">Max Marks (Practical)</label>
+        <input
+          type="number"
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          formControlName="Maxmarksp"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm text-[#6b6b6b]">Min Marks (Practical)</label>
+        <input
+          type="number"
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          formControlName="Minmarksp"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm text-[#6b6b6b]">Remarks</label>
+        <textarea
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          formControlName="Remarks"
+          rows="3"
+        ></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="flex justify-end gap-2 border-t border-[#f0ebe3] px-6 py-4">
+    <button type="button" class="rounded-lg px-4 py-2 text-sm text-[#666] hover:bg-[#f5f0e8]" (click)="onCancel()">Cancel</button>
+    <button *ngIf="exam"
+            type="button"
+            class="rounded-lg px-4 py-2 text-sm text-white bg-[#d97706] hover:bg-[#b45309]"
+            (click)="onDelete()">
+      Delete
+    </button>
+    <button
+      type="button"
+      class="rounded-lg px-4 py-2 text-sm font-medium text-white bg-[#2d8a7e] hover:bg-[#257a6f] disabled:opacity-50"
+      (click)="onSave()"
+      [disabled]="!form.valid"
+    >
+      Save
+    </button>
+  </div>
+</div>

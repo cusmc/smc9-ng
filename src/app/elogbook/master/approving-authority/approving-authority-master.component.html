@@ -1,0 +1,164 @@
+<div class="flex min-h-0 flex-1 flex-col bg-page p-4">
+  <div
+    class="overflow-hidden rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] shadow-sm"
+  >
+    <div
+      class="relative border-b border-[var(--app-border)] bg-[var(--app-surface)] px-6 py-5"
+    >
+      <div
+        class="absolute left-0 top-0 h-full w-1 bg-[var(--app-primary)]"
+      ></div>
+      <div class="flex flex-wrap items-center gap-3">
+        <h2 class="font-serif text-4xl font-normal text-[#2f2a24]">
+          Student Guide
+        </h2>
+        <span class="flex-1"></span>
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 rounded-lg bg-[var(--app-primary)] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--app-primary-dark)]"
+          (click)="onStudentChange()"
+        >
+          <span class="material-icons text-lg">search</span>
+          View
+        </button>
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 rounded-lg bg-[var(--app-primary)] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--app-primary-dark)] disabled:opacity-50"
+          (click)="addGuide()"
+          [disabled]="!selectedStudentNo"
+        >
+          <span class="material-icons text-lg">add</span>
+          Add New
+        </button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="p-6">
+      <!-- Filter Section -->
+      <div
+        class="mb-5 flex flex-wrap items-end gap-4 border-b border-[#eee] pb-5"
+      >
+        <div class="min-w-[200px] flex-1">
+          <label class="mb-1 block text-sm text-[#6b6b6b]">Subject</label>
+          <select
+            [(ngModel)]="selectedSubjectId"
+            (ngModelChange)="onSubjectChange()"
+            class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          >
+            <option [ngValue]="null">— Select —</option>
+            <option *ngFor="let s of subjects" [ngValue]="s.Subject_id">
+              {{ s.Subject_nm }}
+            </option>
+          </select>
+        </div>
+        <div class="min-w-[200px] flex-1">
+          <label class="mb-1 block text-sm text-[#6b6b6b]">Student</label>
+          <select
+            [(ngModel)]="selectedStudentNo"
+            (ngModelChange)="onStudentChange()"
+            class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          >
+            <option [ngValue]="null">— Select —</option>
+            <option *ngFor="let st of students" [ngValue]="st.No">
+              {{ st.Name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="flex items-center gap-3 py-10 text-[#777]">
+        <div
+          class="h-9 w-9 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"
+        ></div>
+        <span class="text-sm">Loading…</span>
+      </div>
+
+      <!-- Table and Form (shown when student selected) -->
+      <div *ngIf="!loading && selectedStudentNo">
+        <!-- Table -->
+        <form
+          [formGroup]="form"
+          class="overflow-x-auto rounded-xl border border-[#f0ebe3] mb-6"
+        >
+          <table class="w-full min-w-[800px] border-collapse text-left text-sm">
+            <thead>
+              <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+                <th
+                  class="px-4 py-3 text-xs font-semibold uppercase tracking-wide"
+                >
+                  Sr No
+                </th>
+                <th
+                  class="px-4 py-3 text-xs font-semibold uppercase tracking-wide"
+                >
+                  Guide Type
+                </th>
+                <th
+                  class="px-4 py-3 text-xs font-semibold uppercase tracking-wide"
+                >
+                  Faculty Name
+                </th>
+                <th
+                  class="px-4 py-3 text-xs font-semibold uppercase tracking-wide"
+                >
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody formArrayName="guides">
+              <tr
+                *ngFor="let guide of guides.controls; let i = index"
+                [formGroupName]="i"
+                [hidden]="guide.get('CanTag')?.value"
+                class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]"
+              >
+                <td class="px-4 py-3 tabular-nums text-[#444]">{{ i + 1 }}</td>
+                <td class="px-4 py-3">
+                  <select
+                    formControlName="Empid"
+                    class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+                  >
+                    <option value="">Select Faculty</option>
+                  </select>
+                </td>
+                <td class="px-4 py-3 text-[#666]">
+                  {{ guide.get("Empid")?.value }}
+                </td>
+                <td class="px-4 py-3">
+                  <button
+                    type="button"
+                    (click)="markForDeletion(i)"
+                    class="rounded-lg p-1.5 text-[#c2410c] transition hover:bg-[#fef2f2]"
+                    title="Mark for Deletion"
+                  >
+                    <span class="material-icons text-xl">delete</span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+
+        <!-- Save Button -->
+        <button
+          (click)="onSave()"
+          [disabled]="loading || !form.valid"
+          class="inline-flex items-center gap-2 rounded-lg bg-[#2d8a7e] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#257a6f] disabled:opacity-50"
+        >
+          <span class="material-icons text-lg">save</span>
+          Save
+        </button>
+      </div>
+
+      <!-- No selection message -->
+      <p
+        *ngIf="!loading && !selectedStudentNo"
+        class="py-12 text-center text-sm text-[#999]"
+      >
+        Select a subject and student to manage guides.
+      </p>
+    </div>
+  </div>
+</div>

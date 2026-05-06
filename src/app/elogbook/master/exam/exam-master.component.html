@@ -1,0 +1,100 @@
+<div class="flex min-h-0 flex-1 flex-col bg-page">
+  <div
+    class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]"
+  >
+    <h2 class="text-lg font-semibold">Exam Master</h2>
+    <span class="flex-1"></span>
+    <button
+      type="button"
+      class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white shadow hover:bg-accent-hover"
+      (click)="openAddDialog()"
+    >
+      <span class="material-icons text-lg">add</span>
+      Add Exam
+    </button>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-4 p-4">
+    <div class="max-w-md">
+      <label class="mb-1 block text-sm font-medium text-ink-muted">Filter</label>
+      <input
+        type="search"
+        class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-primary-soft"
+        placeholder="Search exams..."
+        [(ngModel)]="search.Exam_nm"
+        (keyup)="onSearchChange()"
+      />
+    </div>
+
+    <!-- Content -->
+    <div class="p-6">
+      <!-- Loading -->
+      <div *ngIf="loading" class="flex items-center gap-3 py-10 text-[#777]">
+        <div class="h-9 w-9 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+        <span class="text-sm">Loading…</span>
+      </div>
+
+      <!-- No Data -->
+      <p *ngIf="!loading && exams.length === 0" class="py-12 text-center text-sm text-[#999]">
+        No exams found.
+      </p>
+
+      <!-- Table -->
+      <div *ngIf="!loading && exams.length > 0" class="overflow-x-auto rounded-xl border border-[#f0ebe3]">
+        <table class="w-full min-w-[1000px] border-collapse text-left text-sm">
+          <thead>
+            <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Sr No</th>
+              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Exam Name</th>
+              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Admin Year</th>
+              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Course</th>
+              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Max (T)</th>
+              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Max (P)</th>
+              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Created By</th>
+              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Created Date</th>
+              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Action</th>
+            </tr>
+            <tr class="border-b border-[#f0ebe3] bg-[#faf8f3]">
+              <td class="px-4 py-1"><input disabled class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" placeholder="N/A" /></td>
+              <td class="px-4 py-1"><input [(ngModel)]="search.Exam_nm" (ngModelChange)="onSearchChange()" class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" /></td>
+              <td class="px-4 py-1"><input [(ngModel)]="search.Admyear" (ngModelChange)="onSearchChange()" class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" /></td>
+              <td class="px-4 py-1"><input [(ngModel)]="search.Course_nm" (ngModelChange)="onSearchChange()" class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" /></td>
+              <td class="px-4 py-1"><input disabled class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" placeholder="N/A" /></td>
+              <td class="px-4 py-1"><input disabled class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" placeholder="N/A" /></td>
+              <td class="px-4 py-1"><input [(ngModel)]="search.Create_by" (ngModelChange)="onSearchChange()" class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" /></td>
+              <td class="px-4 py-1"><input [(ngModel)]="search.Create_dt" (ngModelChange)="onSearchChange()" class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" /></td>
+              <td class="px-4 py-1"><input disabled class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" placeholder="N/A" /></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of pagedExams; let i = index" class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]">
+              <td class="px-4 py-3 tabular-nums text-[#444]">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+              <td class="px-4 py-3 text-[#444]">{{ r.Exam_nm }}</td>
+              <td class="px-4 py-3 text-[#444]">{{ r.Admyear }}</td>
+              <td class="px-4 py-3 text-[#555]">{{ r.Course_nm }}</td>
+              <td class="px-4 py-3 tabular-nums text-[#444]">{{ r.Maxmarkst }}</td>
+              <td class="px-4 py-3 tabular-nums text-[#444]">{{ r.Maxmarksp }}</td>
+              <td class="px-4 py-3 text-[#666]">{{ r.Create_by }}</td>
+              <td class="px-4 py-3 text-[#666]">{{ r.Create_dt }}</td>
+              <td class="px-4 py-3">
+                <button type="button" (click)="openEditDialog(r)"
+                        class="rounded-lg p-1.5 text-[#8c6b2f] transition hover:bg-[#f3eadb]" title="Edit">
+                  <span class="material-icons text-xl">edit</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="totalPages > 1" class="mt-4 flex items-center justify-center gap-2 text-sm">
+        <button (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1"
+                class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">Prev</button>
+        <span class="text-[#666]">Page {{ currentPage }} of {{ totalPages }}</span>
+        <button (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages"
+                class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">Next</button>
+      </div>
+    </div>
+  </div>
+</div>

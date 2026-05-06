@@ -1,0 +1,131 @@
+@import "./theme/app-tokens.scss";
+@import "tailwindcss";
+/* Required for CDK Dialog/Overlay: viewport-fixed container, flex-centered pane, backdrop sizing */
+@import "@angular/cdk/overlay-prebuilt.css";
+@import "ngx-toastr/toastr";
+
+@theme {
+  --font-sans: var(--app-font-sans);
+  --font-display: var(--app-font-display);
+
+  --color-page: var(--app-page-bg);
+  --color-surface: var(--app-surface);
+  --color-border: var(--app-border);
+  --color-primary: var(--app-primary);
+  --color-primary-dark: var(--app-primary-dark);
+  --color-primary-soft: var(--app-primary-soft);
+  --color-accent: var(--app-accent);
+  --color-accent-hover: var(--app-accent-hover);
+  --color-ink: var(--app-ink);
+  --color-ink-muted: var(--app-ink-muted);
+  --color-ink-faint: var(--app-ink-faint);
+  --color-danger: var(--app-danger);
+  --color-success: var(--app-success);
+  --color-success-bg: var(--app-success-bg);
+  --color-error: var(--app-error);
+  --color-error-bg: var(--app-error-bg);
+  --color-info-bg: var(--app-info-bg);
+  --color-warn-bg: var(--app-warn-bg);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+/*
+  Global dialogs use a flex wrapper; the overlay pane is position:static so flex
+  alignment centers it. If inline justify/align are missing, defaults are flex-start
+  (top-left). This fallback matches CDK’s centered dialogs; inline styles still win
+  when CDK sets flush layouts (e.g. width: 100%).
+*/
+.cdk-overlay-container .cdk-global-overlay-wrapper {
+  justify-content: center;
+  align-items: center;
+}
+
+/* ---------------------------------------------------------------------
+  CDK dialog backdrop only — pane positioning/centering is handled by CDK
+  (GlobalPositionStrategy + .cdk-global-overlay-wrapper flex layout).
+--------------------------------------------------------------------- */
+@layer components {
+  .cdk-overlay-backdrop.app-dialog-backdrop.cdk-overlay-backdrop-showing {
+    background-color: var(--app-scrim);
+    @apply backdrop-blur-[2px];
+  }
+}
+
+.toast-container .ngx-toastr {
+  animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toast-container .ngx-toastr.ng-leave {
+  animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------------------------------------------------------------------
+ Responsive Toasts
+--------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .toast-container {
+    .ngx-toastr {
+      margin: 10px;
+      font-size: 13px;
+      padding: 12px 16px;
+    }
+
+    .toast-title {
+      font-size: 14px;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------
+ Custom Toast Styles (Glass Effect)
+--------------------------------------------------------------------- */
+.toast-success {
+  background: rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid #1988e4;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  color: #1988e4 !important;
+  border-radius: 12px;
+}
+
+.toast-success .toast-close-button {
+  color: #1988e4 !important;
+  opacity: 0.8;
+  text-shadow: none;
+}
+
+.toast-success .toast-close-button:hover {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------------
+ Error Toast
+--------------------------------------------------------------------- */
+.toast-error {
+  background: rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid #e41919;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  color: #e41919 !important;
+  border-radius: 12px;
+}
+
+.toast-error .toast-close-button {
+  color: #e41919 !important;
+  opacity: 0.8;
+  text-shadow: none;
+}
+
+.toast-error .toast-close-button:hover {
+  opacity: 1;
+}

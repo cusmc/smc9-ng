@@ -1,0 +1,304 @@
+<div class="min-h-screen bg-[#f8f5f0] p-6">
+  <div class="mx-auto max-w-6xl">
+    <div
+      class="overflow-hidden rounded-2xl border border-[#ebe6df] bg-white shadow-[0_10px_40px_rgba(44,36,25,0.07)]"
+    >
+      <div
+        class="relative border-b border-[#f0ebe3] bg-gradient-to-r from-[#f7faf9] via-white to-[#faf8f3] px-6 pt-7 pb-5"
+      >
+        <div
+          class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#2d8a7e] to-[#c8a96a]"
+        ></div>
+        <!-- <p class="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-[#2d8a7e]">Assessment</p> -->
+        <h2
+          class="font-serif text-2xl font-normal tracking-tight text-[#2a2622] md:text-[1.65rem]"
+        >
+          Competency Assessment
+        </h2>
+        <!-- <p class="mt-2 max-w-2xl text-sm leading-relaxed text-[#6b6560]">
+          Review competency decisions and ratings with care. Update or revert entries so each learner's profile
+          reflects their skills accurately and fairly.
+        </p> -->
+      </div>
+
+      <div class="p-6">
+        <!-- Filters -->
+        <form
+          [formGroup]="filterForm"
+          class="flex flex-wrap gap-6 items-end pb-6 border-b border-[#f2f2f2]"
+        >
+          <div class="flex-1 min-w-[220px]">
+            <label
+              class="text-xs uppercase tracking-wide text-[#8a8a8a] mb-2 block"
+            >
+              Subject
+            </label>
+            <select
+              formControlName="Subject_id"
+              (change)="onSubjectChange()"
+              class="w-full border border-[#ececec] rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[#c8a96a] outline-none transition"
+            >
+              <option [ngValue]="null">— All —</option>
+              <option *ngFor="let s of subjects" [value]="s.Subject_id">
+                {{ s.Subject_nm }}
+              </option>
+            </select>
+          </div>
+
+          <div class="flex-1 min-w-[220px]">
+            <label
+              class="text-xs uppercase tracking-wide text-[#8a8a8a] mb-2 block"
+            >
+              Student
+            </label>
+            <select
+              formControlName="Studno"
+              class="w-full border border-[#ececec] rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-[#c8a96a] outline-none transition"
+            >
+              <option [ngValue]="null">— All —</option>
+              <option *ngFor="let st of students" [value]="st['No']">
+                {{ st["Name"] }}
+              </option>
+            </select>
+          </div>
+
+          <button
+            type="button"
+            (click)="loadData()"
+            class="inline-flex items-center gap-2 rounded-lg bg-[var(--app-primary)] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--app-primary-dark)]"
+          >
+            View
+          </button>
+        </form>
+
+        <!-- Status Tabs -->
+        <div class="flex gap-3 mt-6 mb-8 flex-wrap">
+          <button
+            (click)="setStatus('A')"
+            [ngClass]="
+              selectedStatus === 'A'
+                ? 'bg-[#f3eadb] text-[#8c6b2f]'
+                : 'text-[#8a8a8a]'
+            "
+            class="px-4 py-2 rounded-full text-sm transition"
+          >
+            All <span class="ml-2 text-xs opacity-70">{{ countAll }}</span>
+          </button>
+
+          <button
+            (click)="setStatus('P')"
+            [ngClass]="
+              selectedStatus === 'P'
+                ? 'bg-[#fff3e0] text-[#e65100]'
+                : 'text-[#8a8a8a]'
+            "
+            class="px-4 py-2 rounded-full text-sm transition"
+          >
+            Pending <span class="ml-2 text-xs opacity-70">{{ countP }}</span>
+          </button>
+
+          <button
+            (click)="setStatus('C')"
+            [ngClass]="
+              selectedStatus === 'C'
+                ? 'bg-[#e3f2fd] text-[#1976d2]'
+                : 'text-[#8a8a8a]'
+            "
+            class="px-4 py-2 rounded-full text-sm transition"
+          >
+            For Review <span class="ml-2 text-xs opacity-70">{{ countC }}</span>
+          </button>
+
+          <button
+            (click)="setStatus('R')"
+            [ngClass]="
+              selectedStatus === 'R'
+                ? 'bg-[#e8f5e9] text-[#388e3c]'
+                : 'text-[#8a8a8a]'
+            "
+            class="px-4 py-2 rounded-full text-sm transition"
+          >
+            Complete <span class="ml-2 text-xs opacity-70">{{ countR }}</span>
+          </button>
+        </div>
+
+        <!-- Loading -->
+        <div *ngIf="loading" class="flex items-center gap-3 py-8 text-[#777]">
+          <div
+            class="w-5 h-5 border-2 border-[#c8a96a] border-t-transparent rounded-full animate-spin"
+          ></div>
+          <span class="text-sm">Loading data...</span>
+        </div>
+
+        <!-- No Data -->
+        <p
+          *ngIf="!loading && filteredData.length === 0"
+          class="text-center text-[#9a9a9a] py-12 text-sm"
+        >
+          No records found. Please adjust filters.
+        </p>
+
+        <!-- Table -->
+        <div
+          *ngIf="!loading && filteredData.length > 0"
+          class="overflow-x-auto"
+        >
+          <table class="w-full min-w-[900px] text-sm">
+            <thead>
+              <tr class="text-left text-[#888] border-b">
+                <th class="py-3 px-3 font-medium">Sr No</th>
+                <th class="py-3 px-3 font-medium">Student</th>
+                <th class="py-3 px-3 font-medium">Skill</th>
+                <th class="py-3 px-3 font-medium">Remarks</th>
+                <th class="py-3 px-3 font-medium">Date</th>
+                <th class="py-3 px-3 font-medium">Mode</th>
+                <th class="py-3 px-3 font-medium">Decision</th>
+                <th class="py-3 px-3 font-medium">Rating</th>
+                <th class="py-3 px-3 font-medium">Comments</th>
+                <th class="py-3 px-3 font-medium">Status</th>
+                <th class="py-3 px-3 font-medium">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr
+                *ngFor="let r of pagedData; let i = index"
+                class="border-b last:border-0 hover:bg-[#fcfaf6] transition"
+                [ngClass]="{
+                  'bg-[#fff8e1]': r.Status === 'P',
+                  'bg-[#e3f2fd]': r.Status === 'C',
+                  'bg-[#f1f8e9]': r.Status === 'R',
+                }"
+              >
+                <td class="px-3 py-3 tabular-nums text-[#666]">
+                  {{ (currentPage - 1) * itemsPerPage + i + 1 }}
+                </td>
+                <td class="px-3 py-3">{{ r.Name }}</td>
+                <td class="px-3 py-3">{{ r.Description }}</td>
+                <td class="px-3 py-3">{{ r.Remarks }}</td>
+                <td class="px-3 py-3">
+                  {{ r.Dateachieved | date: "dd/MM/yyyy" }}
+                </td>
+                <td class="px-3 py-3">{{ r.Mode_nm }}</td>
+
+                <!-- Decision -->
+                <td class="px-3 py-3">
+                  <select
+                    [(ngModel)]="r.Decision"
+                    [ngModelOptions]="{ standalone: true }"
+                    [disabled]="r.Status !== 'C'"
+                    class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-sm disabled:bg-gray-50 "
+                  >
+                    <option value="">-- Select --</option>
+                    <option *ngFor="let d of decisionList" [value]="d['Cd']">
+                      {{ d["vals"] }}
+                    </option>
+                  </select>
+                </td>
+
+                <!-- Rating -->
+                <td class="px-3 py-3">
+                  <select
+                    [(ngModel)]="r.Rating"
+                    [ngModelOptions]="{ standalone: true }"
+                    [disabled]="r.Status !== 'C'"
+                    class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-sm disabled:bg-gray-50 disabled:text-gray-500"
+                  >
+                    <option value="">-- Select --</option>
+                    <option *ngFor="let d of ratingList" [value]="d['Cd']">
+                      {{ d["vals"] }}
+                    </option>
+                  </select>
+                </td>
+
+                <!-- Comments -->
+                <td class="px-3 py-3">
+                  <input
+                    [(ngModel)]="r.Comments"
+                    [ngModelOptions]="{ standalone: true }"
+                    [disabled]="r.Status !== 'C'"
+                    class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-sm disabled:bg-gray-50 disabled:text-gray-500"
+                    placeholder="Enter Remarks"
+                  />
+                </td>
+
+                <!-- Status -->
+                <td class="px-3 py-3">
+                  <span
+                    class="px-3 py-1 rounded-full text-xs"
+                    [ngClass]="{
+                      'bg-[#fff3e0] text-[#e65100]': r.Status === 'P',
+                      'bg-[#e3f2fd] text-[#1976d2]': r.Status === 'C',
+                      'bg-[#e8f5e9] text-[#388e3c]': r.Status === 'R',
+                    }"
+                  >
+                    {{
+                      r.Status === "P"
+                        ? "Pending"
+                        : r.Status === "C"
+                          ? "For Review"
+                          : r.Status === "R"
+                            ? "Complete"
+                            : r.Status
+                    }}
+                  </span>
+                </td>
+
+                <!-- Actions -->
+                <td class="px-3 py-3">
+                  <div class="flex gap-3 text-xs">
+                    <!-- Update: only for For Review rows -->
+                    <button
+                      *ngIf="r.Status === 'C'"
+                      (click)="update(r, 'U')"
+                      [disabled]="saving"
+                      class="text-green-600 hover:underline disabled:opacity-40"
+                    >
+                      Update
+                    </button>
+
+                    <!-- Revert: only for Complete rows -->
+                    <button
+                      *ngIf="r.Status === 'R'"
+                      (click)="update(r, 'R')"
+                      [disabled]="saving"
+                      class="text-red-500 hover:underline disabled:opacity-40"
+                    >
+                      Revert
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div
+          *ngIf="totalPages > 1"
+          class="mt-4 flex items-center justify-center gap-2 text-sm"
+        >
+          <button
+            type="button"
+            (click)="currentPage = currentPage - 1"
+            [disabled]="currentPage === 1"
+            class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]"
+          >
+            Prev
+          </button>
+          <span class="text-[#666]"
+            >Page {{ currentPage }} of {{ totalPages }}</span
+          >
+          <button
+            type="button"
+            (click)="currentPage = currentPage + 1"
+            [disabled]="currentPage === totalPages"
+            class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

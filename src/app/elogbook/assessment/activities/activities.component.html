@@ -1,0 +1,276 @@
+<div class="min-h-screen bg-[var(--app-bg)] p-6">
+  <div
+    class="overflow-hidden rounded-2xl border border-[#ebe6df] bg-white shadow-[0_10px_40px_rgba(44,36,25,0.07)]"
+  >
+    <div
+      class="relative border-b border-[#f0ebe3] bg-gradient-to-r from-[#f7faf9] via-white to-[#faf8f3] px-6 pt-7 pb-5"
+    >
+      <div
+        class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#2d8a7e] to-[#c8a96a]"
+      ></div>
+      <!-- <p class="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-[#2d8a7e]">Assessment</p> -->
+      <h2
+        class="font-serif text-2xl font-normal tracking-tight text-[#2a2622] md:text-[1.65rem]"
+      >
+        Activities Assessment
+      </h2>
+      <!-- <p class="mt-2 max-w-2xl text-sm leading-relaxed text-[#6b6560]">
+        Review activity participation and performance. Update grades and remarks, or revert entries so student
+        records stay accurate and complete.
+      </p> -->
+    </div>
+
+    <div class="p-6">
+      <!-- Filters -->
+      <form
+        [formGroup]="filterForm"
+        class="flex flex-wrap gap-4 items-end pb-5 border-b border-[#eee]"
+      >
+        <div class="min-w-[200px] flex-1">
+          <label class="text-sm text-[#6b6b6b] block mb-1">Subject</label>
+          <select
+            formControlName="Subject_id"
+            (change)="onSubjectChange()"
+            class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none"
+          >
+            <option [ngValue]="null">— All —</option>
+            <option *ngFor="let s of subjects" [value]="s.Subject_id">
+              {{ s.Subject_nm }}
+            </option>
+          </select>
+        </div>
+
+        <div class="min-w-[200px] flex-1">
+          <label class="text-sm text-[#6b6b6b] block mb-1">Student</label>
+          <select
+            formControlName="Studno"
+            class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none"
+          >
+            <option [ngValue]="null">— All —</option>
+            <option *ngFor="let st of students" [value]="st['No']">
+              {{ st["Name"] }}
+            </option>
+          </select>
+        </div>
+
+        <button
+          type="button"
+          (click)="loadActivities()"
+          class="inline-flex items-center gap-2 rounded-lg bg-[var(--app-primary)] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--app-primary-dark)]"
+        >
+          View
+        </button>
+      </form>
+
+      <!-- Status Tabs -->
+      <div class="flex gap-2 mt-5 mb-6">
+        <button
+          (click)="setStatus('A')"
+          [ngClass]="
+            selectedStatus === 'A'
+              ? 'bg-[#f3eadb] text-[#8c6b2f]'
+              : 'text-[#777]'
+          "
+          class="px-4 py-1.5 rounded-full text-sm transition"
+        >
+          All <span class="ml-2 text-xs">{{ countAll }}</span>
+        </button>
+
+        <button
+          (click)="setStatus('P')"
+          [ngClass]="
+            selectedStatus === 'P'
+              ? 'bg-[#fff3e0] text-[#e65100]'
+              : 'text-[#777]'
+          "
+          class="px-4 py-1.5 rounded-full text-sm transition"
+        >
+          Pending <span class="ml-2 text-xs">{{ countP }}</span>
+        </button>
+
+        <button
+          (click)="setStatus('C')"
+          [ngClass]="
+            selectedStatus === 'C'
+              ? 'bg-[#e8f5e9] text-[#388e3c]'
+              : 'text-[#777]'
+          "
+          class="px-4 py-1.5 rounded-full text-sm transition"
+        >
+          Complete <span class="ml-2 text-xs">{{ countC }}</span>
+        </button>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="flex items-center gap-3 py-6 text-[#777]">
+        <div
+          class="w-5 h-5 border-2 border-[#c8a96a] border-t-transparent rounded-full animate-spin"
+        ></div>
+        <span class="text-sm">Loading...</span>
+      </div>
+
+      <!-- No Data -->
+      <p
+        *ngIf="!loading && filteredData.length === 0"
+        class="text-center text-[#999] py-10 text-sm"
+      >
+        No activities found. Select filters and click View.
+      </p>
+
+      <!-- Table -->
+      <div
+        *ngIf="!loading && filteredData.length > 0"
+        class="overflow-x-auto rounded-xl border border-[#f0ebe3] bg-white shadow-sm ring-1 ring-black/[0.02]"
+      >
+        <table
+          class="w-full min-w-[900px] border-collapse text-left text-sm text-[#444]"
+        >
+          <thead>
+            <tr class="text-left text-[#666] border-b">
+              <th class="py-2 px-3 font-medium">Sr No</th>
+              <th class="py-2 px-3 font-medium">Activity Dt</th>
+              <th class="py-2 px-3 font-medium">Student</th>
+              <th class="py-2 px-3 font-medium">Type</th>
+              <th class="py-2 px-3 font-medium">Mode</th>
+              <th class="py-2 px-3 font-medium">Title</th>
+              <th class="py-2 px-3 font-medium">Details</th>
+              <th class="py-2 px-3 font-medium">Grade</th>
+              <th class="py-2 px-3 font-medium">Remarks</th>
+              <th class="py-2 px-3 font-medium">Entry Dt</th>
+              <th class="py-2 px-3 font-medium">Status</th>
+              <th class="py-2 px-3 font-medium">Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr
+              *ngFor="let r of pagedData; let i = index"
+              class="border-b hover:bg-[#faf8f3] transition"
+              [ngClass]="{
+                'bg-[#fff8e1]': r.Status === 'P',
+                'bg-[#f1f8e9]': r.Status === 'C',
+              }"
+            >
+              <td class="px-3 py-2">
+                {{ (currentPage - 1) * itemsPerPage + i + 1 }}
+              </td>
+              <td class="px-3 py-2">{{ r.Edate | date: "dd/MM/yyyy" }}</td>
+              <td class="px-3 py-2">{{ r.Name }}</td>
+              <td class="px-3 py-2">{{ r.Activity_nm }}</td>
+              <td class="px-3 py-2">{{ r.Mode_nm }}</td>
+              <td class="px-3 py-2">{{ r.Title }}</td>
+              <td class="px-3 py-2">{{ r.Detail_nm }}</td>
+
+              <!-- Grade cell — editable when Pending -->
+              <td class="px-3 py-2" *ngIf="r.Canverify">
+                <select
+                  [(ngModel)]="r.Grade"
+                  [ngModelOptions]="{ standalone: true }"
+                  class="w-full rounded border px-2 py-1 text-sm"
+                >
+                  <option value="">-- Select --</option>
+                  <option *ngFor="let g of grades" [value]="g['Cd']">
+                    {{ g["vals"] }}
+                  </option>
+                </select>
+              </td>
+              <td class="px-3 py-2" *ngIf="!r.Canverify">
+                {{ getGradeLabel(r.Grade) }}
+              </td>
+
+              <!-- Remarks cell — editable when Pending -->
+              <td class="px-3 py-2" *ngIf="r.Canverify">
+                <input
+                  [(ngModel)]="r.Comments"
+                  [ngModelOptions]="{ standalone: true }"
+                  class="w-full rounded border px-2 py-1 text-sm"
+                  placeholder="Enter Remarks"
+                />
+              </td>
+              <td class="px-3 py-2" *ngIf="!r.Canverify">{{ r.Comments }}</td>
+
+              <td class="px-3 py-2">{{ r.Create_dt | date: "dd/MM HH:mm" }}</td>
+
+              <!-- Status -->
+              <td class="px-3 py-2">
+                <span
+                  [ngClass]="{
+                    'bg-[#fff3e0] text-[#e65100]': r.Status === 'P',
+                    'bg-[#e8f5e9] text-[#388e3c]': r.Status === 'C',
+                    'bg-[#f0f0f0] text-[#666]': !r.Status,
+                  }"
+                  class="px-3 py-1 rounded-full text-xs"
+                >
+                  {{
+                    r.Status === "P"
+                      ? "Pending"
+                      : r.Status === "C"
+                        ? "Complete"
+                        : r.Status
+                  }}
+                </span>
+              </td>
+
+              <!-- Actions -->
+              <td class="px-3 py-2 flex gap-2 items-center">
+                <!-- Save: only for Pending rows, disabled until Grade selected -->
+                <button
+                  *ngIf="r.Canverify"
+                  (click)="saveRow(r)"
+                  [disabled]="!r.Grade || saving"
+                  class="text-green-600 hover:underline text-xs disabled:opacity-40"
+                >
+                  Save
+                </button>
+
+                <!-- Revert: only for Complete rows -->
+                <button
+                  *ngIf="r.Status === 'C'"
+                  (click)="revertRow(r)"
+                  [disabled]="saving"
+                  class="text-red-500 hover:underline text-xs disabled:opacity-40"
+                >
+                  Revert
+                </button>
+
+                <!-- Documents: shown when documents attached -->
+                <button
+                  *ngIf="(r.No_of_docu ?? 0) > 0"
+                  class="text-blue-500 hover:underline text-xs"
+                >
+                  Docs ({{ r.No_of_docu }})
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div
+        *ngIf="totalPages > 1"
+        class="mt-4 flex items-center justify-center gap-2 text-sm"
+      >
+        <button
+          type="button"
+          (click)="currentPage = currentPage - 1"
+          [disabled]="currentPage === 1"
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]"
+        >
+          Prev
+        </button>
+        <span class="text-[#666]"
+          >Page {{ currentPage }} of {{ totalPages }}</span
+        >
+        <button
+          type="button"
+          (click)="currentPage = currentPage + 1"
+          [disabled]="currentPage === totalPages"
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

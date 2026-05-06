@@ -1,0 +1,55 @@
+<div class="flex max-h-[inherit] w-full flex-col overflow-hidden rounded-2xl bg-white">
+  <div class="border-b border-[#f0ebe3] px-6 py-5">
+    <h2 class="text-lg font-semibold text-[#2a2622]">
+      {{ data.subgroup ? 'Edit' : 'Add' }} {{ data.subgroupType }}
+    </h2>
+  </div>
+  <div class="max-h-[65vh] overflow-y-auto px-6 py-4" [formGroup]="form">
+    <div class="space-y-4">
+      <div>
+        <label class="mb-1 block text-sm text-[#6b6b6b]">Name</label>
+        <input
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          formControlName="Subgroup_nm"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm text-[#6b6b6b]">Type</label>
+        <input
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          formControlName="Subgroup_type"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm text-[#6b6b6b]">Subject ID</label>
+        <input
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm text-[#2d2d2d] transition focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50"
+          formControlName="Subject_id"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="flex justify-end gap-2 border-t border-[#f0ebe3] px-6 py-4">
+    <button
+      type="button"
+      class="rounded-lg px-4 py-2 text-sm text-[#666] hover:bg-[#f5f0e8]"
+      (click)="onCancel()"
+    >
+      Cancel
+    </button>
+    <button *ngIf="data.subgroup"
+            type="button"
+            class="rounded-lg px-4 py-2 text-sm text-white bg-[#d97706] hover:bg-[#b45309]"
+            (click)="onDelete()">
+      Delete
+    </button>
+    <button
+      type="button"
+      class="rounded-lg px-4 py-2 text-sm font-medium text-white bg-[#2d8a7e] hover:bg-[#257a6f] disabled:opacity-50"
+      (click)="onSave()"
+      [disabled]="!form.valid"
+    >
+      Save
+    </button>
+  </div>
+</div>

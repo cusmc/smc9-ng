@@ -1,0 +1,97 @@
+<div class="flex max-h-[inherit] w-full flex-col overflow-hidden rounded-2xl bg-white">
+<h2 class="border-b border-[#f0ebe3] px-6 pb-3 pt-6 text-xl font-semibold text-[#2a2622]">{{ data ? 'Edit Parameter' : 'Add Parameter' }}</h2>
+<div class="max-h-[min(70vh,calc(90vh-8rem))] flex-1 overflow-y-auto px-6 py-4">
+  <form [formGroup]="form" class="flex flex-col gap-4">
+    <div>
+      <label class="mb-1 block text-sm font-medium text-ink-muted">Code</label>
+      <input
+        class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-primary-soft"
+        formControlName="Code"
+      />
+    </div>
+    <div>
+      <label class="mb-1 block text-sm font-medium text-ink-muted">Description</label>
+      <textarea
+        class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-primary-soft"
+        formControlName="Descr"
+        rows="3"
+      ></textarea>
+    </div>
+    <div>
+      <label class="mb-1 block text-sm font-medium text-ink-muted">Course ID</label>
+      <input
+        type="number"
+        class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-primary-soft"
+        formControlName="Course_id"
+      />
+    </div>
+    <div>
+      <label class="mb-1 block text-sm font-medium text-ink-muted">Max Score</label>
+      <input
+        type="number"
+        class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-primary-soft"
+        formControlName="Maxscore"
+      />
+    </div>
+    <div>
+      <label class="mb-1 block text-sm font-medium text-ink-muted">Is Header</label>
+      <select
+        class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-primary-soft"
+        formControlName="Isheader"
+      >
+        <option value="Y">Yes</option>
+        <option value="N">No</option>
+      </select>
+    </div>
+    <div>
+      <label class="mb-1 block text-sm font-medium text-ink-muted">Is Mandatory</label>
+      <select
+        class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-primary-soft"
+        formControlName="Ismandatory"
+      >
+        <option value="Y">Yes</option>
+        <option value="N">No</option>
+      </select>
+    </div>
+    <div>
+      <label class="mb-1 block text-sm font-medium text-ink-muted">Display Order</label>
+      <input
+        type="number"
+        class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-primary-soft"
+        formControlName="Displayorder"
+      />
+    </div>
+    <div>
+      <label class="mb-1 block text-sm font-medium text-ink-muted">Is Active</label>
+      <select
+        class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-primary-soft"
+        formControlName="Isactive"
+      >
+        <option value="Y">Yes</option>
+        <option value="N">No</option>
+      </select>
+    </div>
+  </form>
+</div>
+<div class="flex justify-between gap-2 border-t border-[#f5f0e8] px-6 py-4">
+  <button
+    *ngIf="data"
+    type="button"
+    class="rounded-lg border border-[#fecaca] bg-[#fef2f2] px-4 py-2 text-sm font-medium text-[#b91c1c] transition hover:bg-[#fee2e2]"
+    (click)="onDelete()"
+  >
+    Delete
+  </button>
+  <div class="flex gap-2 ml-auto">
+    <button type="button" class="rounded-lg px-4 py-2 text-sm text-[#666] transition hover:bg-[#f5f0e8]" (click)="onCancel()">Cancel</button>
+    <button
+      type="button"
+      class="rounded-lg bg-[#2d8a7e] px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-[#257a6f] disabled:opacity-50"
+      (click)="onSave()"
+      [disabled]="!form.valid"
+    >
+      Save
+    </button>
+  </div>
+</div>
+</div>

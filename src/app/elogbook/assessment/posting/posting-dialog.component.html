@@ -1,0 +1,164 @@
+<div class="flex max-h-[inherit] w-full flex-col overflow-hidden rounded-2xl border border-[#ebe6df] bg-white">
+  <div class="relative shrink-0 border-b border-[#f0ebe3] bg-gradient-to-r from-[#f7faf9] via-white to-[#faf8f3] px-6 pb-4 pt-6">
+    <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#2d8a7e] to-[#c8a96a]"></div>
+    <p class="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-[#2d8a7e]">Rotational posting</p>
+    <h2 class="font-serif text-xl font-normal tracking-tight text-[#2a2622] md:text-2xl">
+      {{ data.Pk_id === -1 ? 'New Posting' : 'Edit Posting' }}
+    </h2>
+    <p class="mt-1.5 max-w-xl text-sm leading-relaxed text-[#6b6560]">
+      Choose subject and student, then add one or more rotation lines with dates, speciality, and faculty.
+    </p>
+  </div>
+
+  <div class="min-h-0 flex-1 overflow-y-auto px-6 py-5" [formGroup]="form">
+    <div class="mb-5 flex flex-wrap gap-4 border-b border-[#eee] pb-5">
+      <div class="min-w-[160px] flex-1">
+        <label class="mb-1.5 block text-sm text-[#6b6b6b]">Subject</label>
+        <select
+          formControlName="Subject_id"
+          (change)="onSubjectChange()"
+          class="w-full rounded-lg border border-[#e5e5e5] bg-[#fdfcfa] px-3 py-2.5 text-sm text-[#2d2d2d] transition focus:border-[#c8a96a] focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/35"
+        >
+          <option *ngFor="let s of subjects" [ngValue]="s.Subject_id">{{ s.Subject_nm }}</option>
+        </select>
+      </div>
+      <div class="min-w-[160px] flex-1">
+        <label class="mb-1.5 block text-sm text-[#6b6b6b]">Student</label>
+        <select
+          formControlName="Studno"
+          (change)="onStudnoChange()"
+          class="w-full rounded-lg border border-[#e5e5e5] bg-[#fdfcfa] px-3 py-2.5 text-sm text-[#2d2d2d] transition focus:border-[#c8a96a] focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/35"
+        >
+          <option *ngFor="let st of students" [ngValue]="st['No']">{{ st['Name'] }}</option>
+        </select>
+      </div>
+      <div class="min-w-[200px] flex-[2]">
+        <label class="mb-1.5 block text-sm text-[#6b6b6b]">Remarks</label>
+        <input
+          formControlName="Remarks"
+          class="w-full rounded-lg border border-[#e5e5e5] bg-[#fdfcfa] px-3 py-2.5 text-sm text-[#2d2d2d] transition focus:border-[#c8a96a] focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/35"
+        />
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-[#e8e4dc] bg-[#faf8f3] p-4" formArrayName="SubData">
+      <div class="mb-3 grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-2 text-xs font-semibold uppercase tracking-wide text-[#666] max-md:hidden">
+        <span>Start Date</span>
+        <span>End Date</span>
+        <span>Speciality</span>
+        <span>Faculty</span>
+        <span></span>
+      </div>
+      <ng-container *ngFor="let ctrl of rows.controls; let i = index" [formGroupName]="i">
+        <div
+          *ngIf="ctrl.get('CanTag')?.value !== 'Y'"
+          class="mb-3 flex flex-wrap items-end gap-2 border-b border-[#ebe6df] pb-3 last:mb-0 last:border-0 last:pb-0 md:grid md:grid-cols-[1fr_1fr_1fr_1fr_auto]"
+        >
+          <div>
+            <label class="mb-1 block text-xs text-[#6b6b6b] md:hidden">Start</label>
+            <input
+              type="date"
+              formControlName="Startdate"
+              class="w-full rounded-lg border border-[#e5e5e5] bg-white px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/35"
+            />
+          </div>
+          <div>
+            <label class="mb-1 block text-xs text-[#6b6b6b] md:hidden">End</label>
+            <input
+              type="date"
+              formControlName="Enddate"
+              class="w-full rounded-lg border border-[#e5e5e5] bg-white px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/35"
+            />
+          </div>
+          <div class="flex min-w-[140px] flex-1 items-center gap-1">
+            <select
+              formControlName="Specialty_id"
+              class="min-w-0 flex-1 rounded-lg border border-[#e5e5e5] bg-white px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/35"
+            >
+              <option [ngValue]="-1">— Select —</option>
+              <option *ngFor="let sp of specialities" [ngValue]="sp['id']">{{ sp['nm'] }}</option>
+            </select>
+            <button
+              type="button"
+              class="shrink-0 rounded-lg p-1.5 text-[#2d8a7e] transition hover:bg-white"
+              (click)="specialityPanelOpen = true"
+              title="Add speciality"
+            >
+              <span class="material-icons text-lg">add</span>
+            </button>
+          </div>
+          <select
+            formControlName="Empid"
+            class="w-full min-w-[120px] rounded-lg border border-[#e5e5e5] bg-white px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/35"
+          >
+            <option *ngFor="let f of facultyList" [value]="'' + f['id']">{{ f['nm'] }}</option>
+          </select>
+          <button
+            type="button"
+            class="rounded-lg p-1.5 text-[#b91c1c] transition hover:bg-[#fef2f2]"
+            (click)="removeRow(ctrl.get('itemno')?.value)"
+            title="Remove"
+          >
+            <span class="material-icons">delete</span>
+          </button>
+        </div>
+      </ng-container>
+
+      <button
+        type="button"
+        class="mt-1 inline-flex items-center gap-1.5 rounded-lg border border-[#c8a96a] bg-white px-4 py-2.5 text-sm font-medium text-[#8c6b2f] shadow-sm transition hover:bg-[#f3eadb] disabled:cursor-not-allowed disabled:opacity-45"
+        (click)="addRow()"
+        [disabled]="!form.get('Subject_id')?.value"
+      >
+        <span class="material-icons text-lg">add</span>
+        Add Item
+      </button>
+    </div>
+
+    <div
+      *ngIf="specialityPanelOpen"
+      class="mt-4 flex flex-wrap items-end gap-3 rounded-xl border border-[#e8dfd0] bg-[#fdf6eb] p-4"
+    >
+      <div class="min-w-[200px] flex-1">
+        <label class="mb-1.5 block text-sm text-[#6b6b6b]">Speciality Name</label>
+        <input
+          [(ngModel)]="newSpecialityNm"
+          [ngModelOptions]="{ standalone: true }"
+          class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/35"
+        />
+      </div>
+      <button
+        type="button"
+        class="rounded-lg bg-[#2d8a7e] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#257a6f]"
+        (click)="saveSpeciality()"
+      >
+        Save
+      </button>
+      <button
+        type="button"
+        class="rounded-lg px-4 py-2.5 text-sm text-[#666] transition hover:bg-white/80"
+        (click)="specialityPanelOpen = false; newSpecialityNm = ''"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <div class="flex shrink-0 justify-end gap-2 border-t border-[#f0ebe3] bg-[#fdfcfa] px-6 py-4">
+    <button
+      type="button"
+      class="rounded-lg px-4 py-2.5 text-sm text-[#666] transition hover:bg-[#f5f0e8]"
+      (click)="cancel()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="rounded-lg bg-[#2d8a7e] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#257a6f] disabled:cursor-not-allowed disabled:opacity-50"
+      (click)="save()"
+      [disabled]="form.invalid || saving"
+    >
+      Save
+    </button>
+  </div>
+</div>
