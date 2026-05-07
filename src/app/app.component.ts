@@ -86,8 +86,7 @@ export class AppComponent implements OnInit {
         this.userImageUrl = src || this.defaultAvatar;
       },
       error: () => {
-        // If the profile API fails, show all non-role-restricted modules
-        this.visibleModules = this.nav.getVisibleModules([]);
+        this.visibleModules = this.nav.allModules;
         this.userImageUrl = this.defaultAvatar;
       },
     });

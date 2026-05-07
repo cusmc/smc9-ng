@@ -28,7 +28,13 @@ export class NavService {
    * Modules with no roles restriction are always shown.
    * Pass an empty array to show all non-role-restricted modules.
    */
+  /**
+   * Returns modules visible for the given roles.
+   * When userRoles is empty (roles unknown), all modules are shown —
+   * access control is enforced by the legacy app or route guards.
+   */
   getVisibleModules(userRoles: string[]): NavModule[] {
+    if (userRoles.length === 0) return APP_NAV;
     return APP_NAV.filter((m) => {
       if (!m.roles || m.roles.length === 0) return true;
       return m.roles.some((r) => userRoles.includes(r));

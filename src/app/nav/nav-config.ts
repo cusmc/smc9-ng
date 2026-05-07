@@ -407,6 +407,49 @@ export const APP_NAV: NavModule[] = [
     ],
   },
 
+  // ─── Admin ────────────────────────────────────────────────────────────────
+  {
+    id: 'admin',
+    label: 'Admin',
+    icon: 'admin_panel_settings',
+    baseRoute: '/admin',
+    roles: ['Admin'],
+    migrated: false,
+    groups: [
+      {
+        label: 'User Management',
+        icon: 'manage_accounts',
+        items: [
+          { label: 'Users', icon: 'people', externalUrl: '/Admin/Users' },
+          { label: 'Roles', icon: 'security', externalUrl: '/Admin/Roles' },
+          { label: 'User Rights', icon: 'lock', externalUrl: '/Admin/Rights' },
+        ],
+      },
+      {
+        label: 'Website Admin',
+        icon: 'language',
+        items: [
+          { label: 'Announcements', icon: 'campaign', externalUrl: '/Admin/Announce' },
+          { label: 'Photo Gallery', icon: 'photo_library', externalUrl: '/Admin/Gallery' },
+          { label: 'Webpages', icon: 'web', externalUrl: '/Admin/Webpages' },
+          { label: 'MCQ Test', icon: 'quiz', externalUrl: '/Admin/MCQ' },
+          { label: 'Staff PDF', icon: 'picture_as_pdf', externalUrl: '/Admin/StaffPDF' },
+          { label: 'Alumni', icon: 'school', externalUrl: '/Admin/Alumni' },
+          { label: 'Feedback Master', icon: 'reviews', externalUrl: '/Admin/Feedback' },
+        ],
+      },
+      {
+        label: 'System',
+        icon: 'settings',
+        items: [
+          { label: 'Error Logs', icon: 'bug_report', externalUrl: '/Errorlog/Index' },
+          { label: 'Audit Trail', icon: 'history', externalUrl: '/AuditData/Index' },
+          { label: 'IP Master', icon: 'router', externalUrl: '/Admin/IPMaster' },
+        ],
+      },
+    ],
+  },
+
   // ─── MIS Reports ──────────────────────────────────────────────────────────
   {
     id: 'mis',
