@@ -214,10 +214,10 @@
               <!-- Actions -->
               <td class="px-3 py-2 flex gap-2 items-center">
                 <!-- Save: only for Pending rows, disabled until Grade selected -->
+                <!--[disabled]="!r.Grade || saving"-->
                 <button
                   *ngIf="r.Canverify"
                   (click)="saveRow(r)"
-                  [disabled]="!r.Grade || saving"
                   class="text-green-600 hover:underline text-xs disabled:opacity-40"
                 >
                   Save
