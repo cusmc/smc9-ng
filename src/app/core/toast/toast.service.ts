@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ActiveToast, IndividualConfig, ToastrService } from 'ngx-toastr';
+import { ToastItem } from './toast.models';
 
 export interface ToastOptions {
   title?: string;
@@ -16,6 +18,9 @@ export interface ToastShowOptions {
 
 @Injectable({ providedIn: 'root' })
 export class ToastService {
+  private readonly _items = new BehaviorSubject<ToastItem[]>([]);
+  readonly items: Observable<ToastItem[]> = this._items.asObservable();
+
   constructor(private readonly toastr: ToastrService) {}
 
   show(message: string, options?: ToastShowOptions): string {
