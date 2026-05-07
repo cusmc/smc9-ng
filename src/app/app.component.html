@@ -12,79 +12,30 @@
   ></div>
 
   <div class="flex h-screen overflow-hidden bg-page">
-    <!-- Side navigation -->
-    <aside
-      class="fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col border-r border-white/10 bg-[var(--app-sidenav-bg)] text-[var(--app-sidenav-text)] transition-transform duration-200"
-      [style.transform]="sidenavOpen ? 'translateX(0)' : 'translateX(-250px)'"
+    <!-- Dual-panel nav: icon rail + contextual sidebar -->
+    <div
+      class="fixed inset-y-0 left-0 z-50 flex transition-transform duration-200"
+      [style.transform]="sidenavOpen ? 'translateX(0)' : 'translateX(-100%)'"
     >
-      <div
-        class="flex items-center gap-3 border-b border-white/10 bg-[var(--app-sidenav-brand-bg)] px-4 py-5"
-      >
-        <img class="w-13 drop-shadow" src="../assets/SRSH_logo.png" alt="" />
-        <div *ngIf="sidenavOpen" class="flex flex-col leading-tight">
-          <span class="text-base font-bold tracking-wide text-white">
-            ELogBook Admin
-          </span>
-          <!-- <span
-            class="text-[11px] font-semibold uppercase tracking-wider text-[var(--app-sidenav-muted)]"
-            >eLogBook</span
-          > -->
-        </div>
-      </div>
+      <!-- Module icon rail -->
+      <app-module-rail
+        [modules]="visibleModules"
+        [activeModuleId]="activeModule?.id ?? null"
+        (moduleSelected)="onModuleSelected($event)"
+      />
 
-      <nav class="app-scrollbar flex-1 overflow-y-auto overflow-x-hidden py-2">
-        <details
-          *ngFor="let group of navGroups"
-          class="group border-b border-white/5"
-          open
-        >
-          <summary
-            class="flex cursor-pointer list-none items-center py-2.5 text-[11px] font-semibold uppercase tracking-wide text-[var(--app-sidenav-muted)] marker:content-none [&::-webkit-details-marker]:hidden hover:bg-[var(--app-sidenav-hover)]"
-            [class.justify-center]="!sidenavOpen"
-            [class.gap-2]="sidenavOpen"
-            [class.px-4]="sidenavOpen"
-          >
-            <span
-              class="material-icons text-lg text-[var(--app-sidenav-text)]"
-              >{{ group.icon }}</span
-            >
-            <span *ngIf="sidenavOpen">{{ group.label }}</span>
-            <span
-              *ngIf="sidenavOpen"
-              class="material-icons ml-auto text-base text-[var(--app-sidenav-muted)]"
-              >expand_more</span
-            >
-          </summary>
-          <div class="pb-1">
-            <a
-              *ngFor="let item of group.items"
-              [routerLink]="item.route"
-              routerLinkActive="nav-active"
-              [routerLinkActiveOptions]="{ exact: false }"
-              class="flex items-center border-l-[3px] border-transparent py-2 text-[13px] text-[var(--app-sidenav-text)] hover:bg-[var(--app-sidenav-hover)]"
-              [class.justify-center]="!sidenavOpen"
-              [class.gap-2]="sidenavOpen"
-              [class.pl-8]="sidenavOpen"
-              [class.pr-3]="sidenavOpen"
-              [class.px-0]="!sidenavOpen"
-              (click)="closeSidenavOnMobile()"
-              [attr.title]="!sidenavOpen ? item.label : null"
-            >
-              <span
-                class="material-icons text-[18px] leading-none opacity-90"
-                >{{ item.icon }}</span
-              >
-              <span *ngIf="sidenavOpen">{{ item.label }}</span>
-            </a>
-          </div>
-        </details>
-      </nav>
-    </aside>
+      <!-- Contextual sidebar panel -->
+      <app-sidebar
+        [module]="activeModule"
+        [open]="sidenavOpen"
+        (closeMobile)="closeSidenavOnMobile()"
+      />
+    </div>
 
-    <!-- Main -->
+    <!-- Main content -->
     <div
       class="flex min-w-0 flex-1 flex-col transition-[margin] duration-200"
-      [style.margin-left.px]="sidenavOpen ? 260 : 0"
+      [style.margin-left.px]="sidenavOpen ? 276 : 0"
     >
       <header
         class="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-primary-soft bg-primary px-2 text-[var(--app-toolbar-fg)] shadow-md sm:px-3"
@@ -97,7 +48,6 @@
         >
           <span class="material-icons">menu</span>
         </button>
-        <!-- <span class="text-base font-medium">eLogBook System</span> -->
         <span class="flex-1"></span>
         <button
           type="button"
@@ -106,20 +56,13 @@
         >
           <span class="material-icons text-xl">notifications</span>
         </button>
-        <div class="flex  items-center gap-2 truncate text-sm">
+        <div class="flex items-center gap-2 truncate text-sm">
           <img
             [src]="userImageUrl || defaultAvatar"
             (error)="onImageError($event)"
-            alt="User Image"
-            class="rounded-full route img-fluid img-thumbnail border-0 user-avatar-main w-10 h-10 object-cover object-center border-2 border-white/20 shadow-sm w-11 h-11"
-            style="
-              width: 45px;
-              height: 45px;
-              object-fit: cover;
-              object-position: center;
-              border: 2px solid rgba(255, 255, 255, 0.2);
-              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            "
+            alt="User"
+            class="rounded-full object-cover object-center border-2 border-white/20 shadow-sm"
+            style="width:45px;height:45px;object-fit:cover;"
           />
           <span class="truncate">{{ ProfileName }}</span>
         </div>

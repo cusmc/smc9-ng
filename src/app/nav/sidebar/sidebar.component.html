@@ -1,0 +1,59 @@
+<div class="sidebar-panel" *ngIf="module">
+  <!-- Module header -->
+  <div class="sidebar-module-header">
+    <span class="material-icons module-icon">{{ module.icon }}</span>
+    <span class="module-label">{{ module.label }}</span>
+    <span *ngIf="!module.migrated" class="legacy-badge">Legacy</span>
+  </div>
+
+  <!-- Nav groups -->
+  <nav class="sidebar-nav app-scrollbar">
+    <details
+      *ngFor="let group of module.groups"
+      class="nav-group"
+      open
+    >
+      <summary class="nav-group-summary">
+        <span class="material-icons group-icon">{{ group.icon }}</span>
+        <span class="group-label">{{ group.label }}</span>
+        <span class="material-icons expand-icon">expand_more</span>
+      </summary>
+
+      <div class="nav-items">
+        <!-- Migrated: Angular routerLink -->
+        <ng-container *ngFor="let item of group.items">
+          <a
+            *ngIf="item.route"
+            [routerLink]="item.route"
+            routerLinkActive="nav-active"
+            [routerLinkActiveOptions]="{ exact: false }"
+            class="nav-item"
+            (click)="closeMobile.emit()"
+          >
+            <span class="material-icons nav-item-icon">{{ item.icon }}</span>
+            <span class="nav-item-label">{{ item.label }}</span>
+          </a>
+
+          <!-- Legacy: opens in new tab -->
+          <button
+            *ngIf="item.externalUrl"
+            type="button"
+            class="nav-item nav-item--external"
+            (click)="handleItemClick(item)"
+            [title]="item.label + ' (opens legacy app)'"
+          >
+            <span class="material-icons nav-item-icon">{{ item.icon }}</span>
+            <span class="nav-item-label">{{ item.label }}</span>
+            <span class="material-icons external-icon">open_in_new</span>
+          </button>
+        </ng-container>
+      </div>
+    </details>
+  </nav>
+</div>
+
+<!-- Empty state when no module is active -->
+<div class="sidebar-empty" *ngIf="!module">
+  <span class="material-icons">menu_open</span>
+  <span>Select a module</span>
+</div>

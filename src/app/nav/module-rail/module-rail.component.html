@@ -1,0 +1,14 @@
+<nav class="rail">
+  <button
+    *ngFor="let mod of modules"
+    class="rail-btn"
+    [class.rail-btn--active]="mod.id === activeModuleId"
+    [title]="mod.label"
+    (click)="select(mod.id)"
+    type="button"
+  >
+    <span class="material-icons">{{ mod.icon }}</span>
+    <span class="rail-label">{{ mod.label }}</span>
+    <span *ngIf="!mod.migrated" class="legacy-dot" title="Opens in legacy app"></span>
+  </button>
+</nav>
