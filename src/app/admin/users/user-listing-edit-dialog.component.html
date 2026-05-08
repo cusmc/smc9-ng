@@ -1,0 +1,113 @@
+<div class="flex w-full flex-col bg-white" style="max-height:90vh">
+  <!-- Header -->
+  <div class="flex items-center gap-3 border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+    <span class="material-icons text-[var(--app-primary)]">{{ isEdit ? 'manage_accounts' : 'person_add' }}</span>
+    <h3 class="text-base font-semibold text-[#333]">{{ isEdit ? 'Edit User' : 'Create User' }}</h3>
+    <span class="flex-1"></span>
+    <button type="button" class="rounded p-1 hover:bg-[#eee]" (click)="onCancel()" aria-label="Close">
+      <span class="material-icons text-[#999]">close</span>
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex items-center gap-3 px-5 py-8 text-[#777]">
+    <div class="h-7 w-7 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+    <span class="text-sm">Loading user data…</span>
+  </div>
+
+  <!-- Form body -->
+  <form *ngIf="!loading" [formGroup]="form" class="flex flex-1 flex-col gap-4 overflow-y-auto p-5">
+    <!-- Row 1: User ID + Full Name -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+          User ID <span class="text-red-500">*</span>
+        </label>
+        <input formControlName="Username" type="text"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm font-mono focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)] disabled:bg-gray-50 disabled:text-[#999]"
+          placeholder="e.g. 200001" />
+        <p *ngIf="form.get('Username')?.invalid && form.get('Username')?.touched"
+          class="mt-1 text-xs text-red-500">User ID is required.</p>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+          Full Name <span class="text-red-500">*</span>
+        </label>
+        <input formControlName="FullName" type="text"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+          placeholder="e.g. Dr. Hardik Shah" />
+        <p *ngIf="form.get('FullName')?.invalid && form.get('FullName')?.touched"
+          class="mt-1 text-xs text-red-500">Full name is required.</p>
+      </div>
+    </div>
+
+    <!-- Row 2: Mobile + Email -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Mobile No</label>
+        <input formControlName="PhoneNumber" type="text"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+          placeholder="10-digit mobile" />
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Email</label>
+        <input formControlName="Email" type="email"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+          placeholder="user@cusmc.org" />
+      </div>
+    </div>
+
+    <!-- Row 3: Status + User Type -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+          Status <span class="text-red-500">*</span>
+        </label>
+        <select formControlName="Status"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]">
+          <option value="Y">Active</option>
+          <option value="N">Inactive</option>
+        </select>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">User Type</label>
+        <input formControlName="UserType" type="text"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+          placeholder="e.g. Staff, Student, Doctor…" />
+      </div>
+    </div>
+
+    <!-- Roles (edit only) -->
+    <div *ngIf="isEdit">
+      <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-[#666]">Roles</label>
+      <div class="mb-2">
+        <input type="search" [(ngModel)]="roleSearch" [ngModelOptions]="{standalone: true}"
+          class="w-full max-w-xs rounded-lg border border-[#e5e5e5] px-3 py-1.5 text-sm focus:border-[var(--app-primary)] focus:outline-none"
+          placeholder="Search roles…" />
+      </div>
+      <div class="grid grid-cols-3 gap-2 rounded-lg border border-[#f0ebe3] bg-[#faf8f3] p-3">
+        <label *ngFor="let r of filteredRoles" class="flex cursor-pointer items-center gap-2 text-sm">
+          <input type="checkbox" [(ngModel)]="r.Assigned" [ngModelOptions]="{standalone: true}"
+            class="h-4 w-4 rounded border-[#ccc] accent-[var(--app-primary)]" />
+          <span class="text-[#444]">{{ r.name }}</span>
+        </label>
+        <p *ngIf="filteredRoles.length === 0" class="col-span-3 text-xs text-[#999]">No roles found.</p>
+      </div>
+    </div>
+  </form>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-end gap-2 border-t border-[#f0ebe3] px-5 py-4">
+    <button type="button"
+      class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm text-[#666] hover:bg-[#f5f5f5]"
+      (click)="onCancel()">
+      Cancel
+    </button>
+    <button type="button"
+      class="inline-flex items-center gap-1 rounded-lg bg-[var(--app-primary)] px-5 py-2 text-sm font-medium text-white shadow hover:bg-[var(--app-primary-dark)] disabled:opacity-50"
+      (click)="onSave()" [disabled]="saving || loading">
+      <span class="material-icons text-[16px]">save</span>
+      {{ saving ? 'Saving…' : 'Save' }}
+    </button>
+  </div>
+</div>

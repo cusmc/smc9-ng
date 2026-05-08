@@ -1,0 +1,170 @@
+<div class="flex w-full flex-col bg-white" style="max-height:92vh">
+  <!-- Header -->
+  <div class="flex items-center gap-3 border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+    <span class="material-icons text-[var(--app-primary)]">person</span>
+    <div>
+      <h3 class="text-base font-semibold text-[#333]">Student Details</h3>
+      <p class="text-xs text-[#888]">{{ data.name }} <span class="font-mono">(No: {{ data.no }})</span></p>
+    </div>
+    <span class="flex-1"></span>
+    <button type="button" class="ml-2 rounded p-1 hover:bg-[#eee]" (click)="onClose()" aria-label="Close">
+      <span class="material-icons text-[#999]">close</span>
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex items-center gap-3 px-5 py-12 text-[#777]">
+    <div class="h-7 w-7 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+    <span class="text-sm">Loading details…</span>
+  </div>
+
+  <ng-container *ngIf="!loading && student">
+    <!-- Tabs -->
+    <div class="flex border-b border-[#f0ebe3] bg-white px-5">
+      <button *ngFor="let tab of [
+        {n:1, label:'Personal', icon:'person_outline'},
+        {n:2, label:'Education', icon:'school'},
+        {n:3, label:'Admission', icon:'assignment'},
+        {n:4, label:'Bank', icon:'account_balance'},
+        {n:5, label:'Photo', icon:'photo_camera'}
+      ]" type="button"
+        class="mr-1 border-b-2 px-4 py-2.5 text-xs font-medium transition-colors"
+        [class]="activeTab === tab.n
+          ? 'border-[var(--app-primary)] text-[var(--app-primary)]'
+          : 'border-transparent text-[#666] hover:text-[#333]'"
+        (click)="activeTab = tab.n">
+        <span class="material-icons mr-1 align-middle text-[14px]">{{ tab.icon }}</span>{{ tab.label }}
+      </button>
+    </div>
+
+    <!-- Tab content -->
+    <div class="flex-1 overflow-y-auto px-5 py-4">
+
+      <!-- Tab 1: Personal -->
+      <div *ngIf="activeTab === 1" class="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+        <div class="col-span-2"><span class="text-xs font-semibold uppercase tracking-wide text-[#999]">Basic</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Name</span>
+          <span class="font-medium text-[#333]">{{ student.Name }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Gender</span>
+          <span class="text-[#555]">{{ student.Sex || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Date of Birth</span>
+          <span class="text-[#555]">{{ student.Birthdt ? (student.Birthdt | date:'dd-MMM-yyyy') : '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Birth Place</span>
+          <span class="text-[#555]">{{ student.Birthpl || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Blood Group</span>
+          <span class="text-[#555]">{{ student.Bgroup || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Marital Status</span>
+          <span class="text-[#555]">{{ student.Mstatus || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Nationality</span>
+          <span class="text-[#555]">{{ student.Nation.trim() || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Religion</span>
+          <span class="text-[#555]">{{ student.Religion.trim() || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Caste / Category</span>
+          <span class="text-[#555]">{{ student.Cast || '—' }} / {{ student.Catagory || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">ID Marks</span>
+          <span class="text-[#555]">{{ student.Idmarks || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Allergic</span>
+          <span class="text-[#555]">{{ student.Allergic || '—' }}</span></div>
+
+        <div class="col-span-2 mt-2"><span class="text-xs font-semibold uppercase tracking-wide text-[#999]">Contact</span></div>
+        <div class="col-span-2"><span class="block text-[10px] uppercase tracking-wide text-[#999]">Address</span>
+          <span class="text-[#555]">{{ student.Address || '—' }}, {{ student.City || '' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Phone</span>
+          <span class="text-[#555]">{{ student.Phone || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Mobile (Student)</span>
+          <span class="text-[#555]">{{ student.Studmob1 || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Mobile (Parent)</span>
+          <span class="text-[#555]">{{ student.Parmob1 || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Email</span>
+          <span class="text-[#555]">{{ student.Email || '—' }}</span></div>
+
+        <div class="col-span-2 mt-2"><span class="text-xs font-semibold uppercase tracking-wide text-[#999]">Family</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Father's Name</span>
+          <span class="text-[#555]">{{ student.Fname || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Mother's Name</span>
+          <span class="text-[#555]">{{ student.Mname || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Brother(s)</span>
+          <span class="text-[#555]">{{ student.Bnames || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Sister(s)</span>
+          <span class="text-[#555]">{{ student.Snames || '—' }}</span></div>
+      </div>
+
+      <!-- Tab 2: Education -->
+      <div *ngIf="activeTab === 2" class="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Merit No.</span>
+          <span class="text-[#555]">{{ student.Merit_no ?? '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Merit Marks</span>
+          <span class="text-[#555]">{{ student.Merit_mark ?? '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">GCET Marks</span>
+          <span class="text-[#555]">{{ student.Gcet_marks || '—' }}</span></div>
+      </div>
+
+      <!-- Tab 3: Admission -->
+      <div *ngIf="activeTab === 3" class="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Adm. Date</span>
+          <span class="text-[#555]">{{ student.Admdt ? (student.Admdt | date:'dd-MMM-yyyy') : '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Adm. Year</span>
+          <span class="text-[#555]">{{ student.Admyear ?? '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Course ID</span>
+          <span class="text-[#555]">{{ student.Course_id ?? '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Department ID</span>
+          <span class="text-[#555]">{{ student.Tdept_id ?? '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Quota</span>
+          <span class="text-[#555]">{{ student.Quota || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Uni. No.</span>
+          <span class="text-[#555]">{{ student.Uni_no || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Board</span>
+          <span class="text-[#555]">{{ student.Board || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Hostel</span>
+          <span class="text-[#555]">{{ student.Hostel || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Fees</span>
+          <span class="text-[#555]">{{ student.Fees != null ? (student.Fees | number:'1.2-2') : '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Remarks / Aadhar</span>
+          <span class="text-[#555]">{{ student.Remarks || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Free No.</span>
+          <span class="text-[#555]">{{ student.Free_no || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Free Date</span>
+          <span class="text-[#555]">{{ student.Free_dt ? (student.Free_dt | date:'dd-MMM-yyyy') : '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Current Semester</span>
+          <span class="text-[#555]">{{ student.Cursem || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Batch ID</span>
+          <span class="text-[#555]">{{ student.batch_id ?? '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Sem Roll No.</span>
+          <span class="text-[#555]">{{ student.Semrollno || '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Join Date</span>
+          <span class="text-[#555]">{{ student.JoinDate ? (student.JoinDate | date:'dd-MMM-yyyy') : '—' }}</span></div>
+      </div>
+
+      <!-- Tab 4: Bank -->
+      <div *ngIf="activeTab === 4" class="grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Bank ID</span>
+          <span class="text-[#555]">{{ student.Bank_id ?? '—' }}</span></div>
+        <div><span class="block text-[10px] uppercase tracking-wide text-[#999]">Account No.</span>
+          <span class="text-[#555]">{{ student.Bankacno || '—' }}</span></div>
+        <div class="col-span-2"><span class="block text-[10px] uppercase tracking-wide text-[#999]">Account Name</span>
+          <span class="text-[#555]">{{ student.Bankacnm || '—' }}</span></div>
+      </div>
+
+      <!-- Tab 5: Photo -->
+      <div *ngIf="activeTab === 5" class="flex flex-col items-center py-6">
+        <img *ngIf="photoUrl" [src]="photoUrl" alt="Student photo"
+          class="max-h-64 max-w-xs rounded-xl border border-[#e5e5e5] object-contain shadow-sm" />
+        <div *ngIf="!photoUrl"
+          class="flex h-48 w-48 flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#e0d8cc] text-[#bbb]">
+          <span class="material-icons text-5xl">person_outline</span>
+          <span class="mt-2 text-sm">No photo</span>
+        </div>
+      </div>
+
+    </div>
+  </ng-container>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-end gap-2 border-t border-[#f0ebe3] px-5 py-4">
+    <button type="button"
+      class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm text-[#666] hover:bg-[#f5f5f5]"
+      (click)="onClose()">
+      Close
+    </button>
+  </div>
+</div>

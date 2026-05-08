@@ -1,0 +1,74 @@
+<div class="flex w-full flex-col bg-white" style="max-height:90vh">
+  <!-- Dialog header -->
+  <div class="flex items-center gap-3 border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+    <span class="material-icons text-[var(--app-primary)]">{{ isEdit ? 'edit' : 'add_circle' }}</span>
+    <h3 class="text-base font-semibold text-[#333]">{{ isEdit ? 'Edit Web Module' : 'Add Web Module' }}</h3>
+    <span class="flex-1"></span>
+    <button type="button" class="rounded p-1 hover:bg-[#eee]" (click)="onCancel()" aria-label="Close">
+      <span class="material-icons text-[#999]">close</span>
+    </button>
+  </div>
+
+  <!-- Form body -->
+  <form [formGroup]="form" (ngSubmit)="onSave()" class="flex flex-col gap-4 overflow-y-auto p-5">
+    <!-- Module Name -->
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Module Name <span class="text-red-500">*</span></label>
+      <input formControlName="Wmodule_nm" type="text"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+        placeholder="e.g. Patient Record" />
+      <p *ngIf="form.get('Wmodule_nm')?.invalid && form.get('Wmodule_nm')?.touched"
+        class="mt-1 text-xs text-red-500">Module name is required.</p>
+    </div>
+
+    <!-- Controller Name -->
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Controller Name <span class="text-red-500">*</span></label>
+      <input formControlName="Cont_name" type="text"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+        placeholder="e.g. HMSmast" />
+      <p *ngIf="form.get('Cont_name')?.invalid && form.get('Cont_name')?.touched"
+        class="mt-1 text-xs text-red-500">Controller name is required.</p>
+    </div>
+
+    <!-- View Name -->
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">View Name <span class="text-red-500">*</span></label>
+      <input formControlName="View_name" type="text"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+        placeholder="e.g. EMR" />
+      <p *ngIf="form.get('View_name')?.invalid && form.get('View_name')?.touched"
+        class="mt-1 text-xs text-red-500">View name is required.</p>
+    </div>
+
+    <!-- Params -->
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Params</label>
+      <input formControlName="Params" type="text"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+        placeholder="Optional query parameters" />
+    </div>
+  </form>
+
+  <!-- Footer buttons -->
+  <div class="flex items-center gap-2 border-t border-[#f0ebe3] px-5 py-4">
+    <button *ngIf="isEdit" type="button"
+      class="inline-flex items-center gap-1 rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+      (click)="onDelete()" [disabled]="deleting">
+      <span class="material-icons text-[16px]">delete</span>
+      {{ deleting ? 'Deleting…' : 'Delete' }}
+    </button>
+    <span class="flex-1"></span>
+    <button type="button"
+      class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm text-[#666] hover:bg-[#f5f5f5]"
+      (click)="onCancel()">
+      Cancel
+    </button>
+    <button type="button"
+      class="inline-flex items-center gap-1 rounded-lg bg-[var(--app-primary)] px-5 py-2 text-sm font-medium text-white shadow hover:bg-[var(--app-primary-dark)] disabled:opacity-50"
+      (click)="onSave()" [disabled]="saving">
+      <span class="material-icons text-[16px]">save</span>
+      {{ saving ? 'Saving…' : 'Save' }}
+    </button>
+  </div>
+</div>

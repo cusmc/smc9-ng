@@ -1,0 +1,80 @@
+<div class="flex w-full flex-col bg-white" style="max-height:90vh">
+  <!-- Dialog header -->
+  <div class="flex items-center gap-3 border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+    <span class="material-icons text-[var(--app-primary)]">{{ isEdit ? 'edit' : 'add_circle' }}</span>
+    <h3 class="text-base font-semibold text-[#333]">{{ isEdit ? 'Edit CMS Module' : 'Add CMS Module' }}</h3>
+    <span class="flex-1"></span>
+    <button type="button" class="rounded p-1 hover:bg-[#eee]" (click)="onCancel()" aria-label="Close">
+      <span class="material-icons text-[#999]">close</span>
+    </button>
+  </div>
+
+  <!-- Form body -->
+  <form [formGroup]="form" (ngSubmit)="onSave()" class="flex flex-col gap-4 overflow-y-auto p-5">
+    <!-- Module Name -->
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Module Name <span class="text-red-500">*</span></label>
+      <input formControlName="Name" type="text"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+        placeholder="e.g. Patient Dashboard" />
+      <p *ngIf="form.get('Name')?.invalid && form.get('Name')?.touched"
+        class="mt-1 text-xs text-red-500">Module name is required.</p>
+    </div>
+
+    <!-- Prompt Name -->
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Prompt Name <span class="text-red-500">*</span></label>
+      <input formControlName="Prompt" type="text"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+        placeholder="e.g. Dashboard Prompt" />
+      <p *ngIf="form.get('Prompt')?.invalid && form.get('Prompt')?.touched"
+        class="mt-1 text-xs text-red-500">Prompt name is required.</p>
+    </div>
+
+    <!-- Command -->
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Command</label>
+      <input formControlName="Command" type="text"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+        placeholder="e.g. Dashboard/Index" />
+    </div>
+
+    <!-- Obj Code -->
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Obj Code</label>
+      <input formControlName="Objcode" type="text"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm font-mono focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+        placeholder="e.g. CMS001" />
+    </div>
+
+    <!-- Level Name -->
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Level Name</label>
+      <input formControlName="Levelname" type="text"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+        placeholder="e.g. Admin" />
+    </div>
+  </form>
+
+  <!-- Footer buttons -->
+  <div class="flex items-center gap-2 border-t border-[#f0ebe3] px-5 py-4">
+    <button *ngIf="isEdit" type="button"
+      class="inline-flex items-center gap-1 rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+      (click)="onDelete()" [disabled]="deleting">
+      <span class="material-icons text-[16px]">delete</span>
+      {{ deleting ? 'Deleting…' : 'Delete' }}
+    </button>
+    <span class="flex-1"></span>
+    <button type="button"
+      class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm text-[#666] hover:bg-[#f5f5f5]"
+      (click)="onCancel()">
+      Cancel
+    </button>
+    <button type="button"
+      class="inline-flex items-center gap-1 rounded-lg bg-[var(--app-primary)] px-5 py-2 text-sm font-medium text-white shadow hover:bg-[var(--app-primary-dark)] disabled:opacity-50"
+      (click)="onSave()" [disabled]="saving">
+      <span class="material-icons text-[16px]">save</span>
+      {{ saving ? 'Saving…' : 'Save' }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,69 @@
+<div class="flex w-full flex-col bg-white" style="max-height:90vh">
+  <!-- Header -->
+  <div class="flex items-center gap-3 border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+    <span class="material-icons text-[var(--app-primary)]">groups</span>
+    <div>
+      <h3 class="text-base font-semibold text-[#333]">Role Rights</h3>
+      <p class="text-xs text-[#888]">{{ data.Wmodule_nm }}</p>
+    </div>
+    <span class="flex-1"></span>
+    <button type="button" class="rounded p-1 hover:bg-[#eee]" (click)="onClose()" aria-label="Close">
+      <span class="material-icons text-[#999]">close</span>
+    </button>
+  </div>
+
+  <!-- Table body -->
+  <div class="flex-1 overflow-y-auto px-5 py-3">
+    <div *ngIf="loading" class="flex items-center gap-3 py-8 text-[#777]">
+      <div class="h-7 w-7 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+      <span class="text-sm">Loading roles…</span>
+    </div>
+
+    <div *ngIf="!loading" class="overflow-x-auto rounded-xl border border-[#f0ebe3]">
+      <table class="w-full border-collapse text-left text-sm">
+        <thead>
+          <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">Role ID</th>
+            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">Role Name</th>
+            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide w-36">
+              Permission <span class="font-normal text-[#aaa]">(8 chars)</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let g of groups" class="border-b border-[#f5f0e8] hover:bg-[#faf8f3]">
+            <td class="px-3 py-2 text-xs text-[#888] font-mono">{{ g.Id }}</td>
+            <td class="px-3 py-2 font-medium text-[#333]">{{ g.Name }}</td>
+            <td class="px-3 py-2">
+              <input [(ngModel)]="g.Permission" maxlength="8"
+                class="w-28 rounded border border-[#e5e5e5] px-2 py-1 text-center font-mono text-sm tracking-widest focus:border-[var(--app-primary)] focus:outline-none"
+                placeholder="NNNNNNNN" />
+            </td>
+          </tr>
+          <tr *ngIf="groups.length === 0">
+            <td colspan="3" class="px-3 py-8 text-center text-sm text-[#999]">No roles found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="mt-3 text-xs text-[#aaa]">
+      Permission: <span class="font-mono">V A E D A1 A2 S1 S2</span> — Y = allowed, N = denied
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-end gap-2 border-t border-[#f0ebe3] px-5 py-4">
+    <button type="button"
+      class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm text-[#666] hover:bg-[#f5f5f5]"
+      (click)="onClose()">
+      Close
+    </button>
+    <button type="button"
+      class="inline-flex items-center gap-1 rounded-lg bg-[var(--app-primary)] px-5 py-2 text-sm font-medium text-white shadow hover:bg-[var(--app-primary-dark)] disabled:opacity-50"
+      (click)="onSave()" [disabled]="saving || loading">
+      <span class="material-icons text-[16px]">save</span>
+      {{ saving ? 'Saving…' : 'Save Rights' }}
+    </button>
+  </div>
+</div>

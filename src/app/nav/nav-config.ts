@@ -122,7 +122,7 @@ export const APP_NAV: NavModule[] = [
     label: 'Student',
     icon: 'school',
     baseRoute: '/student',
-    migrated: false,
+    migrated: true,
     groups: [
       {
         label: 'Academic',
@@ -130,7 +130,7 @@ export const APP_NAV: NavModule[] = [
         items: [
           { label: 'Dashboard', icon: 'dashboard', externalUrl: '/ECampus/Dashboard' },
           { label: 'Lecture Schedule', icon: 'event', externalUrl: '/ECampus/LectureSchedule' },
-          { label: 'Student View', icon: 'person', externalUrl: '/ECampus/StudentView' },
+          { label: 'Student View', icon: 'person', route: '/student/students' },
           { label: 'Student Receipt', icon: 'receipt', externalUrl: '/ECampus/Receipt' },
           { label: 'Certificate Request', icon: 'workspace_premium', externalUrl: '/ECampus/Certificate' },
         ],
@@ -414,37 +414,37 @@ export const APP_NAV: NavModule[] = [
     icon: 'admin_panel_settings',
     baseRoute: '/admin',
     roles: ['Admin'],
-    migrated: false,
+    migrated: true,
     groups: [
       {
-        label: 'User Management',
-        icon: 'manage_accounts',
+        label: 'Module Management',
+        icon: 'view_module',
         items: [
-          { label: 'Users', icon: 'people', externalUrl: '/Admin/Users' },
-          { label: 'Roles', icon: 'security', externalUrl: '/Admin/Roles' },
-          { label: 'User Rights', icon: 'lock', externalUrl: '/Admin/Rights' },
+          { label: 'Web Modules', icon: 'web', route: '/admin/module-management/web-modules' },
+          { label: 'CMS Modules', icon: 'article', route: '/admin/module-management/cms-modules' },
         ],
       },
       {
-        label: 'Website Admin',
-        icon: 'language',
+        label: 'Access Control',
+        icon: 'lock',
         items: [
-          { label: 'Announcements', icon: 'campaign', externalUrl: '/Admin/Announce' },
-          { label: 'Photo Gallery', icon: 'photo_library', externalUrl: '/Admin/Gallery' },
-          { label: 'Webpages', icon: 'web', externalUrl: '/Admin/Webpages' },
-          { label: 'MCQ Test', icon: 'quiz', externalUrl: '/Admin/MCQ' },
-          { label: 'Staff PDF', icon: 'picture_as_pdf', externalUrl: '/Admin/StaffPDF' },
-          { label: 'Alumni', icon: 'school', externalUrl: '/Admin/Alumni' },
-          { label: 'Feedback Master', icon: 'reviews', externalUrl: '/Admin/Feedback' },
+          { label: 'Rights Requests', icon: 'approval', route: '/admin/access-control/rights-requests' },
+        ],
+      },
+      {
+        label: 'Users',
+        icon: 'people',
+        items: [
+          { label: 'User Listing', icon: 'manage_accounts', route: '/admin/users' },
         ],
       },
       {
         label: 'System',
         icon: 'settings',
         items: [
-          { label: 'Error Logs', icon: 'bug_report', externalUrl: '/Errorlog/Index' },
+          { label: 'Shared Docs', icon: 'link', externalUrl: '/Admin/SharedDocs' },
           { label: 'Audit Trail', icon: 'history', externalUrl: '/AuditData/Index' },
-          { label: 'IP Master', icon: 'router', externalUrl: '/Admin/IPMaster' },
+          { label: 'Error Logs', icon: 'bug_report', externalUrl: '/Errorlog/Index' },
         ],
       },
     ],

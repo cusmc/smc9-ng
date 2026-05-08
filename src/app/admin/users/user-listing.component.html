@@ -1,0 +1,169 @@
+<div class="flex min-h-0 flex-1 flex-col bg-page">
+  <!-- Header -->
+  <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
+    <h2 class="text-lg font-semibold">User Listing</h2>
+    <span class="flex-1"></span>
+    <button
+      type="button"
+      class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white shadow hover:bg-accent-hover"
+      (click)="openCreateDialog()"
+    >
+      <span class="material-icons text-lg">person_add</span>
+      Create User
+    </button>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-4 p-4">
+    <!-- Filter bar -->
+    <div class="rounded-xl border border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+      <div class="flex flex-wrap items-end gap-4">
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold uppercase tracking-wide text-[#666]">User ID</label>
+          <input type="text" [(ngModel)]="filter.userId"
+            class="rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none w-36"
+            placeholder="User ID" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold uppercase tracking-wide text-[#666]">User Name</label>
+          <input type="text" [(ngModel)]="filter.userName"
+            class="rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none w-48"
+            placeholder="Full name" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold uppercase tracking-wide text-[#666]">Status</label>
+          <select [(ngModel)]="filter.status"
+            class="rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none w-32">
+            <option value="Y">Active</option>
+            <option value="N">Inactive</option>
+            <option value="">All</option>
+          </select>
+        </div>
+        <button type="button"
+          class="inline-flex items-center gap-2 rounded-lg bg-[var(--app-primary)] px-5 py-2 text-sm font-medium text-white shadow hover:bg-[var(--app-primary-dark)] disabled:opacity-50"
+          (click)="loadUsers()" [disabled]="loading">
+          <span class="material-icons text-[18px]">search</span>
+          View
+        </button>
+      </div>
+    </div>
+
+    <div class="p-2">
+      <!-- Loading -->
+      <div *ngIf="loading" class="flex items-center gap-3 py-10 text-[#777]">
+        <div class="h-9 w-9 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+        <span class="text-sm">Loading…</span>
+      </div>
+
+      <!-- Empty state -->
+      <p *ngIf="!loading && users.length === 0" class="py-12 text-center text-sm text-[#999]">
+        Use the filter above and click <strong>View</strong> to load users.
+      </p>
+
+      <!-- Table -->
+      <div *ngIf="!loading && users.length > 0" class="overflow-x-auto rounded-xl border border-[#f0ebe3]">
+        <table class="w-full min-w-[1000px] border-collapse text-left text-sm">
+          <thead>
+            <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">User ID</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Full Name</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">User Type</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Department</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Designation</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Mobile</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Email</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Status</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Actions</th>
+            </tr>
+            <!-- Column search row -->
+            <tr class="border-b border-[#f0ebe3] bg-[#faf8f3]">
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.UserName" (ngModelChange)="onSearchChange()"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.FullName" (ngModelChange)="onSearchChange()"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.usertype" (ngModelChange)="onSearchChange()"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Deptnm" (ngModelChange)="onSearchChange()"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.category" (ngModelChange)="onSearchChange()"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.PhoneNumber" (ngModelChange)="onSearchChange()"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Email" (ngModelChange)="onSearchChange()"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Status" (ngModelChange)="onSearchChange()"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Y/N" />
+              </td>
+              <td class="px-3 py-1">
+                <input disabled class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" placeholder="—" />
+              </td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let u of pagedData"
+              class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]">
+              <td class="px-3 py-2.5 font-mono text-xs text-[#888]">{{ u.UserName }}</td>
+              <td class="px-3 py-2.5 font-medium text-[#333]">{{ u.FullName }}</td>
+              <td class="px-3 py-2.5 text-[#555]">{{ u.usertype }}</td>
+              <td class="px-3 py-2.5 text-[#555]">{{ u.Deptnm }}</td>
+              <td class="px-3 py-2.5 text-[#666]">{{ u.category }}</td>
+              <td class="px-3 py-2.5 text-[#666]">{{ u.PhoneNumber }}</td>
+              <td class="px-3 py-2.5 text-[#666] text-xs">{{ u.Email }}</td>
+              <td class="px-3 py-2.5">
+                <span class="rounded-full px-2 py-0.5 text-xs font-semibold" [class]="statusBadgeClass(u.Status)">
+                  {{ u.Status === 'Y' ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td class="px-3 py-2.5">
+                <div class="flex items-center gap-1">
+                  <!-- Edit -->
+                  <button type="button" (click)="openEditDialog(u)"
+                    class="rounded-lg p-1.5 text-[#8c6b2f] transition hover:bg-[#f3eadb]" title="Edit User">
+                    <span class="material-icons text-[18px]">edit</span>
+                  </button>
+                  <!-- Reset Password -->
+                  <button type="button" (click)="resetPassword(u)" [disabled]="resetting[u.UserName]"
+                    class="rounded-lg p-1.5 text-[#d97706] transition hover:bg-[#fef3c7] disabled:opacity-40" title="Reset Password">
+                    <span class="material-icons text-[18px]">vpn_key</span>
+                  </button>
+                  <!-- User Rights -->
+                  <button type="button" (click)="openRightsDialog(u)"
+                    class="rounded-lg p-1.5 text-[#5a5ab4] transition hover:bg-[#eeeef8]" title="View Rights">
+                    <span class="material-icons text-[18px]">shield</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="!loading && searchedData.length > itemsPerPage"
+        class="mt-4 flex items-center justify-between text-sm">
+        <span class="text-xs text-[#999]">{{ searchedData.length }} users</span>
+        <div class="flex items-center gap-2">
+          <button (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1"
+            class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">Prev</button>
+          <span class="text-[#666]">Page {{ currentPage }} of {{ totalPages }}</span>
+          <button (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages"
+            class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

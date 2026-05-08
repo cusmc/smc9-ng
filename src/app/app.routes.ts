@@ -9,6 +9,16 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () => import('./elogbook/elogbook.routes').then(m => m.ELOGBOOK_ROUTES)
   },
+  {
+    path: 'admin',
+    canActivate: [authGuard],
+    loadChildren: () => import('./admin/admin.routes').then(m => m.ADMIN_ROUTES)
+  },
+  {
+    path: 'student',
+    canActivate: [authGuard],
+    loadChildren: () => import('./student/student.routes').then(m => m.STUDENT_ROUTES)
+  },
   { path: '', redirectTo: '/elogbook/activities', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

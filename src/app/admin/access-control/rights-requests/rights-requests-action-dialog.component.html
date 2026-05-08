@@ -1,0 +1,86 @@
+<div class="flex w-full flex-col bg-white" style="max-height:80vh">
+  <!-- Header -->
+  <div class="flex items-center gap-3 border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+    <span class="material-icons"
+      [class]="data.mode === 'reject' ? 'text-red-500' : 'text-emerald-600'">
+      {{ data.mode === 'reject' ? 'cancel' : data.mode === 'approve-role' ? 'groups' : 'person_check' }}
+    </span>
+    <h3 class="text-base font-semibold text-[#333]">{{ title }}</h3>
+    <span class="flex-1"></span>
+    <button type="button" class="rounded p-1 hover:bg-[#eee]" (click)="onCancel()" aria-label="Close">
+      <span class="material-icons text-[#999]">close</span>
+    </button>
+  </div>
+
+  <!-- Request summary -->
+  <div class="border-b border-[#f0ebe3] bg-[#fffdf9] px-5 py-3">
+    <dl class="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
+      <div>
+        <dt class="text-xs font-semibold uppercase tracking-wide text-[#999]">User</dt>
+        <dd class="font-medium text-[#333]">{{ data.request.Fullname }}
+          <span class="ml-1 font-mono text-xs text-[#aaa]">({{ data.request.Username }})</span>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-xs font-semibold uppercase tracking-wide text-[#999]">Module</dt>
+        <dd class="font-medium text-[#444]">{{ data.request.Wmodule_nm }}</dd>
+      </div>
+      <div class="col-span-2" *ngIf="data.request.Remarks">
+        <dt class="text-xs font-semibold uppercase tracking-wide text-[#999]">Reason given</dt>
+        <dd class="text-[#666] italic">"{{ data.request.Remarks }}"</dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Role selector (approve-role only) -->
+  <div *ngIf="data.mode === 'approve-role'" class="border-b border-[#f0ebe3] px-5 py-4">
+    <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+      Select Role <span class="text-red-500">*</span>
+    </label>
+    <div *ngIf="!data.roles || data.roles.length === 0"
+      class="text-sm text-[#999]">No roles found for this user.</div>
+    <div *ngIf="data.roles && data.roles.length > 0" class="flex flex-wrap gap-2">
+      <button *ngFor="let role of data.roles" type="button"
+        class="rounded-full border px-3 py-1 text-sm font-medium transition"
+        [class]="selectedRole?.Id === role.Id
+          ? 'border-[var(--app-primary)] bg-[var(--app-primary)] text-white'
+          : 'border-[#ddd] text-[#555] hover:border-[var(--app-primary)] hover:text-[var(--app-primary)]'"
+        (click)="selectedRole = role">
+        {{ role.Name }}
+      </button>
+    </div>
+    <p *ngIf="selectedRole" class="mt-2 text-xs text-[#888]">
+      All users in <strong>{{ selectedRole.Name }}</strong> will be granted access to
+      <strong>{{ data.request.Wmodule_nm }}</strong>.
+    </p>
+  </div>
+
+  <!-- Remarks -->
+  <div class="px-5 py-4">
+    <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+      Remarks <span class="text-[#aaa] font-normal">(optional)</span>
+    </label>
+    <textarea [(ngModel)]="remarks" rows="2"
+      class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)] resize-none"
+      placeholder="{{ data.mode === 'reject' ? 'Reason for rejection…' : 'Optional note…' }}">
+    </textarea>
+  </div>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-end gap-2 border-t border-[#f0ebe3] px-5 py-4">
+    <button type="button"
+      class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm text-[#666] hover:bg-[#f5f5f5]"
+      (click)="onCancel()">
+      Cancel
+    </button>
+    <button type="button"
+      class="inline-flex items-center gap-1.5 rounded-lg px-5 py-2 text-sm font-semibold shadow disabled:opacity-50"
+      [class]="confirmClass"
+      (click)="onConfirm()" [disabled]="!canConfirm">
+      <span class="material-icons text-[16px]">
+        {{ data.mode === 'reject' ? 'cancel' : 'check_circle' }}
+      </span>
+      {{ confirmLabel }}
+    </button>
+  </div>
+</div>

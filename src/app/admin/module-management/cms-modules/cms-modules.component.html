@@ -1,0 +1,118 @@
+<div class="flex min-h-0 flex-1 flex-col bg-page">
+  <!-- Header -->
+  <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
+    <h2 class="text-lg font-semibold">CMS Module Management</h2>
+    <span class="flex-1"></span>
+    <button
+      type="button"
+      class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white shadow hover:bg-accent-hover"
+      (click)="openAddDialog()"
+    >
+      <span class="material-icons text-lg">add</span>
+      Add Module
+    </button>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-4 p-4">
+    <div class="p-2">
+      <!-- Loading -->
+      <div *ngIf="loading" class="flex items-center gap-3 py-10 text-[#777]">
+        <div class="h-9 w-9 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+        <span class="text-sm">Loading…</span>
+      </div>
+
+      <!-- No Data -->
+      <p *ngIf="!loading && modules.length === 0" class="py-12 text-center text-sm text-[#999]">
+        No CMS modules found.
+      </p>
+
+      <!-- Table -->
+      <div *ngIf="!loading && modules.length > 0" class="overflow-x-auto rounded-xl border border-[#f0ebe3]">
+        <table class="w-full min-w-[860px] border-collapse text-left text-sm">
+          <thead>
+            <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">ID</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Obj Code</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Name / Prompt</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Command</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Level</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Actions</th>
+            </tr>
+            <!-- Column search row -->
+            <tr class="border-b border-[#f0ebe3] bg-[#faf8f3]">
+              <td class="px-3 py-1">
+                <input disabled class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" placeholder="—" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Objcode" (ngModelChange)="onSearchChange()"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.NamePrompt" (ngModelChange)="onSearchChange()"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search name / prompt" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Command" (ngModelChange)="onSearchChange()"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Levelname" (ngModelChange)="onSearchChange()"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input disabled class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" placeholder="—" />
+              </td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of pagedData"
+              class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]">
+              <td class="px-3 py-2.5 tabular-nums text-[#888] text-xs">{{ m.Module_id }}</td>
+              <td class="px-3 py-2.5 font-mono text-xs text-[#555]">{{ m.Objcode }}</td>
+              <td class="px-3 py-2.5">
+                <span class="font-medium text-[#333]">{{ m.Name }}</span>
+                <span *ngIf="m.Prompt" class="ml-1 text-[#888]">– {{ m.Prompt }}</span>
+              </td>
+              <td class="px-3 py-2.5 text-[#555] text-xs font-mono">{{ m.Command }}</td>
+              <td class="px-3 py-2.5 text-[#666]">{{ m.Levelname }}</td>
+              <td class="px-3 py-2.5">
+                <div class="flex items-center gap-1">
+                  <!-- Edit -->
+                  <button type="button" (click)="openEditDialog(m)"
+                    class="rounded-lg p-1.5 text-[#8c6b2f] transition hover:bg-[#f3eadb]" title="Edit">
+                    <span class="material-icons text-[18px]">edit</span>
+                  </button>
+                  <!-- Users -->
+                  <button type="button" (click)="openUsersDialog(m)"
+                    class="rounded-lg p-1.5 text-[#2d7a6e] transition hover:bg-[#e8f4f1]" title="Manage Users">
+                    <span class="material-icons text-[18px]">people</span>
+                  </button>
+                  <!-- Group -->
+                  <button type="button" (click)="openRolesDialog(m)"
+                    class="rounded-lg p-1.5 text-[#5a5ab4] transition hover:bg-[#eeeef8]" title="Manage Roles">
+                    <span class="material-icons text-[18px]">groups</span>
+                  </button>
+                  <!-- Rights View -->
+                  <button type="button" (click)="openRightsView(m)"
+                    class="rounded-lg p-1.5 text-[#666] transition hover:bg-[#f0f0f0]" title="View All Rights">
+                    <span class="material-icons text-[18px]">shield</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="!loading && searchedData.length > itemsPerPage"
+        class="mt-4 flex items-center justify-center gap-2 text-sm">
+        <button (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1"
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">Prev</button>
+        <span class="text-[#666]">Page {{ currentPage }} of {{ totalPages }}</span>
+        <button (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages"
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">Next</button>
+      </div>
+    </div>
+  </div>
+</div>

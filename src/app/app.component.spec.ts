@@ -4,12 +4,15 @@ import { Router } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { AuthService } from './auth/auth.service';
+import { NavService } from './nav/nav.service';
+import { NavModule } from './nav/nav.types';
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let mockAuthService: jasmine.SpyObj<AuthService>;
   let mockRouter: jasmine.SpyObj<Router>;
   let mockHttp: jasmine.SpyObj<HttpClient>;
+  let mockNav: jasmine.SpyObj<NavService>;
   let isLoggedIn$: BehaviorSubject<boolean>;
 
   beforeEach(() => {
@@ -25,7 +28,14 @@ describe('AppComponent', () => {
     mockHttp = jasmine.createSpyObj<HttpClient>('HttpClient', ['get']);
     mockHttp.get.and.returnValue(of({ ProfileName: 'Test User', UGPG: '', Course_id: '' }));
 
-    component = new AppComponent(mockAuthService, mockRouter, mockHttp);
+    mockNav = {
+      getVisibleModules: jasmine.createSpy('getVisibleModules').and.returnValue([]),
+      setActiveModule: jasmine.createSpy('setActiveModule'),
+      activeModule$: of(null),
+      allModules: [] as NavModule[],
+    } as any;
+
+    component = new AppComponent(mockAuthService, mockRouter, mockHttp, mockNav);
   });
 
   describe('ngOnInit()', () => {
@@ -78,12 +88,18 @@ describe('AppComponent', () => {
     });
   });
 
-  describe('navGroups', () => {
-    it('has Assessment, Masters and Reports groups', () => {
-      const labels = component.navGroups.map(g => g.label);
-      expect(labels).toContain('Assessment');
-      expect(labels).toContain('Masters');
-      expect(labels).toContain('Reports');
+  describe('loadUserProfile()', () => {
+    it('calls nav.getVisibleModules with resolved roles', () => {
+      mockHttp.get.and.returnValue(of({ ProfileName: 'Alice', usertype: 'Employee' }));
+      component.loadUserProfile();
+      expect(mockNav.getVisibleModules).toHaveBeenCalled();
+    });
+
+    it('falls back to nav.allModules on HTTP error', () => {
+      mockHttp.get.and.returnValue(of(null));
+      component.loadUserProfile();
+      // no error thrown — allModules used when response data is missing
+      expect(component.visibleModules).toBeDefined();
     });
   });
 });

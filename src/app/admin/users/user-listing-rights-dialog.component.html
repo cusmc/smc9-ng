@@ -1,0 +1,90 @@
+<div class="flex w-full flex-col bg-white" style="max-height:90vh">
+  <!-- Header -->
+  <div class="flex items-center gap-3 border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+    <span class="material-icons text-[var(--app-primary)]">shield</span>
+    <div>
+      <h3 class="text-base font-semibold text-[#333]">User Rights</h3>
+      <p class="text-xs text-[#888]">{{ data.FullName }} <span class="font-mono">({{ data.UserName }})</span></p>
+    </div>
+    <span class="flex-1"></span>
+    <button type="button"
+      class="inline-flex items-center gap-1 rounded-lg border border-[#e5e5e5] px-3 py-1.5 text-xs text-[#555] hover:bg-[#f5f5f5]"
+      (click)="exportCsv()">
+      <span class="material-icons text-[14px]">download</span> Export CSV
+    </button>
+    <button type="button" class="ml-2 rounded p-1 hover:bg-[#eee]" (click)="onClose()" aria-label="Close">
+      <span class="material-icons text-[#999]">close</span>
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="flex-1 overflow-y-auto px-5 py-3">
+    <div *ngIf="loading" class="flex items-center gap-3 py-8 text-[#777]">
+      <div class="h-7 w-7 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+      <span class="text-sm">Loading rights…</span>
+    </div>
+
+    <div *ngIf="!loading" class="overflow-x-auto rounded-xl border border-[#f0ebe3]">
+      <table class="w-full min-w-[700px] border-collapse text-left text-sm">
+        <thead>
+          <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">Module ID</th>
+            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">Module Name</th>
+            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">Permission</th>
+            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">Role Name</th>
+            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">Rights Type</th>
+          </tr>
+          <!-- Column search row -->
+          <tr class="border-b border-[#f0ebe3] bg-[#faf8f3]">
+            <td class="px-3 py-1">
+              <input [(ngModel)]="search.WModule_id"
+                class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+            </td>
+            <td class="px-3 py-1">
+              <input [(ngModel)]="search.WModule_nm"
+                class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+            </td>
+            <td class="px-3 py-1">
+              <input [(ngModel)]="search.permission"
+                class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+            </td>
+            <td class="px-3 py-1">
+              <input [(ngModel)]="search.RoleName"
+                class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+            </td>
+            <td class="px-3 py-1">
+              <input [(ngModel)]="search.RightType"
+                class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of filteredRecords" class="border-b border-[#f5f0e8] hover:bg-[#faf8f3]">
+            <td class="px-3 py-2 text-xs text-[#888] tabular-nums">{{ r.WModule_id }}</td>
+            <td class="px-3 py-2 font-medium text-[#333]">{{ r.WModule_nm }}</td>
+            <td class="px-3 py-2 font-mono text-[#555] tracking-widest">{{ r.permission }}</td>
+            <td class="px-3 py-2 text-[#666]">{{ r.RoleName }}</td>
+            <td class="px-3 py-2">
+              <span class="rounded-full px-2 py-0.5 text-xs font-semibold"
+                [class]="r.RightType === 'U' ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700'">
+                {{ r.RightType === 'U' ? 'User' : r.RightType === 'R' ? 'Role' : r.RightType }}
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="filteredRecords.length === 0">
+            <td colspan="5" class="px-3 py-8 text-center text-sm text-[#999]">No rights records found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-end gap-2 border-t border-[#f0ebe3] px-5 py-4">
+    <button type="button"
+      class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm text-[#666] hover:bg-[#f5f5f5]"
+      (click)="onClose()">
+      Close
+    </button>
+  </div>
+</div>
