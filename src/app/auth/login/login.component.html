@@ -31,7 +31,9 @@
               type="text"
               formControlName="username"
               placeholder="Enter your username"
-              class="w-full rounded-lg border border-border px-4 py-2.5 text-sm transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-accent"
+              class="w-full rounded-lg border px-4 py-2.5 text-sm transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-accent"
+              [class.border-red-500]="submitted && f['username'].invalid"
+              [class.border-border]="!(submitted && f['username'].invalid)"
             />
             <p
               *ngIf="submitted && f['username'].errors?.['required']"
@@ -48,7 +50,9 @@
               type="password"
               formControlName="password"
               placeholder="Enter your password"
-              class="w-full rounded-lg border border-border px-4 py-2.5 text-sm transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-accent"
+              class="w-full rounded-lg border px-4 py-2.5 text-sm transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-accent"
+              [class.border-red-500]="submitted && f['password'].invalid"
+              [class.border-border]="!(submitted && f['password'].invalid)"
             />
             <p
               *ngIf="submitted && f['password'].errors?.['required']"
