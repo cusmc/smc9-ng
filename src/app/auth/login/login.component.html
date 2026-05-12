@@ -1,17 +1,20 @@
 <div class="flex min-h-screen items-center justify-center bg-page px-4">
-
   <div class="w-full max-w-md">
-
     <!-- Brand -->
     <div class="text-center mb-10">
-      <img src="assets/SRSH_logo.svg" alt="logo" class="w-14 h-14 mx-auto mb-3" />
+      <img
+        src="assets/SRSH_logo.svg"
+        alt="logo"
+        class="w-14 h-14 mx-auto mb-3"
+      />
       <h1 class="text-2xl font-semibold tracking-wide text-ink">CUSMC</h1>
       <p class="text-sm text-ink-muted">Medical eLogBook System</p>
     </div>
 
     <!-- Card -->
-    <div class="rounded-2xl border border-border bg-surface shadow-[0_10px_40px_rgba(0,0,0,0.08)]">
-
+    <div
+      class="rounded-2xl border border-border bg-surface shadow-[0_10px_40px_rgba(0,0,0,0.08)]"
+    >
       <!-- Header -->
       <div class="px-8 pt-8 pb-4 text-center">
         <h2 class="text-xl font-medium text-ink">Welcome Back</h2>
@@ -21,7 +24,6 @@
       <!-- Form -->
       <div class="px-8 pb-8">
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
-
           <!-- Username -->
           <div>
             <label class="mb-1 block text-sm text-ink-muted">Username</label>
@@ -31,7 +33,10 @@
               placeholder="Enter your username"
               class="w-full rounded-lg border border-border px-4 py-2.5 text-sm transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-accent"
             />
-            <p *ngIf="f['username'].hasError('required')" class="text-red-500 text-xs mt-1">
+            <p
+              *ngIf="submitted && f['username'].errors?.['required']"
+              class="text-red-500 text-xs mt-1"
+            >
               Username is required
             </p>
           </div>
@@ -45,16 +50,25 @@
               placeholder="Enter your password"
               class="w-full rounded-lg border border-border px-4 py-2.5 text-sm transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-accent"
             />
-            <p *ngIf="f['password'].hasError('required')" class="text-red-500 text-xs mt-1">
+            <p
+              *ngIf="submitted && f['password'].errors?.['required']"
+              class="text-red-500 text-xs mt-1"
+            >
               Password is required
             </p>
-            <p *ngIf="f['password'].hasError('minlength')" class="text-red-500 text-xs mt-1">
+            <p
+              *ngIf="submitted && f['password'].errors?.['minlength']"
+              class="text-red-500 text-xs mt-1"
+            >
               Minimum 6 characters
             </p>
           </div>
 
           <!-- Error -->
-          <div *ngIf="error" class="text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-lg">
+          <div
+            *ngIf="error"
+            class="text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded-lg"
+          >
             {{ error }}
           </div>
 
@@ -67,7 +81,6 @@
             <span *ngIf="!loading">Login</span>
             <span *ngIf="loading">Signing in...</span>
           </button>
-
         </form>
       </div>
     </div>
@@ -76,6 +89,5 @@
     <div class="mt-6 text-center text-xs text-ink-faint">
       © 2026 CUSMC • IT Department
     </div>
-
   </div>
 </div>
