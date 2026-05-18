@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../shared/api.service';
-import { UserDetail, AppUser, RoleItem, UserSaveDto, UserRightsRecord } from './user-listing.models';
+import { UserDetail, AppUser, RoleItem, UserSaveDto, UserRightsRecord, UserModuleItem } from './user-listing.models';
 
 const BASE = '/api/UsersAPI';
 const WRIGHTS_BASE = '/api/Admin/WmodulesAPI';
@@ -36,5 +36,17 @@ export class UserListingService {
 
   getRightsByUser(username: string): Observable<UserRightsRecord[]> {
     return this.api.get<UserRightsRecord[]>(`${WRIGHTS_BASE}/GetRightsByUserName`, { id: username });
+  }
+
+  getModulesForUser(username: string): Observable<UserModuleItem[]> {
+    return this.api.get<UserModuleItem[]>(`${WRIGHTS_BASE}/GetDatas`, { UserName: username });
+  }
+
+  getEmployeeImage(username: string): Observable<string> {
+    return this.api.get<string>(`/api/HR/EmpmastsAPI/getEmployeeImage`, { empid: username });
+  }
+
+  updateBal(baltype: string): Observable<string> {
+    return this.api.get<string>(`/api/UsersAPI/UpdateBal`, { Baltype: baltype });
   }
 }

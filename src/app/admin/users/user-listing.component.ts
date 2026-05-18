@@ -6,6 +6,8 @@ import { UserListingService } from './user-listing.service';
 import { UserDetail } from './user-listing.models';
 import { UserListingEditDialogComponent } from './user-listing-edit-dialog.component';
 import { UserListingRightsDialogComponent } from './user-listing-rights-dialog.component';
+import { UserListingModulesDialogComponent } from './user-listing-modules-dialog.component';
+import { UserListingPhotoDialogComponent } from './user-listing-photo-dialog.component';
 import { ToastService } from '../../core/toast/toast.service';
 
 @Component({
@@ -19,6 +21,7 @@ export class UserListingComponent {
   users: UserDetail[] = [];
   loading = false;
   resetting: Record<string, boolean> = {};
+  updatingBal = false;
   currentPage = 1;
   readonly itemsPerPage = 10;
 
@@ -108,6 +111,30 @@ export class UserListingComponent {
       error: (err) => {
         this.toast.show(err?.error?.Message || 'Error resetting password', { variant: 'error', duration: 3000 });
         this.resetting[user.UserName] = false;
+      },
+    });
+  }
+
+  openModulesDialog(user: UserDetail): void {
+    this.dialog.open(UserListingModulesDialogComponent, { width: '800px', data: user });
+  }
+
+  openPhotoDialog(user: UserDetail): void {
+    this.dialog.open(UserListingPhotoDialogComponent, { width: '380px', data: user });
+  }
+
+  updateBal(baltype: string): void {
+    const label = baltype === 'L' ? 'Leave Balance' : 'Provident Balance';
+    if (!confirm('Update ' + label + ' for all users?')) return;
+    this.updatingBal = true;
+    this.service.updateBal(baltype).subscribe({
+      next: (msg) => {
+        this.toast.show(msg || label + ' updated successfully', { variant: 'success', duration: 4000 });
+        this.updatingBal = false;
+      },
+      error: (err) => {
+        this.toast.show(err?.error?.Message || 'Error updating ' + label, { variant: 'error', duration: 3000 });
+        this.updatingBal = false;
       },
     });
   }

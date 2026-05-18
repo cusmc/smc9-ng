@@ -19,6 +19,9 @@ export class WebModulesUsersDialogComponent implements OnInit {
   saving = false;
   search = '';
 
+  currentPage = 1;
+  readonly itemsPerPage = 7;
+
   get filteredUsers(): UserWright[] {
     if (!this.search) return this.users;
     const q = this.search.toLowerCase();
@@ -28,6 +31,25 @@ export class WebModulesUsersDialogComponent implements OnInit {
         u.UserName.toLowerCase().includes(q) ||
         (u.Deptnm ?? '').toLowerCase().includes(q),
     );
+  }
+
+  get pagedUsers(): UserWright[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredUsers.slice(start, start + this.itemsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredUsers.length / this.itemsPerPage));
+  }
+
+  prevPage(): void { if (this.currentPage > 1) this.currentPage--; }
+  nextPage(): void { if (this.currentPage < this.totalPages) this.currentPage++; }
+
+  deleteUser(index: number): void {
+    const user = this.pagedUsers[index];
+    const actualIndex = this.users.indexOf(user);
+    if (actualIndex !== -1) this.users.splice(actualIndex, 1);
+    if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
   }
 
   constructor(

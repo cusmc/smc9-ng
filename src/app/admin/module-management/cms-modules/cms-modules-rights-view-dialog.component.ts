@@ -17,6 +17,8 @@ export class CmsModulesRightsViewDialogComponent implements OnInit {
   records: RightsRecord[] = [];
   loading = false;
   search = '';
+  currentPage = 1;
+  readonly itemsPerPage = 10;
 
   get filteredRecords(): RightsRecord[] {
     if (!this.search) return this.records;
@@ -28,6 +30,18 @@ export class CmsModulesRightsViewDialogComponent implements OnInit {
         (r.RoleName ?? '').toLowerCase().includes(q),
     );
   }
+
+  get pagedRecords(): RightsRecord[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredRecords.slice(start, start + this.itemsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredRecords.length / this.itemsPerPage));
+  }
+
+  prevPage(): void { if (this.currentPage > 1) this.currentPage--; }
+  nextPage(): void { if (this.currentPage < this.totalPages) this.currentPage++; }
 
   constructor(
     private service: CmsModulesService,

@@ -20,8 +20,8 @@ export interface UserWright {
 }
 
 export interface GroupWright {
-  Id: string;
-  Name: string;
+  UserName: string;
+  FullName: string;
   Wrights_id: number;
   Permission: string;
 }

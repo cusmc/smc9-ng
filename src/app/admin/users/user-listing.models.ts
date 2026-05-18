@@ -19,6 +19,7 @@ export interface AppUser {
   usertype: string;
   dept_id: number;
   desg_id: number;
+  AllowLogin: boolean;
   Roles: UserRoleEntry[];
 }
 
@@ -43,6 +44,7 @@ export interface UserSaveDto {
   Email?: string;
   Status: string;
   UserType?: string;
+  AllowLogin?: boolean;
   Password?: string;
   Roles?: RoleItem[];
 }
@@ -53,4 +55,13 @@ export interface UserRightsRecord {
   permission: string;
   RoleName: string;
   RightType: string;
+}
+
+export interface UserModuleItem {
+  Wmodule_id: number;
+  Wmodule_nm: string;
+  Cont_name: string;
+  View_name: string;
+  Params: string;
+  Permission: string;
 }

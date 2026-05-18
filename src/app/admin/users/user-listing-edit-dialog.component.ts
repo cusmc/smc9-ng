@@ -23,6 +23,11 @@ export class UserListingEditDialogComponent implements OnInit {
 
   get isEdit(): boolean { return !!this.username; }
 
+  get is30Series(): boolean {
+    const un: string = this.form ? (this.form.getRawValue().Username || '') : '';
+    return un.startsWith('30');
+  }
+
   get filteredRoles(): RoleItem[] {
     if (!this.roleSearch) return this.roleList;
     const q = this.roleSearch.toLowerCase();
@@ -45,6 +50,7 @@ export class UserListingEditDialogComponent implements OnInit {
       Email: [''],
       Status: ['Y', [Validators.required]],
       UserType: [''],
+      AllowLogin: [false],
     });
 
     if (this.isEdit) {
@@ -61,6 +67,7 @@ export class UserListingEditDialogComponent implements OnInit {
             Email: user.Email,
             Status: user.Status || 'Y',
             UserType: user.usertype,
+            AllowLogin: user.AllowLogin || false,
           });
           const assignedIds = new Set((user.Roles || []).map((r) => r.RoleId));
           this.roleList = (roles as any[]).map((r) => ({
@@ -91,6 +98,7 @@ export class UserListingEditDialogComponent implements OnInit {
       Email: raw.Email,
       Status: raw.Status,
       UserType: raw.UserType,
+      AllowLogin: raw.AllowLogin || false,
       Roles: this.isEdit ? this.roleList : undefined,
     };
     this.service.saveUser(payload).subscribe({

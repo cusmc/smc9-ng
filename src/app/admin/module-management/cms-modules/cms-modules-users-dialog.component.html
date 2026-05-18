@@ -38,10 +38,11 @@
               Permission
               <span class="ml-1 font-normal text-[#aaa]">(8 chars)</span>
             </th>
+            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide w-10"></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let u of filteredUsers" class="border-b border-[#f5f0e8] hover:bg-[#faf8f3]">
+          <tr *ngFor="let u of pagedUsers; let i = index" class="border-b border-[#f5f0e8] hover:bg-[#faf8f3]">
             <td class="px-3 py-2 text-xs text-[#888] font-mono">{{ u.UserName }}</td>
             <td class="px-3 py-2 font-medium text-[#333]">{{ u.FullName }}</td>
             <td class="px-3 py-2 text-[#555]">{{ u.Deptnm }}</td>
@@ -51,12 +52,30 @@
                 class="w-28 rounded border border-[#e5e5e5] px-2 py-1 text-center font-mono text-sm tracking-widest focus:border-[var(--app-primary)] focus:outline-none"
                 placeholder="NNNNNNNN" />
             </td>
+            <td class="px-3 py-2">
+              <button type="button" (click)="deleteUser(i)"
+                class="rounded p-1 text-red-400 hover:bg-red-50 hover:text-red-600" title="Remove user">
+                <span class="material-icons text-[16px]">delete</span>
+              </button>
+            </td>
           </tr>
-          <tr *ngIf="filteredUsers.length === 0">
-            <td colspan="5" class="px-3 py-8 text-center text-sm text-[#999]">No users found.</td>
+          <tr *ngIf="pagedUsers.length === 0">
+            <td colspan="6" class="px-3 py-8 text-center text-sm text-[#999]">No users found.</td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="mt-3 flex items-center justify-between text-xs text-[#999]">
+      <span>{{ filteredUsers.length }} users</span>
+      <div class="flex items-center gap-2">
+        <button (click)="prevPage()" [disabled]="currentPage === 1"
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">Prev</button>
+        <span class="text-[#666]">Page {{ currentPage }} of {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">Next</button>
+      </div>
     </div>
 
     <p class="mt-3 text-xs text-[#aaa]">
