@@ -19,6 +19,7 @@ export interface Activity {
   FacultyName?: string;
   Canverify?: boolean;
   Action?: string;  // 'U'=Update, 'R'=Revert
+  
 }
 
 // Server response shape (same as Activity, Canverify set client-side)
