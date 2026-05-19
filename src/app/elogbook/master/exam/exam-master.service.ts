@@ -9,8 +9,10 @@ import { ExamMast, Course, Subject, Section } from './exam-master.models';
 export class ExamMasterService {
   constructor(private apiService: ApiService) {}
 
-  getExams(): Observable<ExamMast[]> {
-    return this.apiService.get<ExamMast[]>('/api/Campus/exammastsAPI/GetDatas1');
+  getExams(subjectId?: number): Observable<ExamMast[]> {
+    const params: any = {};
+    if (subjectId) params['Subject_id'] = subjectId;
+    return this.apiService.get<ExamMast[]>('/api/Campus/exammastsAPI/GetDatas', params);
   }
 
   getExamById(id: number): Observable<ExamMast> {
@@ -22,7 +24,7 @@ export class ExamMasterService {
   }
 
   deleteExam(id: number): Observable<any> {
-    return this.apiService.get<any>('/api/Campus/exammastsAPI/DeleteData', { id });
+    return this.apiService.post<any>(`/api/Campus/exammastsAPI/DeleteData?id=${id}`, {});
   }
 
   getCourses(): Observable<Course[]> {

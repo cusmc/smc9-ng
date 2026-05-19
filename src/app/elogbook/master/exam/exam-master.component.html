@@ -14,16 +14,28 @@
     </button>
   </div>
 
-  <div class="flex flex-1 flex-col gap-4 p-4">
-    <div class="max-w-md">
-      <label class="mb-1 block text-sm font-medium text-ink-muted">Filter</label>
-      <input
-        type="search"
-        class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-primary-soft"
-        placeholder="Search exams..."
-        [(ngModel)]="search.Exam_nm"
-        (keyup)="onSearchChange()"
-      />
+  <div class="flex flex-1 flex-col gap-4">
+    <div class="flex flex-wrap items-end gap-3 border-b border-[#f0ebe3] p-4">
+      <div class="min-w-[180px]">
+        <label class="mb-1 block text-sm font-medium text-[#555]">Course</label>
+        <select [(ngModel)]="filterCourseId" (ngModelChange)="onFilterCourseChange()"
+                class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50">
+          <option [ngValue]="null">— All Courses —</option>
+          <option *ngFor="let c of courses" [ngValue]="c.Course_id">{{ c.Course_nm }}</option>
+        </select>
+      </div>
+      <div class="min-w-[180px]">
+        <label class="mb-1 block text-sm font-medium text-[#555]">Subject</label>
+        <select [(ngModel)]="filterSubjectId"
+                class="w-full rounded-lg border border-[#e5e5e5] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#c8a96a]/50">
+          <option [ngValue]="null">— All Subjects —</option>
+          <option *ngFor="let s of subjects" [ngValue]="s.Subject_id">{{ s.Subject_nm }}</option>
+        </select>
+      </div>
+      <button (click)="applyFilter()"
+              class="rounded-lg bg-[#2d8a7e] px-4 py-2 text-sm font-medium text-white hover:bg-[#257a6f]">
+        View
+      </button>
     </div>
 
     <!-- Content -->
@@ -76,10 +88,14 @@
               <td class="px-4 py-3 tabular-nums text-[#444]">{{ r.Maxmarksp }}</td>
               <td class="px-4 py-3 text-[#666]">{{ r.Create_by }}</td>
               <td class="px-4 py-3 text-[#666]">{{ r.Create_dt }}</td>
-              <td class="px-4 py-3">
+              <td class="px-4 py-3 flex items-center gap-1">
                 <button type="button" (click)="openEditDialog(r)"
                         class="rounded-lg p-1.5 text-[#8c6b2f] transition hover:bg-[#f3eadb]" title="Edit">
                   <span class="material-icons text-xl">edit</span>
+                </button>
+                <button type="button" (click)="deleteExam(r.Exam_id)"
+                        class="rounded-lg p-1.5 text-[#c0392b] transition hover:bg-[#fdecea]" title="Delete">
+                  <span class="material-icons text-xl">delete</span>
                 </button>
               </td>
             </tr>

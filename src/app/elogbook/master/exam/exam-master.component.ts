@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Dialog } from '@angular/cdk/dialog';
 import { ExamMasterService } from './exam-master.service';
-import { ExamMast } from './exam-master.models';
+import { ExamMast, Course, Subject } from './exam-master.models';
 import { ExamMasterDialogComponent } from './exam-master-dialog.component';
 import { ToastService } from '../../../core/toast/toast.service';
 
@@ -16,6 +16,10 @@ import { ToastService } from '../../../core/toast/toast.service';
 })
 export class ExamMasterComponent implements OnInit {
   exams: ExamMast[] = [];
+  courses: Course[] = [];
+  subjects: Subject[] = [];
+  filterCourseId: number | null = null;
+  filterSubjectId: number | null = null;
   search = { Exam_nm: '', Admyear: '', Course_nm: '', Create_by: '', Create_dt: '' };
   currentPage = 1;
   readonly itemsPerPage = 10;
@@ -28,12 +32,35 @@ export class ExamMasterComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadCourses();
     this.loadExams();
   }
 
-  loadExams(): void {
+  loadCourses(): void {
+    this.service.getCourses().subscribe({
+      next: (data) => { this.courses = data; },
+      error: () => this.toast.show('Error loading courses', { variant: 'error', duration: 3000 })
+    });
+  }
+
+  onFilterCourseChange(): void {
+    this.filterSubjectId = null;
+    this.subjects = [];
+    if (this.filterCourseId) {
+      this.service.getSubjectsByCourse(this.filterCourseId).subscribe({
+        next: (data) => { this.subjects = data; },
+        error: () => this.toast.show('Error loading subjects', { variant: 'error', duration: 3000 })
+      });
+    }
+  }
+
+  applyFilter(): void {
+    this.loadExams(this.filterSubjectId ?? undefined);
+  }
+
+  loadExams(subjectId?: number): void {
     this.loading = true;
-    this.service.getExams().subscribe({
+    this.service.getExams(subjectId).subscribe({
       next: (data) => {
         this.exams = data;
         this.currentPage = 1;
@@ -72,14 +99,14 @@ export class ExamMasterComponent implements OnInit {
   openAddDialog(): void {
     const ref = this.dialog.open(ExamMasterDialogComponent, { width: '600px', data: null });
     ref.closed.subscribe((result) => {
-      if (result) this.loadExams();
+      if (result) this.loadExams(this.filterSubjectId ?? undefined);
     });
   }
 
   openEditDialog(exam: ExamMast): void {
     const ref = this.dialog.open(ExamMasterDialogComponent, { width: '600px', data: exam });
     ref.closed.subscribe((result) => {
-      if (result) this.loadExams();
+      if (result) this.loadExams(this.filterSubjectId ?? undefined);
     });
   }
 
@@ -88,7 +115,7 @@ export class ExamMasterComponent implements OnInit {
       this.service.deleteExam(id).subscribe({
         next: () => {
           this.toast.show('Exam deleted successfully', { variant: 'success', duration: 3000 });
-          this.loadExams();
+          this.loadExams(this.filterSubjectId ?? undefined);
         },
         error: () => this.toast.show('Error deleting exam', { variant: 'error', duration: 3000 })
       });

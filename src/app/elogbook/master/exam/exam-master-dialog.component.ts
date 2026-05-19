@@ -82,8 +82,19 @@ export class ExamMasterDialogComponent implements OnInit {
           Remarks: data.Remarks
         });
 
+        // Load dependent dropdowns without clearing the already-patched values
         if (data.Course_id) {
-          this.onCourseChange();
+          this.service.getSubjectsByCourse(data.Course_id).subscribe({
+            next: (subjects) => {
+              this.subjects = subjects;
+              if (data.Subject_id) {
+                this.service.getSectionsBySubject(data.Subject_id).subscribe({
+                  next: (sections) => { this.sections = sections; }
+                });
+              }
+            },
+            error: () => this.toast.show('Error loading subjects', { variant: 'error', duration: 3000 })
+          });
         }
       },
       error: () => this.toast.show('Error loading exam details', { variant: 'error', duration: 3000 })
@@ -92,29 +103,25 @@ export class ExamMasterDialogComponent implements OnInit {
 
   onCourseChange(): void {
     const courseId = this.form.get('Course_id')?.value;
-    if (courseId) {
-      this.service.getSubjectsByCourse(courseId).subscribe({
-        next: (data) => {
-          this.subjects = data;
-          this.sections = [];
-          this.form.patchValue({ Subject_id: '', Section_id: '' });
-        },
-        error: () => this.toast.show('Error loading subjects', { variant: 'error', duration: 3000 })
-      });
-    }
+    if (!courseId) return;
+    this.subjects = [];
+    this.sections = [];
+    this.form.patchValue({ Subject_id: '', Section_id: '' });
+    this.service.getSubjectsByCourse(courseId).subscribe({
+      next: (data) => { this.subjects = data; },
+      error: () => this.toast.show('Error loading subjects', { variant: 'error', duration: 3000 })
+    });
   }
 
   onSubjectChange(): void {
     const subjectId = this.form.get('Subject_id')?.value;
-    if (subjectId) {
-      this.service.getSectionsBySubject(subjectId).subscribe({
-        next: (data) => {
-          this.sections = data;
-          this.form.patchValue({ Section_id: '' });
-        },
-        error: () => this.toast.show('Error loading sections', { variant: 'error', duration: 3000 })
-      });
-    }
+    if (!subjectId) return;
+    this.sections = [];
+    this.form.patchValue({ Section_id: '' });
+    this.service.getSectionsBySubject(subjectId).subscribe({
+      next: (data) => { this.sections = data; },
+      error: () => this.toast.show('Error loading sections', { variant: 'error', duration: 3000 })
+    });
   }
 
   onSave(): void {
