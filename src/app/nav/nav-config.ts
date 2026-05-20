@@ -439,6 +439,13 @@ export const APP_NAV: NavModule[] = [
         ],
       },
       {
+        label: 'Website CMS',
+        icon: 'language',
+        items: [
+          { label: 'Webpages', icon: 'web', route: '/admin/website/webpages' },
+        ],
+      },
+      {
         label: 'System',
         icon: 'settings',
         items: [

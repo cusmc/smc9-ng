@@ -1,0 +1,117 @@
+<div class="flex w-full flex-col bg-white" style="max-height: 90vh; width: 900px">
+  <!-- Header -->
+  <div class="flex items-center gap-3 border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+    <span class="material-icons text-[var(--app-primary)]">{{ isEdit ? 'edit' : 'add_circle' }}</span>
+    <h3 class="text-base font-semibold text-[#333]">{{ isEdit ? 'Edit Webpage' : 'Add Webpage' }}</h3>
+    <span class="flex-1"></span>
+    <button type="button" class="rounded p-1 hover:bg-[#eee]" (click)="onCancel()" aria-label="Close">
+      <span class="material-icons text-[#999]">close</span>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <form [formGroup]="form" class="flex flex-1 overflow-y-auto">
+    <!-- Left column -->
+    <div class="flex w-80 shrink-0 flex-col gap-4 border-r border-[#f0ebe3] p-5">
+
+      <!-- Site -->
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Site</label>
+        <input formControlName="Site" type="text" maxlength="5"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+          placeholder="e.g. SMC" />
+        <p *ngIf="form.get('Site')?.invalid && form.get('Site')?.touched"
+          class="mt-1 text-xs text-red-500">Max 5 characters.</p>
+      </div>
+
+      <!-- Page Name -->
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Page Name</label>
+        <input formControlName="Page_nm" type="text" maxlength="50"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+          placeholder="Enter page name" />
+        <p *ngIf="form.get('Page_nm')?.invalid && form.get('Page_nm')?.touched"
+          class="mt-1 text-xs text-red-500">Max 50 characters.</p>
+      </div>
+
+      <!-- Department ID -->
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Department ID</label>
+        <input formControlName="Dept_id" type="number"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+          placeholder="Optional" />
+      </div>
+
+      <!-- Page Description -->
+      <div class="flex flex-1 flex-col">
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+          Page Description / HTML Tag
+        </label>
+        <textarea formControlName="Page_desc" rows="8"
+          class="flex-1 w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm font-mono focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)] resize-none"
+          placeholder="Short description or HTML meta tags…"></textarea>
+      </div>
+
+    </div>
+
+    <!-- Right column — Page Content with tab toggle -->
+    <div class="flex flex-1 flex-col p-5 gap-2">
+      <!-- Label + tab buttons -->
+      <div class="flex items-center gap-2">
+        <label class="text-xs font-semibold uppercase tracking-wide text-[#666]">Page Content</label>
+        <span class="flex-1"></span>
+        <div class="inline-flex overflow-hidden rounded-md border border-[#e5e5e5] text-xs">
+          <button type="button"
+            [class]="contentMode === 'wysiwyg'
+              ? 'px-3 py-1.5 bg-[var(--app-primary)] text-white font-medium'
+              : 'px-3 py-1.5 text-[#666] hover:bg-[#f5f5f5]'"
+            (click)="contentMode = 'wysiwyg'">
+            <span class="material-icons mr-1 align-middle text-[14px]">text_fields</span>Rich Text
+          </button>
+          <button type="button"
+            [class]="contentMode === 'html'
+              ? 'px-3 py-1.5 bg-[var(--app-primary)] text-white font-medium'
+              : 'px-3 py-1.5 text-[#666] hover:bg-[#f5f5f5]'"
+            (click)="contentMode = 'html'">
+            <span class="material-icons mr-1 align-middle text-[14px]">code</span>HTML
+          </button>
+        </div>
+      </div>
+
+      <!-- WYSIWYG panel -->
+      <div *ngIf="contentMode === 'wysiwyg'" class="NgxEditor__Wrapper flex flex-1 flex-col overflow-hidden">
+        <ngx-editor-menu [editor]="editor" [toolbar]="toolbar"></ngx-editor-menu>
+        <ngx-editor
+          class="flex-1 overflow-y-auto"
+          [editor]="editor"
+          formControlName="Page_cont"
+          [outputFormat]="'html'"
+          placeholder="Enter page content…">
+        </ngx-editor>
+      </div>
+
+      <!-- Raw HTML panel -->
+      <textarea *ngIf="contentMode === 'html'"
+        formControlName="Page_cont"
+        class="flex-1 w-full resize-none rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm font-mono
+               focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+        placeholder="Paste or write raw HTML…"></textarea>
+    </div>
+  </form>
+
+  <!-- Footer -->
+  <div class="flex items-center gap-2 border-t border-[#f0ebe3] px-5 py-4">
+    <span class="flex-1"></span>
+    <button type="button"
+      class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm text-[#666] hover:bg-[#f5f5f5]"
+      (click)="onCancel()">
+      Cancel
+    </button>
+    <button type="button"
+      class="inline-flex items-center gap-1 rounded-lg bg-[var(--app-primary)] px-5 py-2 text-sm font-medium text-white shadow hover:bg-[var(--app-primary-dark)] disabled:opacity-50"
+      (click)="onSave()" [disabled]="saving">
+      <span class="material-icons text-[16px]">save</span>
+      {{ saving ? 'Saving…' : 'Save' }}
+    </button>
+  </div>
+</div>
