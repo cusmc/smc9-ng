@@ -29,6 +29,8 @@ describe('ExamMasterComponent', () => {
       'getSubjectsByCourse', 'getSectionsBySubject', 'getCourseById'
     ]);
     mockService.getExams.and.returnValue(of([]));
+    mockService.getCourses.and.returnValue(of([]));
+    mockService.getSubjectsByCourse.and.returnValue(of([]));
     mockService.deleteExam.and.returnValue(of(null));
 
     mockDialog = jasmine.createSpyObj<Dialog>('Dialog', ['open']);
