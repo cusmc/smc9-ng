@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -16,16 +16,33 @@ export class LoginComponent {
   loading = false;
   submitted = false;
   error: string | null = null;
+  private returnUrl: string;
 
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
+    this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/elogbook/activities';
+
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+
+    const username = this.route.snapshot.queryParamMap.get('username') ?? '';
+
+    if (this.authService.isLoggedIn()) {
+      const loggedInAs = this.authService.getUsername();
+      if (!username || username === loggedInAs) {
+        this.router.navigateByUrl(this.returnUrl);
+        return;
+      }
+      this.authService.logout();
+    }
+
+    this.loginForm.patchValue({ username });
   }
 
   get f() {
@@ -45,7 +62,7 @@ export class LoginComponent {
 
     this.authService.login(username, password).subscribe({
       next: () => {
-        this.router.navigate(['/elogbook/activities']);
+        this.router.navigateByUrl(this.returnUrl);
       },
       error: (err) => {
         this.error = err?.error?.error_description || 'Login failed';

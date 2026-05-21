@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir \"d:\\\\DotNet\\\\App_Start\")",
+      "Bash(Get-ChildItem \"d:\\\\DotNet\\\\App_Start\" -ErrorAction SilentlyContinue)",
+      "Bash(Format-Table Name)"
+    ],
+    "additionalDirectories": [
+      "d:\\DotNet\\smc9\\App_Start",
+      "d:\\DotNet\\smc9\\Providers"
+    ]
+  }
+}
