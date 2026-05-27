@@ -303,6 +303,7 @@ export const APP_NAV: NavModule[] = [
           { label: 'Stock Reports', icon: 'bar_chart', externalUrl: '/Pharmacy/StockReport' },
           { label: 'Rate Contract', icon: 'price_check', externalUrl: '/Pharmacy/RateContract' },
           { label: 'Form-H Monitor', icon: 'monitor_heart', externalUrl: '/Pharmacy/FormH' },
+          { label: 'PO Register', icon: 'list_alt', route: '/pharmacy/po-register' },
         ],
       },
       {
@@ -341,6 +342,7 @@ export const APP_NAV: NavModule[] = [
           { label: 'O/s Register', icon: 'book', externalUrl: '/Accounts/OSRegister' },
           { label: 'FD Report', icon: 'savings', externalUrl: '/Accounts/FDReport' },
           { label: 'Payment Request', icon: 'payments', externalUrl: '/Accounts/PaymentRequest' },
+          { label: 'Chq. Payment Forwarding', icon: 'send_and_archive', route: '/accounts/chq-payment' },
         ],
       },
       {

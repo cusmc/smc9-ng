@@ -3,7 +3,14 @@
     "allow": [
       "Bash(dir \"d:\\\\DotNet\\\\App_Start\")",
       "Bash(Get-ChildItem \"d:\\\\DotNet\\\\App_Start\" -ErrorAction SilentlyContinue)",
-      "Bash(Format-Table Name)"
+      "Bash(Format-Table Name)",
+      "Bash(npx tsc *)",
+      "Bash(Select-String -Pattern \"exam-master\")",
+      "Bash(Get-ChildItem -Path \"d:\\\\DotNet\\\\smc9-ng\\\\src\\\\app\\\\elogbook\\\\master\" -Filter \"*.html\")",
+      "Bash(Get-ChildItem -Path \"d:\\\\DotNet\\\\smc9\" -Directory -ErrorAction SilentlyContinue)",
+      "Bash(Get-ChildItem -Path \"d:\\\\DotNet\\\\smc9-ng\\\\src\\\\app\" -Recurse -Filter \"*.routing.ts\")",
+      "Read(//d/DotNet/smc9/**)",
+      "Bash(git log *)"
     ],
     "additionalDirectories": [
       "d:\\DotNet\\smc9\\App_Start",

@@ -1,0 +1,177 @@
+<div class="min-h-screen bg-[var(--app-bg)] p-6">
+  <div class="overflow-hidden rounded-2xl border border-[#ebe6df] bg-white shadow-[0_10px_40px_rgba(44,36,25,0.07)]">
+
+    <!-- Page Header -->
+    <div class="relative border-b border-[#f0ebe3] bg-gradient-to-r from-[#f7faf9] via-white to-[#faf8f3] px-6 pt-7 pb-5">
+      <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#2d8a7e] to-[#c8a96a]"></div>
+      <h2 class="font-serif text-2xl font-normal tracking-tight text-[#2a2622] md:text-[1.65rem]">
+        Chq. Entry / Payment Forwarding
+      </h2>
+      <p class="mt-1 text-sm text-[#8a7e72]">Send WhatsApp &amp; Email payment advice to vendors</p>
+    </div>
+
+    <div class="p-6">
+
+      <!-- Filter Bar -->
+      <div class="flex flex-wrap gap-4 items-end pb-5 border-b border-[#eee]">
+
+        <div class="min-w-[200px]">
+          <label class="text-sm text-[#6b6b6b] block mb-1">Lot No.</label>
+          <select [(ngModel)]="selectedLotId"
+            class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none">
+            <option [ngValue]="null">-- Select Lot --</option>
+            <option *ngFor="let lot of lotList" [ngValue]="lot.lot_id">
+              {{ lot.lot_id }} &mdash; {{ lot.dept }}
+            </option>
+          </select>
+        </div>
+
+        <div class="flex gap-2">
+          <button type="button" (click)="loadData()" [disabled]="loading || !selectedLotId"
+            class="inline-flex items-center gap-2 rounded-lg bg-[var(--app-primary)] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--app-primary-dark)] disabled:opacity-50">
+            <span class="material-icons text-base">{{ loading ? 'hourglass_top' : 'search' }}</span>
+            {{ loading ? 'Loading…' : 'View' }}
+          </button>
+        </div>
+
+        <!-- Action buttons — shown only after data loaded -->
+        <ng-container *ngIf="summaryRows.length > 0">
+          <div class="ml-auto flex gap-2 flex-wrap">
+            <button type="button" (click)="selectAll()"
+              class="rounded-lg border border-[#ddd] px-4 py-2 text-sm text-[#555] hover:bg-[#f5f0e8] transition">
+              Select All
+            </button>
+            <button type="button" (click)="deselectAll()"
+              class="rounded-lg border border-[#ddd] px-4 py-2 text-sm text-[#555] hover:bg-[#f5f0e8] transition">
+              Deselect All
+            </button>
+            <button type="button" (click)="sendWhatsApp()"
+              [disabled]="sending || selectedIds.length === 0"
+              class="inline-flex items-center gap-2 rounded-lg bg-[#25d366] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1eb558] disabled:opacity-50">
+              <span class="material-icons text-base">chat</span>
+              {{ sending ? 'Sending…' : 'WhatsApp' }}
+            </button>
+            <button type="button" (click)="sendEmail()"
+              [disabled]="sending || selectedIds.length === 0"
+              class="inline-flex items-center gap-2 rounded-lg bg-[#4285f4] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#3367d6] disabled:opacity-50">
+              <span class="material-icons text-base">email</span>
+              {{ sending ? 'Sending…' : 'Email' }}
+            </button>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Empty state -->
+      <p *ngIf="!loading && summaryRows.length === 0"
+        class="text-center text-[#999] py-10 text-sm">
+        Select a Lot No. and click View to load payment data.
+      </p>
+
+      <!-- Summary Grid -->
+      <div *ngIf="!loading && summaryRows.length > 0"
+        class="overflow-x-auto rounded-xl border border-[#f0ebe3] bg-white shadow-sm ring-1 ring-black/[0.02] mt-4">
+        <table class="w-full min-w-[900px] border-collapse text-left text-sm text-[#444]">
+          <thead>
+            <tr class="text-left text-[#666] border-b bg-[#fafafa] text-xs uppercase tracking-wide">
+              <th class="py-2 px-3 w-8"></th>
+              <th class="py-2 px-3">Name</th>
+              <th class="py-2 px-3 text-right">Paid Amt</th>
+              <th class="py-2 px-3">Pay Through</th>
+              <th class="py-2 px-3">Chq. No / UTR</th>
+              <th class="py-2 px-3">Chq. Dt.</th>
+              <th class="py-2 px-3">Dept</th>
+              <th class="py-2 px-3 w-8"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let row of pagedData">
+              <!-- Summary row -->
+              <tr class="border-b hover:bg-[#faf8f3] transition cursor-pointer"
+                [class.bg-[#f0fff4]]="row.selected">
+                <td class="px-3 py-2">
+                  <input type="checkbox" [(ngModel)]="row.selected"
+                    class="h-4 w-4 accent-[#2d8a7e]" (click)="$event.stopPropagation()" />
+                </td>
+                <td class="px-3 py-2 font-medium" (click)="toggleDetail(row)">{{ row.party_nm }}</td>
+                <td class="px-3 py-2 text-right font-mono" (click)="toggleDetail(row)">
+                  {{ row.paid_amt | number:'1.2-2' }}
+                </td>
+                <td class="px-3 py-2" (click)="toggleDetail(row)">
+                  <span class="px-2 py-0.5 rounded-full text-xs"
+                    [ngClass]="row.rtgs
+                      ? 'bg-[#e3f2fd] text-[#1565c0]'
+                      : 'bg-[#fff3e0] text-[#e65100]'">
+                    {{ payThrough(row) }}
+                  </span>
+                </td>
+                <td class="px-3 py-2 font-mono text-sm" (click)="toggleDetail(row)">
+                  {{ row.chq_no || row.utr_no || '—' }}
+                </td>
+                <td class="px-3 py-2" (click)="toggleDetail(row)">
+                  {{ row.paym_dt | date:'dd/MM/yyyy' }}
+                </td>
+                <td class="px-3 py-2 text-[#888]" (click)="toggleDetail(row)">{{ row.dept }}</td>
+                <td class="px-3 py-2 text-center" (click)="toggleDetail(row)">
+                  <span class="material-icons text-sm text-[#aaa]">
+                    {{ expandedPartyId === row.party_id ? 'expand_less' : 'expand_more' }}
+                  </span>
+                </td>
+              </tr>
+
+              <!-- Invoice detail panel -->
+              <tr *ngIf="expandedPartyId === row.party_id" class="bg-[#f9f9f9]">
+                <td colspan="8" class="px-6 py-3">
+                  <div class="text-xs font-semibold text-[#666] mb-2 uppercase tracking-wide">
+                    Invoice Breakdown
+                  </div>
+                  <table class="w-full text-xs border-collapse">
+                    <thead>
+                      <tr class="text-[#888] border-b">
+                        <th class="py-1 pr-4 font-medium text-left">Bill No</th>
+                        <th class="py-1 pr-4 font-medium text-left">Bill Date</th>
+                        <th class="py-1 pr-4 font-medium text-right">Bill Amt</th>
+                        <th class="py-1 pr-4 font-medium text-right">Paid Amt</th>
+                        <th class="py-1 pr-4 font-medium text-right">Due Amt</th>
+                        <th class="py-1 font-medium text-left">Remark</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let inv of detailFor(row.party_id)" class="border-b border-[#eee]">
+                        <td class="py-1 pr-4">{{ inv.bill_no || '—' }}</td>
+                        <td class="py-1 pr-4">{{ inv.bill_dt | date:'dd/MM/yyyy' }}</td>
+                        <td class="py-1 pr-4 text-right font-mono">{{ inv.bill_amt | number:'1.2-2' }}</td>
+                        <td class="py-1 pr-4 text-right font-mono text-[#2d8a7e]">{{ inv.paid_amt | number:'1.2-2' }}</td>
+                        <td class="py-1 pr-4 text-right font-mono"
+                          [class.text-[#c0392b]]="(inv.due_amt ?? 0) > 0">
+                          {{ inv.due_amt | number:'1.2-2' }}
+                        </td>
+                        <td class="py-1 text-[#777]">{{ inv.remark }}</td>
+                      </tr>
+                      <tr *ngIf="detailFor(row.party_id).length === 0">
+                        <td colspan="6" class="py-2 text-center text-[#aaa]">No invoice detail available.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="totalPages > 1" class="mt-4 flex items-center justify-center gap-2 text-sm">
+        <button type="button" (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1"
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">
+          Prev
+        </button>
+        <span class="text-[#666]">Page {{ currentPage }} of {{ totalPages }}</span>
+        <button type="button" (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages"
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">
+          Next
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
