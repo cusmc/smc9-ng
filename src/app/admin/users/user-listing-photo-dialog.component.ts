@@ -4,6 +4,7 @@ import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { UserListingService } from './user-listing.service';
 import { UserDetail } from './user-listing.models';
 import { ToastService } from '../../core/toast/toast.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-user-listing-photo-dialog',
@@ -13,13 +14,14 @@ import { ToastService } from '../../core/toast/toast.service';
   styleUrls: ['./user-listing-photo-dialog.component.scss'],
 })
 export class UserListingPhotoDialogComponent implements OnInit {
-  photoUrl = '';
-  loading = false;
+  photoUrl: SafeUrl | null = null;
+  loading = true;
 
   constructor(
     private service: UserListingService,
     private dialogRef: DialogRef<void, UserListingPhotoDialogComponent>,
     private toast: ToastService,
+    private sanitizer: DomSanitizer,
     @Inject(DIALOG_DATA) public data: UserDetail,
   ) {}
 
@@ -27,15 +29,25 @@ export class UserListingPhotoDialogComponent implements OnInit {
     this.loading = true;
     this.service.getEmployeeImage(this.data.UserName).subscribe({
       next: (base64) => {
-        this.photoUrl = base64 ? 'data:image/jpeg;base64,' + base64 : '';
+        if (base64) {
+          const cleaned = base64.trim().replace(/^["']|["']$/g, '');
+          this.photoUrl = 'data:image/jpeg;base64,' + cleaned;
+        } else {
+          this.photoUrl = null;
+        }
         this.loading = false;
       },
       error: () => {
-        this.toast.show('Error loading photo', { variant: 'error', duration: 3000 });
+        this.toast.show('Error loading photo', {
+          variant: 'error',
+          duration: 3000,
+        });
+        this.photoUrl = null;
         this.loading = false;
       },
     });
   }
-
-  onClose(): void { this.dialogRef.close(); }
+  onClose(): void {
+    this.dialogRef.close();
+  }
 }
