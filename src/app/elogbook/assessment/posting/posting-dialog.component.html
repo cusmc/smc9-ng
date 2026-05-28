@@ -1,13 +1,13 @@
-<div class="flex max-h-[inherit] w-full flex-col overflow-hidden rounded-2xl border border-[#ebe6df] bg-white">
+<div class="flex max-h-[90vh] w-full flex-col overflow-hidden rounded-2xl border border-[#ebe6df] bg-white">
   <div class="relative shrink-0 border-b border-[#f0ebe3] bg-gradient-to-r from-[#f7faf9] via-white to-[#faf8f3] px-6 pb-4 pt-6">
     <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#2d8a7e] to-[#c8a96a]"></div>
     <p class="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-[#2d8a7e]">Rotational posting</p>
     <h2 class="font-serif text-xl font-normal tracking-tight text-[#2a2622] md:text-2xl">
       {{ data.Pk_id === -1 ? 'New Posting' : 'Edit Posting' }}
     </h2>
-    <p class="mt-1.5 max-w-xl text-sm leading-relaxed text-[#6b6560]">
+    <!-- <p class="mt-1.5 max-w-xl text-sm leading-relaxed text-[#6b6560]">
       Choose subject and student, then add one or more rotation lines with dates, speciality, and faculty.
-    </p>
+    </p> -->
   </div>
 
   <div class="min-h-0 flex-1 overflow-y-auto px-6 py-5" [formGroup]="form">
