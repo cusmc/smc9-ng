@@ -37,7 +37,24 @@ export interface FirmItem {
   nm: string;
 }
 
+export interface YearItem {
+  id: string;
+  nm: string;
+}
+
+export interface PartyItem {
+  id: number;
+  nm: string;
+}
+
+export interface ProductItem {
+  id: number;
+  nm: string;
+}
+
 export interface PrintRegBody {
+  Firm: string;
+  Year: string;
   Status: string;
   Product_id: number;
   Party_id: number;

@@ -24,6 +24,15 @@
         </div>
 
         <div class="min-w-[140px]">
+          <label class="text-sm text-[#6b6b6b] block mb-1">Year</label>
+          <select [(ngModel)]="selectedYear" [ngModelOptions]="{standalone: true}"
+            (ngModelChange)="onYearChange()"
+            class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none">
+            <option *ngFor="let y of years" [value]="y.id">{{ y.nm }}</option>
+          </select>
+        </div>
+
+        <div class="min-w-[140px]">
           <label class="text-sm text-[#6b6b6b] block mb-1">Status</label>
           <select formControlName="status"
             class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none">
@@ -34,28 +43,30 @@
         </div>
 
         <div class="min-w-[200px] flex-1">
+          <label class="text-sm text-[#6b6b6b] block mb-1">Party</label>
+          <select [(ngModel)]="selectedParty" [ngModelOptions]="{standalone: true}"
+            class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none">
+            <option [value]="0">All Parties</option>
+            <option *ngFor="let p of partyList" [value]="p.id">{{ p.nm }}</option>
+          </select>
+        </div>
+
+        <div class="min-w-[200px] flex-1">
+          <label class="text-sm text-[#6b6b6b] block mb-1">Product</label>
+          <select [(ngModel)]="selectedProd" [ngModelOptions]="{standalone: true}"
+            class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none">
+            <option [value]="0">All Products</option>
+            <option *ngFor="let p of productList" [value]="p.id">{{ p.nm }}</option>
+          </select>
+        </div>
+
+        <div class="min-w-[200px] flex-1">
           <label class="text-sm text-[#6b6b6b] block mb-1">Manufacturer</label>
           <select formControlName="mfgId"
             class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none">
             <option [value]="0">All Manufacturers</option>
             <option *ngFor="let m of mfgList" [value]="m.id">{{ m.nm }}</option>
           </select>
-        </div>
-
-        <div class="min-w-[180px] flex-1">
-          <label class="text-sm text-[#6b6b6b] block mb-1">Party Name</label>
-          <input type="text" [(ngModel)]="partySearch" [ngModelOptions]="{standalone: true}"
-            (ngModelChange)="applyFilter()"
-            placeholder="Search party…"
-            class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none" />
-        </div>
-
-        <div class="min-w-[180px] flex-1">
-          <label class="text-sm text-[#6b6b6b] block mb-1">Product Name</label>
-          <input type="text" [(ngModel)]="prodSearch" [ngModelOptions]="{standalone: true}"
-            (ngModelChange)="applyFilter()"
-            placeholder="Search product…"
-            class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none" />
         </div>
 
         <div class="flex gap-2">

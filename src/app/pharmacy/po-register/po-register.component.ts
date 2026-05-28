@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { PoRegisterService } from './po-register.service';
-import { FirmItem, MfgItem, PoListItem } from './po-register.models';
+import { FirmItem, MfgItem, PartyItem, PoListItem, ProductItem, YearItem } from './po-register.models';
 import { ToastService } from '../../core/toast/toast.service';
 
 @Component({
@@ -16,18 +16,31 @@ export class PoRegisterComponent implements OnInit {
   allData: PoListItem[] = [];
   filteredData: PoListItem[] = [];
   mfgList: MfgItem[] = [];
+  partyList: PartyItem[] = [];
+  productList: ProductItem[] = [];
 
   readonly firms: FirmItem[] = [
     { id: '0001', nm: 'Firm 1' },
     { id: '0002', nm: 'Firm 2' }
   ];
-  selectedFirm = '0001';
+
+  readonly years: YearItem[] = [
+    { id: '2023', nm: '2023-24' },
+    { id: '2024', nm: '2024-25' },
+    { id: '2025', nm: '2025-26' },
+    { id: '2026', nm: '2026-27' }
+  ];
+
+  selectedFirm  = '0001';
+  selectedYear  = '2026';
+  selectedParty = 0;
+  selectedProd  = 0;
 
   filterForm: FormGroup;
   partySearch = '';
-  prodSearch = '';
+  prodSearch  = '';
 
-  loading = false;
+  loading  = false;
   printing = false;
   currentPage = 1;
   readonly itemsPerPage = 15;
@@ -44,28 +57,34 @@ export class PoRegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.service.getFirm().subscribe({
-      next: (firm) => { this.selectedFirm = firm; },
-      error: () => {}
-    });
-    this.loadMfgList();
+    this.loadLookups();
   }
 
   onFirmChange(): void {
-    this.service.setFirm(this.selectedFirm).subscribe({
-      next: () => {
-        this.allData = [];
-        this.filteredData = [];
-        this.loadMfgList();
-      },
-      error: () => this.toast.show('Failed to switch firm', { variant: 'error', duration: 5000 })
-    });
+    this.allData = [];
+    this.filteredData = [];
+    this.selectedParty = 0;
+    this.selectedProd  = 0;
+    this.loadLookups();
   }
 
-  private loadMfgList(): void {
-    this.service.getMfgList().subscribe({
+  onYearChange(): void {
+    this.allData = [];
+    this.filteredData = [];
+  }
+
+  private loadLookups(): void {
+    this.service.getMfgList(this.selectedFirm).subscribe({
       next: (data) => { this.mfgList = data; },
       error: () => this.toast.show('Failed to load manufacturer list', { variant: 'error', duration: 5000 })
+    });
+    this.service.getPartyList(this.selectedFirm).subscribe({
+      next: (data) => { this.partyList = data; },
+      error: () => this.toast.show('Failed to load party list', { variant: 'error', duration: 5000 })
+    });
+    this.service.getProductList(this.selectedFirm).subscribe({
+      next: (data) => { this.productList = data; },
+      error: () => this.toast.show('Failed to load product list', { variant: 'error', duration: 5000 })
     });
   }
 
@@ -74,7 +93,11 @@ export class PoRegisterComponent implements OnInit {
     this.loading = true;
     this.currentPage = 1;
 
-    this.service.getDatas(status || 'A', mfgId || 0).subscribe({
+    this.service.getDatas(
+      this.selectedFirm, this.selectedYear,
+      status || 'A',
+      this.selectedProd, this.selectedParty, mfgId || 0
+    ).subscribe({
       next: (data) => {
         this.allData = data;
         this.applyFilter();
@@ -111,9 +134,11 @@ export class PoRegisterComponent implements OnInit {
     this.printing = true;
 
     this.service.printReg({
+      Firm:       this.selectedFirm,
+      Year:       this.selectedYear,
       Status:     status || 'A',
-      Product_id: 0,
-      Party_id:   0,
+      Product_id: this.selectedProd,
+      Party_id:   this.selectedParty,
       Int1:       mfgId || 0,
       Output:     'SCREEN'
     }).subscribe({

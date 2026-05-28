@@ -1,31 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../shared/api.service';
-import { MfgItem, PoListItem, PrintRegBody } from './po-register.models';
+import { MfgItem, PartyItem, PoListItem, PrintRegBody, ProductItem } from './po-register.models';
 
 @Injectable({ providedIn: 'root' })
 export class PoRegisterService {
   constructor(private api: ApiService) {}
 
-  getFirm(): Observable<string> {
-    return this.api.get<string>('/api/Pharmacy/PoRegisterAPI/GetFirm');
-  }
-
-  setFirm(firm: string): Observable<string> {
-    return this.api.post<string>(`/api/Pharmacy/PoRegisterAPI/SetFirm?firm=${encodeURIComponent(firm)}`, null);
-  }
-
-  getDatas(status: string, mfgId: number): Observable<PoListItem[]> {
+  getDatas(firm: string, year: string, status: string, prodId: number, partyId: number, mfgId: number): Observable<PoListItem[]> {
     return this.api.get<PoListItem[]>('/api/Pharmacy/PoRegisterAPI/GetDatas', {
-      status,
-      prodId: 0,
-      partyId: 0,
-      mfgId
+      firm, year, status, prodId, partyId, mfgId
     });
   }
 
-  getMfgList(): Observable<MfgItem[]> {
-    return this.api.get<MfgItem[]>('/api/Pharmacy/PoRegisterAPI/GetMfgList');
+  getMfgList(firm: string): Observable<MfgItem[]> {
+    return this.api.get<MfgItem[]>('/api/Pharmacy/PoRegisterAPI/GetMfgList', { firm });
+  }
+
+  getPartyList(firm: string): Observable<PartyItem[]> {
+    return this.api.get<PartyItem[]>('/api/Pharmacy/PoRegisterAPI/GetPartyList', { firm });
+  }
+
+  getProductList(firm: string): Observable<ProductItem[]> {
+    return this.api.get<ProductItem[]>('/api/Pharmacy/PoRegisterAPI/GetProductList', { firm });
   }
 
   printReg(body: PrintRegBody): Observable<string> {
