@@ -15,6 +15,15 @@
       <form [formGroup]="filterForm" class="flex flex-wrap gap-4 items-end pb-5 border-b border-[#eee]">
 
         <div class="min-w-[140px]">
+          <label class="text-sm text-[#6b6b6b] block mb-1">Firm</label>
+          <select [(ngModel)]="selectedFirm" [ngModelOptions]="{standalone: true}"
+            (ngModelChange)="onFirmChange()"
+            class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none">
+            <option *ngFor="let f of firms" [value]="f.id">{{ f.nm }}</option>
+          </select>
+        </div>
+
+        <div class="min-w-[140px]">
           <label class="text-sm text-[#6b6b6b] block mb-1">Status</label>
           <select formControlName="status"
             class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none">

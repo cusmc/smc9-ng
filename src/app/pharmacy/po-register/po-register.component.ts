@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { PoRegisterService } from './po-register.service';
-import { MfgItem, PoListItem } from './po-register.models';
+import { FirmItem, MfgItem, PoListItem } from './po-register.models';
 import { ToastService } from '../../core/toast/toast.service';
 
 @Component({
@@ -16,6 +16,12 @@ export class PoRegisterComponent implements OnInit {
   allData: PoListItem[] = [];
   filteredData: PoListItem[] = [];
   mfgList: MfgItem[] = [];
+
+  readonly firms: FirmItem[] = [
+    { id: '0001', nm: 'Firm 1' },
+    { id: '0002', nm: 'Firm 2' }
+  ];
+  selectedFirm = '0001';
 
   filterForm: FormGroup;
   partySearch = '';
@@ -38,6 +44,25 @@ export class PoRegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.service.getFirm().subscribe({
+      next: (firm) => { this.selectedFirm = firm; },
+      error: () => {}
+    });
+    this.loadMfgList();
+  }
+
+  onFirmChange(): void {
+    this.service.setFirm(this.selectedFirm).subscribe({
+      next: () => {
+        this.allData = [];
+        this.filteredData = [];
+        this.loadMfgList();
+      },
+      error: () => this.toast.show('Failed to switch firm', { variant: 'error', duration: 5000 })
+    });
+  }
+
+  private loadMfgList(): void {
     this.service.getMfgList().subscribe({
       next: (data) => { this.mfgList = data; },
       error: () => this.toast.show('Failed to load manufacturer list', { variant: 'error', duration: 5000 })

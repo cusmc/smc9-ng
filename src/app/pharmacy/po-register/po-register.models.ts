@@ -32,6 +32,11 @@ export interface MfgItem {
   nm: string;
 }
 
+export interface FirmItem {
+  id: string;
+  nm: string;
+}
+
 export interface PrintRegBody {
   Status: string;
   Product_id: number;

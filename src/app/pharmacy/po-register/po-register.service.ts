@@ -7,6 +7,14 @@ import { MfgItem, PoListItem, PrintRegBody } from './po-register.models';
 export class PoRegisterService {
   constructor(private api: ApiService) {}
 
+  getFirm(): Observable<string> {
+    return this.api.get<string>('/api/Pharmacy/PoRegisterAPI/GetFirm');
+  }
+
+  setFirm(firm: string): Observable<string> {
+    return this.api.post<string>(`/api/Pharmacy/PoRegisterAPI/SetFirm?firm=${encodeURIComponent(firm)}`, null);
+  }
+
   getDatas(status: string, mfgId: number): Observable<PoListItem[]> {
     return this.api.get<PoListItem[]>('/api/Pharmacy/PoRegisterAPI/GetDatas', {
       status,
