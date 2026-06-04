@@ -29,6 +29,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () => import('./accounts/accounts.routes').then(m => m.ACCOUNTS_ROUTES)
   },
+  {
+    path: 'store',
+    canActivate: [authGuard],
+    loadChildren: () => import('./store/store.routes').then(m => m.STORE_ROUTES)
+  },
   { path: '', redirectTo: '/elogbook/activities', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

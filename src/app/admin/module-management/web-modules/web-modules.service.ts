@@ -44,4 +44,8 @@ export class WebModulesService {
   getRightsByModule(id: number): Observable<RightsRecord[]> {
     return this.api.get<RightsRecord[]>(`${BASE}/GetRightsByModuleID`, { id });
   }
+
+  saveLabels(id: number, labels: string[]): Observable<any> {
+    return this.api.post<any>(`${BASE}/SaveLabels?id=${id}`, { Labels: JSON.stringify(labels) });
+  }
 }

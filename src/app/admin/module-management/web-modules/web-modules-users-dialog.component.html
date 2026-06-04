@@ -12,13 +12,6 @@
     </button>
   </div>
 
-  <!-- Search -->
-  <div class="border-b border-[#f0ebe3] px-5 py-3">
-    <input type="search" [(ngModel)]="search"
-      class="w-full max-w-sm rounded-lg border border-[#e5e5e5] px-3 py-1.5 text-sm focus:border-[var(--app-primary)] focus:outline-none"
-      placeholder="Search by name, user ID, department…" />
-  </div>
-
   <!-- Table body -->
   <div class="flex-1 overflow-y-auto px-5 py-3">
     <!-- Loading -->
@@ -28,40 +21,59 @@
     </div>
 
     <div *ngIf="!loading" class="overflow-x-auto rounded-xl border border-[#f0ebe3]">
-      <table class="w-full min-w-[600px] border-collapse text-left text-sm">
+      <table class="w-full border-collapse text-left text-sm">
         <thead>
-          <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
-            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">User ID</th>
-            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">Full Name</th>
-            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">Department</th>
-            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">Category</th>
-            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide w-32">
-              Permission
-              <span class="ml-1 font-normal text-[#aaa]">(8 chars)</span>
+          <!-- Column labels -->
+          <tr class="bg-[#faf8f3] text-[#666]">
+            <th class="border border-[#e8e0d4] px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">User ID</th>
+            <th class="border border-[#e8e0d4] px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">Full Name</th>
+            <th class="border border-[#e8e0d4] px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">Department</th>
+            <th class="border border-[#e8e0d4] px-3 py-2.5 text-xs font-semibold uppercase tracking-wide">Category</th>
+            <th *ngFor="let lbl of labels"
+              class="border border-[#e8e0d4] px-2 py-2.5 text-center text-xs font-semibold uppercase tracking-wide whitespace-nowrap">
+              {{ lbl }}
             </th>
-            <th class="px-3 py-2.5 text-xs font-semibold uppercase tracking-wide w-10"></th>
+          </tr>
+          <!-- Column filters -->
+          <tr class="bg-white">
+            <th class="border border-[#e8e0d4] px-2 py-1.5">
+              <input type="search" [(ngModel)]="filterUserId" (ngModelChange)="resetPage()"
+                class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs font-normal focus:border-[var(--app-primary)] focus:outline-none"
+                placeholder="User ID…" />
+            </th>
+            <th class="border border-[#e8e0d4] px-2 py-1.5">
+              <input type="search" [(ngModel)]="filterName" (ngModelChange)="resetPage()"
+                class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs font-normal focus:border-[var(--app-primary)] focus:outline-none"
+                placeholder="Name…" />
+            </th>
+            <th class="border border-[#e8e0d4] px-2 py-1.5">
+              <input type="search" [(ngModel)]="filterDept" (ngModelChange)="resetPage()"
+                class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs font-normal focus:border-[var(--app-primary)] focus:outline-none"
+                placeholder="Department…" />
+            </th>
+            <th class="border border-[#e8e0d4] px-2 py-1.5">
+              <input type="search" [(ngModel)]="filterCategory" (ngModelChange)="resetPage()"
+                class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs font-normal focus:border-[var(--app-primary)] focus:outline-none"
+                placeholder="Category…" />
+            </th>
+            <th *ngFor="let lbl of labels" class="border border-[#e8e0d4]"></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let u of pagedUsers; let i = index" class="border-b border-[#f5f0e8] hover:bg-[#faf8f3]">
-            <td class="px-3 py-2 text-xs text-[#888] font-mono">{{ u.UserName }}</td>
-            <td class="px-3 py-2 font-medium text-[#333]">{{ u.FullName }}</td>
-            <td class="px-3 py-2 text-[#555]">{{ u.Deptnm }}</td>
-            <td class="px-3 py-2 text-[#666]">{{ u.category }}</td>
-            <td class="px-3 py-2">
-              <input [(ngModel)]="u.Permission" maxlength="8"
-                class="w-28 rounded border border-[#e5e5e5] px-2 py-1 text-center font-mono text-sm tracking-widest focus:border-[var(--app-primary)] focus:outline-none"
-                placeholder="NNNNNNNN" />
-            </td>
-            <td class="px-3 py-2">
-              <button type="button" (click)="deleteUser(i)"
-                class="rounded p-1 text-red-400 hover:bg-red-50 hover:text-red-600" title="Remove user">
-                <span class="material-icons text-[16px]">delete</span>
-              </button>
+          <tr *ngFor="let u of pagedUsers" class="hover:bg-[#faf8f3]">
+            <td class="border border-[#e8e0d4] px-3 py-2 text-xs text-[#888] font-mono">{{ u.UserName }}</td>
+            <td class="border border-[#e8e0d4] px-3 py-2 font-medium text-[#333]">{{ u.FullName }}</td>
+            <td class="border border-[#e8e0d4] px-3 py-2 text-[#555]">{{ u.Deptnm }}</td>
+            <td class="border border-[#e8e0d4] px-3 py-2 text-[#666]">{{ u.category }}</td>
+            <td *ngFor="let lbl of labels; let j = index"
+              class="border border-[#e8e0d4] px-2 py-2 text-center">
+              <input type="checkbox"
+                [(ngModel)]="u.checks![j]"
+                class="h-3.5 w-3.5 accent-[var(--app-primary)]" />
             </td>
           </tr>
           <tr *ngIf="pagedUsers.length === 0">
-            <td colspan="6" class="px-3 py-8 text-center text-sm text-[#999]">No users found.</td>
+            <td [attr.colspan]="4 + labels.length" class="border border-[#e8e0d4] px-3 py-8 text-center text-sm text-[#999]">No users found.</td>
           </tr>
         </tbody>
       </table>
@@ -78,12 +90,6 @@
           class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">Next</button>
       </div>
     </div>
-
-    <!-- Permission key legend -->
-    <p class="mt-3 text-xs text-[#aaa]">
-      Permission format (8 characters): <span class="font-mono">V A E D A1 A2 S1 S2</span>
-      — Y = allowed, N = denied
-    </p>
   </div>
 
   <!-- Footer -->

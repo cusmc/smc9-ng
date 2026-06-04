@@ -1,0 +1,140 @@
+<div class="container-fluid p-3">
+
+  <div class="card shadow-sm border-0">
+    <div class="card-header d-flex justify-content-between align-items-center"
+         style="background:#595CA7; color:#fff;">
+      <span><i class="fas fa-pills me-2"></i> Pharmacy &mdash; Discharge Clearance Queue</span>
+      <span class="d-flex align-items-center gap-2">
+        <button class="btn btn-sm btn-light" (click)="loadQueue(); countdown=120;" [disabled]="isLoading">
+          <i class="fas fa-sync-alt" [class.fa-spin]="isLoading"></i> Refresh
+        </button>
+        <small>Auto-refresh in {{ countdown }}s</small>
+      </span>
+    </div>
+
+    <div class="card-body p-2">
+
+      <div class="alert alert-info py-1 mb-2" style="font-size:13px;">
+        <i class="fas fa-info-circle"></i>
+        Pharmacy clearance is recorded automatically when cleared in the Pharmacy application.
+      </div>
+
+      <!-- Date Filter -->
+      <div class="d-flex align-items-center gap-2 mb-2 flex-wrap" style="font-size:13px;">
+        <label class="mb-0 fw-semibold">Dis. Date From:</label>
+        <input type="date" class="form-control form-control-sm" style="width:150px;"
+               [(ngModel)]="filter.disFdate">
+        <label class="mb-0 fw-semibold">To:</label>
+        <input type="date" class="form-control form-control-sm" style="width:150px;"
+               [(ngModel)]="filter.disTdate">
+        <button class="btn btn-sm btn-primary" (click)="loadQueue(); countdown=120;" [disabled]="isLoading">
+          <i class="fas fa-filter"></i> Apply
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" (click)="resetFilters()">
+          <i class="fas fa-times"></i> Clear
+        </button>
+      </div>
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-2">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="activeTab==='Pending'"
+             (click)="setTab('Pending')" style="cursor:pointer">
+            Pharm. Pending
+            <span class="badge bg-danger text-white ms-1" *ngIf="pendingCount > 0">{{pendingCount}}</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="activeTab==='Completed'"
+             (click)="setTab('Completed')" style="cursor:pointer">
+            Completed
+            <span class="badge bg-success text-white ms-1" *ngIf="completedCount > 0">{{completedCount}}</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="activeTab==='All'"
+             (click)="setTab('All')" style="cursor:pointer">
+            All
+            <span class="badge bg-secondary text-white ms-1">{{allData.length}}</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-sm mb-1">
+          <thead style="background:#66758e; color:#f5f5f5;">
+            <tr>
+              <th>Ward / Bed</th>
+              <th>OPD No</th>
+              <th>Patient Name</th>
+              <th>Discharge Requested</th>
+              <th>Waiting</th>
+              <th class="text-center">Dis.Summary</th>
+              <th class="text-center">Scheme</th>
+              <th class="text-center">Pharmacy</th>
+              <th class="text-center">Financial</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="filteredList.length === 0 && !isLoading">
+              <td colspan="9" class="text-center text-success py-3">
+                <i class="fas fa-check-circle"></i> No patients in this view.
+              </td>
+            </tr>
+            <tr *ngIf="isLoading">
+              <td colspan="9" class="text-center py-3">Loading&hellip;</td>
+            </tr>
+            <tr *ngFor="let bx of filteredList" [ngClass]="rowClass(bx.waitingMins)">
+              <td>
+                {{ bx.nustname }}<br/>
+                <small class="text-muted">Bed: {{ bx.bedno }}</small>
+              </td>
+              <td>{{ bx.opdid }}</td>
+              <td>{{ bx.fullname }}</td>
+              <td>{{ bx.disReqDt | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                <span class="badge" [ngClass]="waitBadge(bx.waitingMins)">
+                  {{ bx.waitingMins }} min
+                </span>
+              </td>
+              <td class="text-center">
+                <i *ngIf="bx.disSumDt"  class="fas fa-check-circle text-success"
+                   title="{{ bx.disSumDt | date:'dd/MM/yyyy HH:mm' }}"></i>
+                <i *ngIf="!bx.disSumDt" class="fas fa-times-circle text-danger"
+                   title="Pending"></i>
+              </td>
+              <td class="text-center">
+                <i *ngIf="bx.schemeClearDt" class="fas fa-check-circle text-success"
+                   title="{{ bx.schemeClearDt | date:'dd/MM/yyyy HH:mm' }}"></i>
+                <i *ngIf="!bx.schemeClearDt && bx.isSchemeRequired" class="fas fa-times-circle text-danger"
+                   title="Pending"></i>
+                <i *ngIf="!bx.schemeClearDt && !bx.isSchemeRequired" class="fas fa-minus-circle text-muted"
+                   title="Not applicable (Self Pay)"></i>
+              </td>
+              <td class="text-center">
+                <i *ngIf="bx.pharmClearDt"  class="fas fa-check-circle text-success"
+                   title="{{ bx.pharmClearDt | date:'dd/MM/yyyy HH:mm' }}"></i>
+                <i *ngIf="!bx.pharmClearDt" class="fas fa-times-circle text-danger"
+                   title="Pending"></i>
+              </td>
+              <td class="text-center">
+                <i *ngIf="bx.finClearDt"  class="fas fa-check-circle text-success"
+                   title="{{ bx.finClearDt | date:'dd/MM/yyyy HH:mm' }}"></i>
+                <i *ngIf="!bx.finClearDt" class="fas fa-times-circle text-danger"
+                   title="Pending"></i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex gap-3 mt-1" style="font-size:12px;">
+        <span><span class="badge badge-success">&nbsp;</span> &le;120 min</span>
+        <span><span class="badge badge-warning">&nbsp;</span> 121&ndash;240 min</span>
+        <span><span class="badge badge-danger">&nbsp;</span> &gt;240 min</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>

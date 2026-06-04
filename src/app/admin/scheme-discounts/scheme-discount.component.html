@@ -1,0 +1,119 @@
+<div class="flex min-h-0 flex-1 flex-col bg-page">
+  <!-- Header -->
+  <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
+    <h2 class="text-lg font-semibold">Scheme Discount Rates</h2>
+    <span class="flex-1"></span>
+    <button type="button"
+      class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white shadow hover:bg-accent-hover disabled:opacity-50"
+      (click)="openCreateDialog()" [disabled]="!selectedSchmastId">
+      <span class="material-icons text-lg">add_circle</span>
+      Add Rule
+    </button>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-4 p-4">
+    <!-- Filter bar -->
+    <div class="rounded-xl border border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+      <div class="flex flex-wrap items-end gap-4">
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-semibold uppercase tracking-wide text-[#666]">Scheme</label>
+          <select [(ngModel)]="selectedSchmastId"
+            class="rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none w-56">
+            <option [ngValue]="null">-- Select Scheme --</option>
+            <option *ngFor="let s of schemeList" [ngValue]="s.id">{{ s.nm }}</option>
+          </select>
+        </div>
+        <button type="button"
+          class="inline-flex items-center gap-2 rounded-lg bg-[var(--app-primary)] px-5 py-2 text-sm font-medium text-white shadow hover:bg-[var(--app-primary-dark)] disabled:opacity-50"
+          (click)="loadData()" [disabled]="!selectedSchmastId || loading">
+          <span class="material-icons text-[18px]">search</span>
+          View
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex items-center gap-3 px-2 py-6 text-[#777]">
+      <div class="h-6 w-6 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+      <span class="text-sm">Loading…</span>
+    </div>
+
+    <!-- Grid -->
+    <div *ngIf="!loading && rows.length > 0" class="rounded-xl border border-[#f0ebe3] bg-white overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-[#404040] text-white">
+          <tr>
+            <th class="px-3 py-2 text-left font-semibold w-28">Level</th>
+            <th class="px-3 py-2 text-left font-semibold w-16">Code</th>
+            <th class="px-3 py-2 text-left font-semibold">Narration / Group</th>
+            <th class="px-3 py-2 text-left font-semibold w-28">Rate Type</th>
+            <th class="px-3 py-2 text-right font-semibold w-24">Discount %</th>
+            <th class="px-3 py-2 text-left font-semibold w-28">Eff. Date</th>
+            <th class="px-3 py-2 text-left font-semibold w-28">Expiry</th>
+            <th class="px-3 py-2 text-center font-semibold w-20">Action</th>
+          </tr>
+          <!-- Search row -->
+          <tr class="bg-[#555]">
+            <td class="px-2 py-1">
+              <input type="text" [(ngModel)]="search.Level" (ngModelChange)="onSearchChange()"
+                class="w-full rounded px-2 py-1 text-xs text-black focus:outline-none" placeholder="Search" />
+            </td>
+            <td class="px-2 py-1"></td>
+            <td class="px-2 py-1">
+              <input type="text" [(ngModel)]="search.NarrOrGroup" (ngModelChange)="onSearchChange()"
+                class="w-full rounded px-2 py-1 text-xs text-black focus:outline-none" placeholder="Search" />
+            </td>
+            <td class="px-2 py-1"></td>
+            <td class="px-2 py-1">
+              <input type="text" [(ngModel)]="search.DiscountPct" (ngModelChange)="onSearchChange()"
+                class="w-full rounded px-2 py-1 text-xs text-black focus:outline-none" placeholder="Search" />
+            </td>
+            <td colspan="3"></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of pagedRows" class="border-b border-[#f0ebe3] hover:bg-[#fafafa]">
+            <td class="px-3 py-2">
+              <span class="rounded-full px-2 py-0.5 text-xs font-medium" [ngClass]="levelBadgeClass(r.Level)">
+                {{ r.Level }}
+              </span>
+            </td>
+            <td class="px-3 py-2 text-[#888]">{{ r.Narrcode ?? '' }}</td>
+            <td class="px-3 py-2 text-[#333]">{{ displayName(r) }}</td>
+            <td class="px-3 py-2 text-[#888] text-xs">{{ r.Rate_nm || '–' }}</td>
+            <td class="px-3 py-2 text-right font-semibold text-emerald-700">{{ r.DiscountPct }}%</td>
+            <td class="px-3 py-2 text-[#555]">{{ r.Wef_dt | date:'dd/MM/yyyy' }}</td>
+            <td class="px-3 py-2 text-[#555]">{{ r.Expdt ? (r.Expdt | date:'dd/MM/yyyy') : '–' }}</td>
+            <td class="px-3 py-2 text-center">
+              <button class="rounded p-1 hover:bg-[#eee]" title="Edit" (click)="openEditDialog(r)">
+                <span class="material-icons text-[18px] text-[#555]">edit</span>
+              </button>
+              <button class="rounded p-1 hover:bg-red-50" title="Deactivate" (click)="deleteRow(r)">
+                <span class="material-icons text-[18px] text-red-400">delete</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-between border-t border-[#f0ebe3] px-4 py-2 text-sm text-[#555]">
+        <span>{{ filteredRows.length }} rule(s)</span>
+        <div class="flex items-center gap-1">
+          <button class="rounded px-2 py-1 hover:bg-[#eee] disabled:opacity-40"
+            [disabled]="currentPage === 1" (click)="currentPage = currentPage - 1">&#8249;</button>
+          <span>{{ currentPage }} / {{ totalPages }}</span>
+          <button class="rounded px-2 py-1 hover:bg-[#eee] disabled:opacity-40"
+            [disabled]="currentPage === totalPages" (click)="currentPage = currentPage + 1">&#8250;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loading && rows.length === 0 && selectedSchmastId"
+      class="rounded-xl border border-[#f0ebe3] bg-white px-6 py-10 text-center text-[#aaa]">
+      <span class="material-icons text-4xl">discount</span>
+      <p class="mt-2 text-sm">No discount rules configured for this scheme.</p>
+    </div>
+  </div>
+</div>

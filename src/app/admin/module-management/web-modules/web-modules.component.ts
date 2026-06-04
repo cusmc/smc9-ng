@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Dialog } from '@angular/cdk/dialog';
 import { WebModulesService } from './web-modules.service';
-import { Wmodule } from './web-modules.models';
+import { Wmodule, DEFAULT_LABELS, getModuleLabels } from './web-modules.models';
 import { WebModulesEditDialogComponent } from './web-modules-edit-dialog.component';
 import { WebModulesUsersDialogComponent } from './web-modules-users-dialog.component';
 import { WebModulesRolesDialogComponent } from './web-modules-roles-dialog.component';
@@ -22,6 +22,12 @@ export class WebModulesComponent implements OnInit {
   loading = false;
   currentPage = 1;
   readonly itemsPerPage = 10;
+  readonly defaultLabels = DEFAULT_LABELS;
+
+  expandedLabelsId: number | null = null;
+  labelSavingId: number | null = null;
+  labelSavedId: number | null = null;
+  private labelSavedTimer: ReturnType<typeof setTimeout> | null = null;
 
   search = {
     Wmodule_nm: '',
@@ -102,5 +108,32 @@ export class WebModulesComponent implements OnInit {
 
   openRightsView(mod: Wmodule): void {
     this.dialog.open(WebModulesRightsViewDialogComponent, { width: '860px', data: mod });
+  }
+
+  toggleLabels(mod: Wmodule): void {
+    if (this.expandedLabelsId === mod.Wmodule_id) {
+      this.expandedLabelsId = null;
+      return;
+    }
+    mod.labelArr = getModuleLabels(mod);
+    this.expandedLabelsId = mod.Wmodule_id;
+  }
+
+  autoSaveLabels(mod: Wmodule): void {
+    if (!mod.labelArr) return;
+    this.labelSavingId = mod.Wmodule_id;
+    this.service.saveLabels(mod.Wmodule_id, mod.labelArr).subscribe({
+      next: () => {
+        mod.Rights_Labels = JSON.stringify(mod.labelArr);
+        this.labelSavingId = null;
+        this.labelSavedId = mod.Wmodule_id;
+        if (this.labelSavedTimer) clearTimeout(this.labelSavedTimer);
+        this.labelSavedTimer = setTimeout(() => { this.labelSavedId = null; }, 2000);
+      },
+      error: () => {
+        this.labelSavingId = null;
+        this.toast.show('Error saving labels', { variant: 'error', duration: 3000 });
+      },
+    });
   }
 }

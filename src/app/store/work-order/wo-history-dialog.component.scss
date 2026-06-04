@@ -1,0 +1,123 @@
+.history-dialog {
+  background: #fff;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  width: 860px;
+  max-width: 96vw;
+  max-height: 82vh;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #dee2e6;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #666;
+  padding: 2px 6px;
+  border-radius: 3px;
+  &:hover { background: #f0f0f0; }
+}
+
+.filter-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 10px 16px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  label { font-size: 0.75rem; font-weight: 500; color: #666; }
+}
+
+.form-control {
+  padding: 5px 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  &:focus { outline: none; border-color: #0d6efd; }
+}
+
+.table-wrap {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+
+  th {
+    background: #495057;
+    color: #fff;
+    padding: 7px 10px;
+    text-align: left;
+    white-space: nowrap;
+    font-weight: 500;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .clickable {
+    cursor: pointer;
+    &:hover { background: #e8f0fe; }
+  }
+
+  .text-right { text-align: right; }
+  .narration { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .no-data { text-align: center; color: #aaa; padding: 24px 0; }
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+  &.badge-pending { background: #fff3cd; color: #856404; }
+  &.badge-done    { background: #d1e7dd; color: #0a3622; }
+}
+
+.dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-top: 1px solid #dee2e6;
+}
+
+.record-count { font-size: 0.78rem; color: #888; }
+
+.btn {
+  padding: 6px 18px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  &.btn-primary   { background: #0d6efd; color: #fff; }
+  &.btn-secondary { background: #6c757d; color: #fff; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}

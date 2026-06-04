@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { WebModulesService } from './web-modules.service';
-import { Wmodule, UserWright } from './web-modules.models';
+import { Wmodule, UserWright, DEFAULT_LABELS, getModuleLabels, permToChecks, checksToPerm } from './web-modules.models';
 import { ToastService } from '../../../core/toast/toast.service';
 
 @Component({
@@ -17,19 +17,28 @@ export class WebModulesUsersDialogComponent implements OnInit {
   users: UserWright[] = [];
   loading = false;
   saving = false;
-  search = '';
+
+  filterUserId   = '';
+  filterName     = '';
+  filterDept     = '';
+  filterCategory = '';
+
+  labels: string[] = [...DEFAULT_LABELS];
+  isCustom = false;
 
   currentPage = 1;
   readonly itemsPerPage = 7;
 
   get filteredUsers(): UserWright[] {
-    if (!this.search) return this.users;
-    const q = this.search.toLowerCase();
-    return this.users.filter(
-      (u) =>
-        u.FullName.toLowerCase().includes(q) ||
-        u.UserName.toLowerCase().includes(q) ||
-        (u.Deptnm ?? '').toLowerCase().includes(q),
+    const id  = this.filterUserId.toLowerCase();
+    const nm  = this.filterName.toLowerCase();
+    const dep = this.filterDept.toLowerCase();
+    const cat = this.filterCategory.toLowerCase();
+    return this.users.filter(u =>
+      (!id  || (u.UserName  ?? '').toLowerCase().includes(id)) &&
+      (!nm  || (u.FullName  ?? '').toLowerCase().includes(nm)) &&
+      (!dep || (u.Deptnm    ?? '').toLowerCase().includes(dep)) &&
+      (!cat || (u.category  ?? '').toLowerCase().includes(cat))
     );
   }
 
@@ -42,15 +51,9 @@ export class WebModulesUsersDialogComponent implements OnInit {
     return Math.max(1, Math.ceil(this.filteredUsers.length / this.itemsPerPage));
   }
 
+  resetPage(): void { this.currentPage = 1; }
   prevPage(): void { if (this.currentPage > 1) this.currentPage--; }
   nextPage(): void { if (this.currentPage < this.totalPages) this.currentPage++; }
-
-  deleteUser(index: number): void {
-    const user = this.pagedUsers[index];
-    const actualIndex = this.users.indexOf(user);
-    if (actualIndex !== -1) this.users.splice(actualIndex, 1);
-    if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
-  }
 
   constructor(
     private service: WebModulesService,
@@ -60,13 +63,18 @@ export class WebModulesUsersDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.labels = getModuleLabels(this.data);
+    this.isCustom = this.labels.some((l, i) => l !== DEFAULT_LABELS[i]);
     this.loadUsers();
   }
 
   loadUsers(): void {
     this.loading = true;
     this.service.getAllUsers(this.data.Wmodule_id).subscribe({
-      next: (data) => { this.users = data; this.loading = false; },
+      next: (data) => {
+        this.users = data.map(u => ({ ...u, checks: permToChecks(u.Permission) }));
+        this.loading = false;
+      },
       error: () => {
         this.toast.show('Error loading users', { variant: 'error', duration: 3000 });
         this.loading = false;
@@ -76,7 +84,8 @@ export class WebModulesUsersDialogComponent implements OnInit {
 
   onSave(): void {
     this.saving = true;
-    this.service.saveUserRights(this.data.Wmodule_id, this.users).subscribe({
+    const payload = this.users.map(u => ({ ...u, Permission: checksToPerm(u.checks ?? []) }));
+    this.service.saveUserRights(this.data.Wmodule_id, payload).subscribe({
       next: () => {
         this.toast.show('User rights saved', { variant: 'success', duration: 3000 });
         this.saving = false;

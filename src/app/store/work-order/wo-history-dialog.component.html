@@ -1,0 +1,70 @@
+<div class="history-dialog">
+  <div class="dialog-header">
+    <span>Work Order History</span>
+    <button class="btn-close" (click)="close()">&#10005;</button>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>From</label>
+      <input type="date" [(ngModel)]="fromDt" class="form-control" />
+    </div>
+    <div class="filter-group">
+      <label>To</label>
+      <input type="date" [(ngModel)]="toDt" class="form-control" />
+    </div>
+    <div class="filter-group">
+      <label>Party</label>
+      <select [(ngModel)]="partyId" class="form-control">
+        <option [value]="0">All</option>
+        <option *ngFor="let p of data.parties" [value]="p.Party_id">{{p.Party_nm}}</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Status</label>
+      <select [(ngModel)]="status" class="form-control">
+        <option *ngFor="let s of statusOptions" [value]="s.value">{{s.label}}</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" (click)="load()" [disabled]="loading">
+      {{ loading ? 'Loading...' : 'Show' }}
+    </button>
+  </div>
+
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>WO No.</th>
+          <th>Date</th>
+          <th>Contractor</th>
+          <th>Remarks</th>
+          <th class="text-right">Net Bill</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of listData" (click)="select(row)" class="clickable">
+          <td>{{row.Wo_no}}</td>
+          <td>{{row.Wo_dt | date:'dd/MM/yyyy'}}</td>
+          <td>{{row.Party_nm}}</td>
+          <td class="narration">{{row.Narration}}</td>
+          <td class="text-right">{{row.Netbill | number:'1.2-2'}}</td>
+          <td>
+            <span class="badge" [class.badge-pending]="row.Pending" [class.badge-done]="!row.Pending">
+              {{row.Pending ? 'Pending' : 'Closed'}}
+            </span>
+          </td>
+        </tr>
+        <tr *ngIf="listData.length === 0 && !loading">
+          <td colspan="6" class="no-data">No records found</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="dialog-footer">
+    <span class="record-count">{{listData.length}} record(s)</span>
+    <button class="btn btn-secondary" (click)="close()">Close</button>
+  </div>
+</div>

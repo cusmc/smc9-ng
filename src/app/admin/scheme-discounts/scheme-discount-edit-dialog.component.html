@@ -1,0 +1,134 @@
+<div class="flex w-full flex-col bg-white" style="max-height:90vh">
+  <!-- Header -->
+  <div class="flex items-center gap-3 border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+    <span class="material-icons text-[var(--app-primary)]">discount</span>
+    <h3 class="text-base font-semibold text-[#333]">{{ isEdit ? 'Edit Discount Rule' : 'Add Discount Rule' }}</h3>
+    <span class="flex-1"></span>
+    <button type="button" class="rounded p-1 hover:bg-[#eee]" (click)="onCancel()" aria-label="Close">
+      <span class="material-icons text-[#999]">close</span>
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex items-center gap-3 px-5 py-10 text-[#777]">
+    <div class="h-7 w-7 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+    <span class="text-sm">Loading…</span>
+  </div>
+
+  <!-- Form -->
+  <form *ngIf="!loading" [formGroup]="form" class="flex flex-1 flex-col gap-4 overflow-y-auto p-5">
+
+    <!-- Scheme -->
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+        Scheme <span class="text-red-500">*</span>
+      </label>
+      <select formControlName="Schmast_id"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none">
+        <option [ngValue]="null">-- Select Scheme --</option>
+        <option *ngFor="let s of schemeList" [ngValue]="s.id">{{ s.nm }}</option>
+      </select>
+    </div>
+
+    <!-- Level -->
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+        Level <span class="text-red-500">*</span>
+      </label>
+      <select formControlName="Level" (change)="onLevelChange()"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none">
+        <option value="Item">Item — specific narration code</option>
+        <option value="Sub-Group">Sub-Group — all codes in sub-group</option>
+        <option value="Head Group">Head Group — all codes in group</option>
+      </select>
+    </div>
+
+    <!-- Item level: Narrcode -->
+    <div *ngIf="level === 'Item'">
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+        Narration Code <span class="text-red-500">*</span>
+      </label>
+      <input formControlName="Narrcode" type="number" min="1"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none"
+        placeholder="Enter narration code (see Code List)" />
+      <p class="mt-1 text-xs text-[#999]">Refer to Code List screen for narration codes.</p>
+    </div>
+
+    <!-- Sub-Group level: Sgroup_id -->
+    <div *ngIf="level === 'Sub-Group'">
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+        Sub-Group <span class="text-red-500">*</span>
+      </label>
+      <select formControlName="Sgroup_id"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none">
+        <option [ngValue]="null">-- Select Sub-Group --</option>
+        <option *ngFor="let s of sgroupList" [ngValue]="s.id">{{ s.nm }}</option>
+      </select>
+    </div>
+
+    <!-- Head Group level: Group_id -->
+    <div *ngIf="level === 'Head Group'">
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+        Head Group <span class="text-red-500">*</span>
+      </label>
+      <select formControlName="Group_id"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none">
+        <option [ngValue]="null">-- Select Head Group --</option>
+        <option *ngFor="let h of headList" [ngValue]="h.id">{{ h.nm }}</option>
+      </select>
+    </div>
+
+    <!-- Rate Type (optional) -->
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+        Rate Type <span class="text-[#aaa] font-normal normal-case">(optional — e.g. Bed Charge)</span>
+      </label>
+      <input formControlName="Rate_nm" type="text" maxlength="15"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none"
+        placeholder="Leave blank to match any rate type" />
+    </div>
+
+    <!-- Discount % + Dates -->
+    <div class="grid grid-cols-3 gap-4">
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+          Discount % <span class="text-red-500">*</span>
+        </label>
+        <input formControlName="DiscountPct" type="number" min="0.01" max="100" step="0.01"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none"
+          placeholder="e.g. 20" />
+        <p *ngIf="form.get('DiscountPct')?.invalid && form.get('DiscountPct')?.touched"
+          class="mt-1 text-xs text-red-500">Enter a valid discount (1–100).</p>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">
+          Effective Date <span class="text-red-500">*</span>
+        </label>
+        <input formControlName="Wef_dt" type="date"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none" />
+        <p *ngIf="form.get('Wef_dt')?.invalid && form.get('Wef_dt')?.touched"
+          class="mt-1 text-xs text-red-500">Date is required.</p>
+      </div>
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Expiry Date</label>
+        <input formControlName="Expdt" type="date"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none" />
+      </div>
+    </div>
+
+  </form>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-end gap-3 border-t border-[#f0ebe3] px-5 py-3">
+    <button type="button"
+      class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm text-[#555] hover:bg-[#f5f5f5]"
+      (click)="onCancel()">Cancel</button>
+    <button type="button"
+      class="inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-2 text-sm font-medium text-white shadow hover:bg-accent-hover disabled:opacity-50"
+      (click)="onSave()" [disabled]="saving">
+      <span *ngIf="saving" class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+      <span class="material-icons text-[18px]" *ngIf="!saving">save</span>
+      {{ saving ? 'Saving…' : 'Save' }}
+    </button>
+  </div>
+</div>

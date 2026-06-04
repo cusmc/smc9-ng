@@ -207,6 +207,7 @@ export const APP_NAV: NavModule[] = [
         icon: 'gavel',
         items: [
           { label: 'Tender', icon: 'description', externalUrl: '/Tender/Index' },
+          { label: 'Work Order', icon: 'engineering', route: '/store/work-order' },
           { label: 'Payment Request', icon: 'payments', externalUrl: '/Payment/Request' },
           { label: 'GatePass', icon: 'badge', externalUrl: '/GatePass/Index' },
           { label: 'Condemn / Sold', icon: 'delete_sweep', externalUrl: '/Condemn/Index' },
@@ -304,6 +305,7 @@ export const APP_NAV: NavModule[] = [
           { label: 'Rate Contract', icon: 'price_check', externalUrl: '/Pharmacy/RateContract' },
           { label: 'Form-H Monitor', icon: 'monitor_heart', externalUrl: '/Pharmacy/FormH' },
           { label: 'PO Register', icon: 'list_alt', route: '/pharmacy/po-register' },
+          { label: 'Discharge Queue', icon: 'monitor_heart', route: '/pharmacy/discharge-queue' },
         ],
       },
       {
@@ -445,6 +447,13 @@ export const APP_NAV: NavModule[] = [
         icon: 'language',
         items: [
           { label: 'Webpages', icon: 'web', route: '/admin/website/webpages' },
+        ],
+      },
+      {
+        label: 'Scheme Configuration',
+        icon: 'discount',
+        items: [
+          { label: 'Scheme Discounts', icon: 'percent', route: '/admin/scheme-discounts' },
         ],
       },
       {

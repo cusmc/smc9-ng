@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { WebModulesService } from './web-modules.service';
-import { Wmodule, GroupWright } from './web-modules.models';
+import { Wmodule, GroupWright, DEFAULT_LABELS, getModuleLabels, permToChecks, checksToPerm } from './web-modules.models';
 import { ToastService } from '../../../core/toast/toast.service';
 
 @Component({
@@ -20,6 +20,8 @@ export class WebModulesRolesDialogComponent implements OnInit {
   search = '';
   currentPage = 1;
   readonly itemsPerPage = 7;
+  labels: string[] = [...DEFAULT_LABELS];
+  isCustom = false;
 
   get filteredGroups(): GroupWright[] {
     if (!this.search) return this.groups;
@@ -59,13 +61,18 @@ export class WebModulesRolesDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.labels = getModuleLabels(this.data);
+    this.isCustom = this.labels.some((l, i) => l !== DEFAULT_LABELS[i]);
     this.loadGroups();
   }
 
   loadGroups(): void {
     this.loading = true;
     this.service.getAllGroups(this.data.Wmodule_id).subscribe({
-      next: (data) => { this.groups = data; this.loading = false; },
+      next: (data) => {
+        this.groups = data.map(g => ({ ...g, checks: permToChecks(g.Permission) }));
+        this.loading = false;
+      },
       error: () => {
         this.toast.show('Error loading roles', { variant: 'error', duration: 3000 });
         this.loading = false;
@@ -75,9 +82,8 @@ export class WebModulesRolesDialogComponent implements OnInit {
 
   onSave(): void {
     this.saving = true;
-    // The legacy API takes roleid + list; we send the full groups array
-    // SaveModulesByrole expects roleid (not used for bulk) + list of Wrights
-    this.service.saveRoleRights('', this.groups).subscribe({
+    const payload = this.groups.map(g => ({ ...g, Permission: checksToPerm(g.checks ?? []) }));
+    this.service.saveRoleRights('', payload).subscribe({
       next: () => {
         this.toast.show('Role rights saved', { variant: 'success', duration: 3000 });
         this.saving = false;

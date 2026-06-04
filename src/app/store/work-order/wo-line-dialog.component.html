@@ -1,0 +1,118 @@
+<div class="line-dialog">
+
+  <!-- Header -->
+  <div class="dialog-header">
+    <span>{{data.line ? 'Edit Item' : 'Add Item'}}</span>
+    <button type="button" class="btn-close" (click)="cancel()" title="Close">&#10005;</button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-body">
+
+    <!-- Product -->
+    <div class="section-block">
+      <div class="form-row">
+        <div class="form-group fg-full">
+          <label>Search Product</label>
+          <input type="text" class="form-control" placeholder="Type 2+ chars to search..."
+                 [(ngModel)]="prodSearch" [ngModelOptions]="{standalone: true}" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group fg-full">
+          <label>Product <span class="req">*</span></label>
+          <select formControlName="Prodno" class="form-control" (change)="onProductChange()">
+            <option [value]="null">{{filteredProducts.length === 0 && prodSearch.length >= 2 ? 'No results' : '-- Search above to find product --'}}</option>
+            <option *ngFor="let p of filteredProducts" [value]="p.Prodno">{{p.Prodname}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group fg-lg">
+          <label>Description</label>
+          <textarea formControlName="Descri" class="form-control" rows="2"></textarea>
+        </div>
+        <div class="form-group fg-lg">
+          <label>Specifications</label>
+          <textarea formControlName="Speci" class="form-control" rows="2"></textarea>
+        </div>
+        <div class="form-group fg-sm">
+          <label>Make / Brand</label>
+          <input type="text" formControlName="Make" class="form-control" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Qty / Rate / Amount -->
+    <div class="section-block section-divider">
+      <div class="form-row">
+        <div class="form-group fg-sm">
+          <label>Qty <span class="req">*</span></label>
+          <input type="number" formControlName="Qnt" class="form-control text-right" (change)="recalc()" />
+        </div>
+        <div class="form-group fg-sm">
+          <label>Rate</label>
+          <input type="number" formControlName="Rate" class="form-control text-right" (change)="recalc()" />
+        </div>
+        <div class="form-group fg-sm">
+          <label>Amount</label>
+          <input type="number" formControlName="Amount" class="form-control text-right computed" readonly />
+        </div>
+        <div class="form-group fg-xs">
+          <label>Ratio (BCD)</label>
+          <input type="number" formControlName="Ratio" class="form-control text-right" />
+        </div>
+        <div class="form-group fg-md">
+          <label>Dept.</label>
+          <select formControlName="Dept_id" class="form-control">
+            <option [value]="null">-- None --</option>
+            <option *ngFor="let d of data.depts" [value]="d.Dept_id">{{d.Dept_nm}}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Discount & Taxes -->
+    <div class="section-block section-divider">
+      <div class="tax-grid">
+        <div class="tax-label"></div>
+        <div class="tax-col-header">%</div>
+        <div class="tax-col-header">Amount</div>
+        <div class="tax-label">Discount</div>
+        <input type="number" formControlName="Disc_per" class="form-control text-right"  (change)="recalc()" />
+        <input type="number" formControlName="Disc_amt" class="form-control text-right computed" readonly />
+        <div class="tax-label">SGST</div>
+        <input type="number" formControlName="St_per"  class="form-control text-right" (change)="recalc()" />
+        <input type="number" formControlName="St_amt"  class="form-control text-right computed" readonly />
+        <div class="tax-label">CGST</div>
+        <input type="number" formControlName="Ex_per"  class="form-control text-right" (change)="recalc()" />
+        <input type="number" formControlName="Ex_amt"  class="form-control text-right computed" readonly />
+        <div class="tax-label">IGST</div>
+        <input type="number" formControlName="Cst_per" class="form-control text-right" (change)="recalc()" />
+        <input type="number" formControlName="Cst_amt" class="form-control text-right computed" readonly />
+      </div>
+    </div>
+
+    <!-- Footer: Tender + Total -->
+    <div class="section-block section-divider dialog-footer-row">
+      <div class="form-group fg-md">
+        <label>Tender Ref.</label>
+        <select formControlName="Tender_id" class="form-control">
+          <option [value]="null">-- None --</option>
+          <option *ngFor="let t of data.tenders" [value]="t.Pk_id">{{t.Tender_no}}</option>
+        </select>
+      </div>
+      <div class="spacer"></div>
+      <div class="total-box">
+        <span class="total-box-label">Net Total</span>
+        <input type="number" formControlName="Total" class="form-control text-right total-field" readonly />
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Save Item</button>
+    </div>
+
+  </form>
+</div>
