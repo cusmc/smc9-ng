@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+// Prevent ApexCharts SVG from clipping outside card bounds
+::ng-deep .apexcharts-canvas {
+  overflow: hidden;
+}
+
+// Tighten legend text on small charts
+::ng-deep .apexcharts-legend-text {
+  font-size: 11px !important;
+}

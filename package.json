@@ -20,6 +20,8 @@
     "@angular/platform-browser-dynamic": "^18.2.14",
     "@angular/router": "^18.2.14",
     "@tailwindcss/postcss": "^4.2.4",
+    "apexcharts": "^5.14.0",
+    "ng-apexcharts": "^1.11.0",
     "ngx-editor": "^18.0.0",
     "ngx-toastr": "^19.1.0",
     "postcss": "^8.5.13",

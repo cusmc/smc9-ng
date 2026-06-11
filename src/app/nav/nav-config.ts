@@ -433,6 +433,7 @@ export const APP_NAV: NavModule[] = [
         icon: 'lock',
         items: [
           { label: 'Rights Requests', icon: 'approval', route: '/admin/access-control/rights-requests' },
+          { label: 'Access Review (NABH)', icon: 'fact_check', route: '/admin/access-control/access-review' },
         ],
       },
       {
@@ -481,7 +482,7 @@ export const APP_NAV: NavModule[] = [
         label: 'Dashboards',
         icon: 'dashboard',
         items: [
-          { label: 'Hospital Dashboard', icon: 'local_hospital', externalUrl: '/MIS/Hospital' },
+          { label: 'Hospital Dashboard', icon: 'local_hospital', route: '/hims/dashboard' },
           { label: 'Student Dashboard', icon: 'school', externalUrl: '/MIS/Student' },
           { label: 'HR Dashboard', icon: 'people', externalUrl: '/MIS/HR' },
           { label: 'Hostel Dashboard', icon: 'holiday_village', externalUrl: '/MIS/Hostel' },
