@@ -126,8 +126,17 @@ export class ChqPaymentComponent implements OnInit {
         },
         error: (err) => {
           this.sending = false;
-          const msg = err?.error || err?.error?.Message || 'Failed to queue notifications.';
-          this.toast.show(msg, { variant: 'error', duration: 7000 });
+          let msg: string;
+          if (typeof err?.error === 'string' && err.error.trim().length > 0) {
+            msg = err.error;
+          } else if (err?.error?.Message) {
+            msg = err.error.Message;
+          } else if (err?.error?.ExceptionMessage) {
+            msg = err.error.ExceptionMessage;
+          } else {
+            msg = 'Failed to queue notifications.';
+          }
+          this.toast.show(msg, { variant: 'error', duration: 8000 });
         }
       });
   }

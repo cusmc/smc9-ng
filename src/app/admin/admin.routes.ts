@@ -6,14 +6,15 @@ import { AccessReviewComponent } from './access-control/access-review/access-rev
 import { UserListingComponent } from './users/user-listing.component';
 import { WebpagesComponent } from './website/webpages/webpages.component';
 import { SchemeDiscountsComponent } from './scheme-discounts/scheme-discount.component';
+import { rightsGuard } from '../auth/rights.guard';
 
 export const ADMIN_ROUTES: Routes = [
-  { path: 'module-management/web-modules', component: WebModulesComponent },
-  { path: 'module-management/cms-modules', component: CmsModulesComponent },
-  { path: 'access-control/rights-requests', component: RightsRequestsComponent },
-  { path: 'access-control/access-review', component: AccessReviewComponent },
-  { path: 'users', component: UserListingComponent },
-  { path: 'website/webpages', component: WebpagesComponent },
-  { path: 'scheme-discounts', component: SchemeDiscountsComponent },
+  { path: 'module-management/web-modules', component: WebModulesComponent, canActivate: [rightsGuard], data: { cont: 'Admin', view: 'Wmodule' } },
+  { path: 'module-management/cms-modules', component: CmsModulesComponent, canActivate: [rightsGuard], data: { cont: 'Admin', view: 'Cmodule' } },
+  { path: 'access-control/rights-requests', component: RightsRequestsComponent, canActivate: [rightsGuard], data: { cont: 'Admin', view: 'RightsRequests' } },
+  { path: 'access-control/access-review', component: AccessReviewComponent, canActivate: [rightsGuard], data: { cont: 'Admin', view: 'AccessReview' } },
+  { path: 'users', component: UserListingComponent, canActivate: [rightsGuard], data: { cont: 'Admin', view: 'Users' } },
+  { path: 'website/webpages', component: WebpagesComponent, canActivate: [rightsGuard], data: { cont: 'Admin', view: 'Webpages' } },
+  { path: 'scheme-discounts', component: SchemeDiscountsComponent, canActivate: [rightsGuard], data: { cont: 'Admin', view: 'SchemeDiscounts' } },
   { path: '', redirectTo: 'module-management/web-modules', pathMatch: 'full' },
 ];

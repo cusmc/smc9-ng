@@ -11,27 +11,28 @@ import { ApprovingAuthorityMasterComponent } from './master/approving-authority/
 import { AppraisalParametersMasterComponent } from './master/appraisal-params/appraisal-params-master.component';
 import { ElogbookReportComponent } from './reports/elogbook-report/elogbook-report.component';
 import { OldDataReportComponent } from './reports/old-data-report/old-data-report.component';
+import { rightsGuard } from '../auth/rights.guard';
 
 export const ELOGBOOK_ROUTES: Routes = [
   // Phase 1 - Activities Assessment
-  { path: 'activities', component: ActivitiesComponent },
+  { path: 'activities', component: ActivitiesComponent, canActivate: [rightsGuard], data: { cont: 'ECampus', view: 'Activities' } },
 
   // Phase 2 - Assessment Screens
-  { path: 'competency-assessment', component: CompetencyAssessmentComponent },
-  { path: 'examination-assessment', component: ExaminationComponent },
-  { path: 'posting', component: PostingComponent },
-  { path: 'appraisal', component: AppraisalComponent },
+  { path: 'competency-assessment', component: CompetencyAssessmentComponent, canActivate: [rightsGuard], data: { cont: 'ECampus', view: 'Studentcompetency' } },
+  { path: 'examination-assessment', component: ExaminationComponent, canActivate: [rightsGuard], data: { cont: 'ECampus', view: 'Examination' } },
+  { path: 'posting', component: PostingComponent, canActivate: [rightsGuard], data: { cont: 'ECampus', view: 'Posting_logbook' } },
+  { path: 'appraisal', component: AppraisalComponent, canActivate: [rightsGuard], data: { cont: 'ECampus', view: 'StudApprisalHeader' } },
 
   // Phase 3 - Master Screens
-  { path: 'master/competency', component: CompetencyMasterComponent },
-  { path: 'master/subgroup/:type', component: SubgroupMasterComponent },
-  { path: 'master/exam', component: ExamMasterComponent },
-  { path: 'master/approving-authority', component: ApprovingAuthorityMasterComponent },
-  { path: 'master/appraisal-params', component: AppraisalParametersMasterComponent },
+  { path: 'master/competency', component: CompetencyMasterComponent, canActivate: [rightsGuard], data: { cont: 'ECampus', view: 'Competencie' } },
+  { path: 'master/subgroup/:type', component: SubgroupMasterComponent, canActivate: [rightsGuard], data: { cont: 'ECampus', view: 'Subgrp_logbook' } },
+  { path: 'master/exam', component: ExamMasterComponent, canActivate: [rightsGuard], data: { cont: 'ECampus', view: 'Exammast' } },
+  { path: 'master/approving-authority', component: ApprovingAuthorityMasterComponent, canActivate: [rightsGuard], data: { cont: 'ECampus', view: 'ApprovingAuthority' } },
+  { path: 'master/appraisal-params', component: AppraisalParametersMasterComponent, canActivate: [rightsGuard], data: { cont: 'ECampus', view: 'AppraisalMaster' } },
 
   // Phase 4 - Reports
-  { path: 'reports/elogbook', component: ElogbookReportComponent },
-  { path: 'reports/old-data', component: OldDataReportComponent },
+  { path: 'reports/elogbook', component: ElogbookReportComponent, canActivate: [rightsGuard], data: { cont: 'ECampus', view: 'ElogbookRpt' } },
+  { path: 'reports/old-data', component: OldDataReportComponent, canActivate: [rightsGuard], data: { cont: 'ECampus', view: 'LogBookOldData' } },
 
   { path: '', redirectTo: 'activities', pathMatch: 'full' }
 ];

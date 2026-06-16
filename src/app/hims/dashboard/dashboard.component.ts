@@ -38,6 +38,7 @@ export type DonutOptions = {
   fill: ApexFill;
   tooltip: ApexTooltip;
   colors: string[];
+  plotOptions: ApexPlotOptions;
 };
 
 export type BarOptions = {
@@ -50,6 +51,16 @@ export type BarOptions = {
   colors: string[];
   tooltip: ApexTooltip;
   legend: ApexLegend;
+};
+
+export type RadialOptions = {
+  series: ApexNonAxisChartSeries;
+  chart: ApexChart;
+  labels: string[];
+  colors: string[];
+  plotOptions: ApexPlotOptions;
+  fill: ApexFill;
+  stroke: ApexStroke;
 };
 
 @Component({
@@ -72,42 +83,42 @@ export class HimsDashboardComponent implements OnInit, OnDestroy {
   lastRefreshed: Date | null = null;
 
   // ── KPI counters ──────────────────────────────────────────────────────────
-  // Note: Ward_bed / Icu_bed / Ward_rem / Icu_rem are NOT returned by hDashboardDt1 SP.
-  // Use Rem (current inpatients) as the only reliable inpatient metric.
-  totalOpdPatients  = 0;
-  erPatients        = 0;
-  totalAdmissions   = 0;
-  totalDischarges   = 0;
-  currentInpatients = 0;   // Σ Rem
-  majorOt           = 0;
-  minorOt           = 0;
-  dayCareOt         = 0;
-  totalOtCases      = 0;
-  totalPathoCases   = 0;
-  totalRadioCases   = 0;
-  totalPhysio       = 0;
-  totalOpdDept      = 0;
-  totalMajor        = 0;
-  totalMinor        = 0;
-  totalDayCare      = 0;
+  totalOpdPatients      = 0;
+  erPatients            = 0;
+  totalAdmissions       = 0;
+  totalDischarges       = 0;
+  currentInpatients     = 0;
+  inpatientRetentionPct = 0;   // Rem / (Rem + Dis) * 100 — proxy for census
+  majorOt               = 0;
+  minorOt               = 0;
+  dayCareOt             = 0;
+  totalOtCases          = 0;
+  totalPathoCases       = 0;
+  totalRadioCases       = 0;
+  totalPhysio           = 0;
+  totalOpdDept          = 0;
+  totalMajor            = 0;
+  totalMinor            = 0;
+  totalDayCare          = 0;
 
   // ── Raw data ──────────────────────────────────────────────────────────────
   summary: DailySummary = { Opd_Gen: 0, Opd_Casu: 0 };
-  deptDetails: DeptDetail[]       = [];
+  deptDetails:    DeptDetail[]        = [];
   investigations: InvestigationItem[] = [];
-  physioData: PhysioItem[]        = [];
-  surgeonData: SurgeonItem[]      = [];
+  physioData:     PhysioItem[]        = [];
+  surgeonData:    SurgeonItem[]       = [];
 
-  // ── Chart options ─────────────────────────────────────────────────────────
-  opdBreakdownDonut!: Partial<DonutOptions>;   // Gen vs Casualty OPD
-  deptActivityBar!:   Partial<BarOptions>;
-  invDonut!:          Partial<DonutOptions>;
-  otDonut!:           Partial<DonutOptions>;
-  pathBar!:           Partial<BarOptions>;
-  radioBar!:          Partial<BarOptions>;
-  physioBar!:         Partial<BarOptions>;
-  surgeonBar!:        Partial<BarOptions>;
-  inpatientBar!:      Partial<BarOptions>;     // Rem by dept
+  // ── Charts ────────────────────────────────────────────────────────────────
+  inpatientsGauge!:    Partial<RadialOptions>;
+  opdBreakdownDonut!:  Partial<DonutOptions>;
+  otDonut!:            Partial<DonutOptions>;
+  invDonut!:           Partial<DonutOptions>;
+  deptActivityBar!:    Partial<BarOptions>;
+  pathBar!:            Partial<BarOptions>;
+  radioBar!:           Partial<BarOptions>;
+  physioBar!:          Partial<BarOptions>;
+  surgeonBar!:         Partial<BarOptions>;
+  inpatientBar!:       Partial<BarOptions>;
 
   constructor(
     private service: HimsDashboardService,
@@ -119,7 +130,7 @@ export class HimsDashboardComponent implements OnInit, OnDestroy {
 
   refresh(): void { this.loadData(); }
 
-  private loadData(): void {
+  loadData(): void {
     this.loading  = true;
     this.errorMsg = null;
 
@@ -163,6 +174,10 @@ export class HimsDashboardComponent implements OnInit, OnDestroy {
     this.currentInpatients = d.reduce((s, x) => s + (x.Rem     || 0), 0);
     this.totalOpdDept      = d.reduce((s, x) => s + (x.Opd     || 0), 0);
 
+    const caseBase = this.currentInpatients + this.totalDischarges;
+    this.inpatientRetentionPct = caseBase > 0
+      ? Math.round((this.currentInpatients / caseBase) * 100) : 0;
+
     this.majorOt    = d.reduce((s, x) => s + (x.Major   || 0), 0);
     this.minorOt    = d.reduce((s, x) => s + (x.Minor   || 0), 0);
     this.dayCareOt  = d.reduce((s, x) => s + (x.DayCare || 0), 0);
@@ -171,69 +186,129 @@ export class HimsDashboardComponent implements OnInit, OnDestroy {
     this.totalMinor   = this.minorOt;
     this.totalDayCare = this.dayCareOt;
 
-    this.totalPathoCases = this.investigations
-      .filter(i => i.Group_id === 1)
-      .reduce((s, i) => s + (i.Qnt || 0), 0);
-    this.totalRadioCases = this.investigations
-      .filter(i => i.Group_id === 2)
-      .reduce((s, i) => s + (i.Qnt || 0), 0);
-    this.totalPhysio = this.physioData.reduce((s, p) => s + (p.Total || 0), 0);
+    const patho  = this.investigations.filter(i => i.Group_id === 1);
+    const radio  = this.investigations.filter(i => i.Group_id === 2);
+    this.totalPathoCases = patho.reduce((s, i) => s + (i.Qnt || 0), 0);
+    this.totalRadioCases = radio.reduce((s, i) => s + (i.Qnt || 0), 0);
+    this.totalPhysio     = this.physioData.reduce((s, p) => s + (p.Total || 0), 0);
   }
 
   private buildCharts(): void {
+    this.inpatientsGauge = this.makeSemiGauge(
+      this.inpatientRetentionPct, 'Inpatients', '#1e3a5f'
+    );
+
     this.opdBreakdownDonut = this.makeDonut(
       ['General OPD', 'Casualty OPD'],
       [this.summary.Opd_Gen || 0, this.summary.Opd_Casu || 0],
-      ['#1a8f72', '#ef6c00'],
-      (v: number) => v + ' patients'
+      ['#2563eb', '#ea580c'],
+      (v: number) => v + ' patients',
+      'OPD'
     );
-    this.deptActivityBar = this.makeDeptActivityBar();
-    this.otDonut  = this.makeDonut(
+
+    this.otDonut = this.makeDonut(
       ['Major', 'Minor', 'Day Care'],
       [this.majorOt, this.minorOt, this.dayCareOt],
-      ['#ef6c00', '#fb8c00', '#ffa726'],
-      (v: number) => v + ' cases'
+      ['#ea580c', '#f97316', '#fbbf24'],
+      (v: number) => v + ' cases',
+      'Total OT'
     );
+
     this.invDonut = this.makeDonut(
       ['Pathology', 'Radiology'],
       [this.totalPathoCases, this.totalRadioCases],
-      ['#1a8f72', '#5c6bc0'],
-      (v: number) => v + ' tests'
+      ['#0d9488', '#7c3aed'],
+      (v: number) => v + ' tests',
+      'Tests'
     );
-    this.pathBar  = this.makeHorizBar(
-      this.investigations.filter(i => i.Group_id === 1).map(i => i.Sgroup_nm),
-      this.investigations.filter(i => i.Group_id === 1).map(i => i.Qnt),
-      '#1a8f72', 'Tests'
-    );
-    this.radioBar = this.makeHorizBar(
-      this.investigations.filter(i => i.Group_id === 2).map(i => i.Sgroup_nm),
-      this.investigations.filter(i => i.Group_id === 2).map(i => i.Qnt),
-      '#5c6bc0', 'Tests'
-    );
-    this.physioBar     = this.makePhysioBar();
-    this.surgeonBar    = this.makeSurgeonBar();
-    this.inpatientBar  = this.makeInpatientBar();
+
+    this.deptActivityBar = this.makeDeptActivityBar();
+
+    const patho = this.investigations.filter(i => i.Group_id === 1);
+    const radio = this.investigations.filter(i => i.Group_id === 2);
+    this.pathBar  = this.makeHorizBar(patho.map(i => i.Sgroup_nm), patho.map(i => i.Qnt), '#0d9488', 'Count');
+    this.radioBar = this.makeHorizBar(radio.map(i => i.Sgroup_nm), radio.map(i => i.Qnt), '#7c3aed', 'Count');
+
+    this.physioBar    = this.makePhysioBar();
+    this.surgeonBar   = this.makeSurgeonBar();
+    this.inpatientBar = this.makeInpatientBar();
   }
 
-  // ── Chart builders ────────────────────────────────────────────────────────
-
-  private makeDonut(
-    labels: string[], series: number[], colors: string[],
-    tooltipFmt: (v: number) => string
-  ): Partial<DonutOptions> {
+  // ── Semicircle gauge (matching the image's Bed Occupancy widget) ──────────
+  private makeSemiGauge(pct: number, label: string, color: string): Partial<RadialOptions> {
     return {
-      series,
-      chart:      { type: 'donut', height: 240, toolbar: { show: false } },
-      labels,
-      colors,
-      legend:     { position: 'bottom', fontSize: '12px' },
-      dataLabels: { enabled: true, formatter: (v: number) => Math.round(v) + '%' },
-      stroke:     { width: 2 },
-      fill:       { opacity: 1 },
-      tooltip:    { y: { formatter: tooltipFmt } },
+      series:  [pct],
+      chart:   { type: 'radialBar', height: 200, sparkline: { enabled: true } },
+      labels:  [label],
+      colors:  [color],
+      plotOptions: {
+        radialBar: {
+          startAngle: -90,
+          endAngle:    90,
+          hollow:      { size: '62%' },
+          track:       { background: '#e5e7eb', strokeWidth: '100%', margin: 5 } as any,
+          dataLabels:  {
+            name:  { show: false },
+            value: {
+              offsetY: -12,
+              fontSize:   '28px',
+              fontWeight: '800',
+              color:      '#1e293b',
+              formatter:  (v: number) => Math.round(v) + '%',
+            },
+          },
+        },
+      },
+      fill:   { type: 'solid' },
+      stroke: { lineCap: 'round' },
     };
   }
 
+  // ── Donut with center label ───────────────────────────────────────────────
+  private makeDonut(
+    labels: string[], series: number[], colors: string[],
+    tooltipFmt: (v: number) => string,
+    centerLabel: string
+  ): Partial<DonutOptions> {
+    const total = series.reduce((a, b) => a + b, 0);
+    return {
+      series,
+      chart:      { type: 'donut', height: 250, toolbar: { show: false } },
+      labels,
+      colors,
+      legend:     { position: 'bottom', fontSize: '11px', itemMargin: { horizontal: 6 } },
+      dataLabels: { enabled: false },
+      stroke:     { width: 2 },
+      fill:       { opacity: 1 },
+      tooltip:    { y: { formatter: tooltipFmt } },
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '72%',
+            labels: {
+              show: true,
+              total: {
+                show:      true,
+                showAlways: true,
+                label:     centerLabel,
+                fontSize:  '12px',
+                color:     '#9ca3af',
+                formatter: () => total.toString(),
+              },
+              value: {
+                show:       true,
+                fontSize:   '20px',
+                fontWeight: '700',
+                color:      '#1e293b',
+              },
+            },
+          },
+        },
+      },
+    };
+  }
+
+  // ── Grouped bar: OPD / Adm / Dis by dept ─────────────────────────────────
   private makeDeptActivityBar(): Partial<BarOptions> {
     const depts = this.deptDetails.filter(
       d => (d.Opd || 0) + (d.Adm || 0) + (d.Dis || 0) > 0
@@ -245,14 +320,14 @@ export class HimsDashboardComponent implements OnInit, OnDestroy {
         { name: 'Discharges', data: depts.map(d => d.Dis || 0) },
       ],
       chart: { type: 'bar', height: 300, stacked: false, toolbar: { show: false } },
-      plotOptions: { bar: { borderRadius: 3, columnWidth: '60%' } },
+      plotOptions: { bar: { borderRadius: 3, columnWidth: '65%' } },
       xaxis: {
         categories: depts.map(d => d.DeptName),
         labels:     { rotate: -35, style: { fontSize: '10px' } },
       },
       yaxis:      { labels: { style: { fontSize: '11px' } } },
       dataLabels: { enabled: false },
-      colors:     ['#1a8f72', '#5c6bc0', '#ef6c00'],
+      colors:     ['#2563eb', '#0d9488', '#ea580c'],
       legend:     { position: 'top', fontSize: '12px' },
       tooltip:    { shared: true, intersect: false },
     };
@@ -260,17 +335,16 @@ export class HimsDashboardComponent implements OnInit, OnDestroy {
 
   private makeInpatientBar(): Partial<BarOptions> {
     const depts = this.deptDetails.filter(d => (d.Rem || 0) > 0);
-    const height = Math.max(160, depts.length * 34);
     return {
       series: [{ name: 'Inpatients', data: depts.map(d => d.Rem || 0) }],
-      chart:  { type: 'bar', height, toolbar: { show: false } },
+      chart:  { type: 'bar', height: Math.max(160, depts.length * 34), toolbar: { show: false } },
       plotOptions: {
         bar: { horizontal: true, borderRadius: 4, dataLabels: { position: 'top' } },
       },
       xaxis:      { categories: depts.map(d => d.DeptName) },
       yaxis:      { labels: { style: { fontSize: '11px' } } },
       dataLabels: { enabled: true, offsetX: 6, style: { fontSize: '11px', colors: ['#444'] } },
-      colors:     ['#1a8f72'],
+      colors:     ['#1e3a5f'],
       legend:     { show: false },
       tooltip:    { y: { formatter: (v: number) => v + ' patients' } },
     };
@@ -279,10 +353,9 @@ export class HimsDashboardComponent implements OnInit, OnDestroy {
   private makeHorizBar(
     categories: string[], data: number[], color: string, seriesName: string
   ): Partial<BarOptions> {
-    const height = Math.max(160, categories.length * 36);
     return {
       series: [{ name: seriesName, data }],
-      chart:  { type: 'bar', height, toolbar: { show: false } },
+      chart:  { type: 'bar', height: Math.max(160, categories.length * 36), toolbar: { show: false } },
       plotOptions: {
         bar: { horizontal: true, borderRadius: 4, dataLabels: { position: 'top' } },
       },
@@ -310,7 +383,7 @@ export class HimsDashboardComponent implements OnInit, OnDestroy {
       },
       yaxis:      { labels: { style: { fontSize: '11px' } } },
       dataLabels: { enabled: false },
-      colors:     ['#1a8f72', '#80cbc4'],
+      colors:     ['#7c3aed', '#c4b5fd'],
       legend:     { position: 'top', fontSize: '12px' },
       tooltip:    { shared: true, intersect: false },
     };
@@ -320,17 +393,16 @@ export class HimsDashboardComponent implements OnInit, OnDestroy {
     const sorted = [...this.surgeonData]
       .sort((a, b) => (b.Total || 0) - (a.Total || 0))
       .slice(0, 15);
-    const height = Math.max(200, sorted.length * 38);
     return {
       series: [{ name: 'Surgeries', data: sorted.map(s => s.Total || 0) }],
-      chart:  { type: 'bar', height, toolbar: { show: false } },
+      chart:  { type: 'bar', height: Math.max(200, sorted.length * 38), toolbar: { show: false } },
       plotOptions: {
         bar: { horizontal: true, borderRadius: 4, dataLabels: { position: 'top' } },
       },
       xaxis:      { categories: sorted.map(s => s.Doctname) },
       yaxis:      { labels: { style: { fontSize: '11px' } } },
       dataLabels: { enabled: true, offsetX: 6, style: { fontSize: '11px', colors: ['#444'] } },
-      colors:     ['#ef6c00'],
+      colors:     ['#ea580c'],
       legend:     { show: false },
       tooltip:    { y: { formatter: (v: number) => v.toString() } },
     };

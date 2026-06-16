@@ -1,199 +1,231 @@
-<div class="min-h-screen bg-[var(--app-page-bg)]">
+<div class="min-h-screen bg-slate-100">
 
-  <!-- ══ Page Header ══════════════════════════════════════════════════════════ -->
-  <div class="bg-[var(--app-primary)] px-5 py-4 shadow-md">
-    <div class="flex flex-wrap items-center justify-between gap-4">
+  <!-- ═══════════════════════════════════════════════════════════════════
+       PAGE HEADER — dark navy, matches reference image
+  ═════════════════════════════════════════════════════════════════════ -->
+  <header class="bg-[#1e3a5f] shadow-lg">
+    <div class="px-6 py-4 flex flex-wrap items-center justify-between gap-3">
 
+      <!-- Left: icon + title + subtitle -->
       <div class="flex items-center gap-3">
-        <span class="material-icons text-white text-3xl">local_hospital</span>
+        <div class="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center">
+          <span class="material-icons text-white text-[22px]">local_hospital</span>
+        </div>
         <div>
-          <h1 class="text-xl font-bold text-white tracking-wide uppercase">
-            HIMS Management Dashboard
+          <h1 class="text-lg font-bold text-white leading-tight tracking-wide">
+            HIMS MANAGEMENT DASHBOARD
           </h1>
-          <p class="text-xs text-white/70 mt-0.5">
-            Hospital Information &amp; Management System
-            <ng-container *ngIf="lastRefreshed">
-              &mdash; Refreshed at {{ lastRefreshed | date:'HH:mm:ss' }}
-            </ng-container>
+          <p class="text-xs text-white/60 tracking-widest uppercase">
+            C. U. Shah Medical College
           </p>
         </div>
       </div>
 
-      <!-- Date Controls -->
-      <div class="flex flex-wrap items-center gap-3">
+      <!-- Right: date controls -->
+      <div class="flex items-center gap-3 flex-wrap">
 
-        <!-- FROM DATE — uncomment after SP supports date range -->
-        <!--
+        <!-- FROM DATE — uncomment after SP supports date range
         <div class="flex items-center gap-1.5">
-          <label class="text-xs text-white/70 whitespace-nowrap">From Date</label>
+          <label class="text-xs text-white/60 uppercase tracking-wide">From</label>
           <input type="date" [(ngModel)]="selectedFromDate" [max]="selectedToDate"
-                 class="rounded-lg border border-white/25 bg-white/10 px-3 py-1.5
-                        text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/40" />
+                 class="rounded border border-white/20 bg-white/10 px-2.5 py-1
+                        text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/40" />
         </div>
-        <span class="material-icons text-white/50 text-base">arrow_forward</span>
+        <span class="text-white/40">&rarr;</span>
         -->
 
         <div class="flex items-center gap-1.5">
-          <label class="text-xs text-white/70 whitespace-nowrap">As of Date</label>
+          <span class="material-icons text-white/50 text-[16px]">event</span>
+          <label class="text-xs text-white/60 uppercase tracking-wide">As of</label>
           <input type="date" [(ngModel)]="selectedToDate" [max]="todayIso"
-                 class="rounded-lg border border-white/25 bg-white/10 px-3 py-1.5
-                        text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/40" />
+                 class="rounded border border-white/20 bg-white/10 px-2.5 py-1
+                        text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/40" />
         </div>
 
-        <button type="button" (click)="refresh()" [disabled]="loading"
-          class="inline-flex items-center gap-1.5 rounded-lg border border-white/25
-                 bg-white/15 px-4 py-1.5 text-sm font-medium text-white
-                 hover:bg-white/25 disabled:opacity-50 transition-colors">
-          <span class="material-icons text-[18px] leading-none"
-                [class.animate-spin]="loading">
-            {{ loading ? 'autorenew' : 'refresh' }}
-          </span>
+        <button (click)="refresh()" [disabled]="loading"
+          class="inline-flex items-center gap-1.5 rounded bg-white/15 border border-white/20
+                 px-3 py-1 text-sm font-medium text-white
+                 hover:bg-white/25 disabled:opacity-50 transition">
+          <span class="material-icons text-[16px]">{{ loading ? 'hourglass_top' : 'refresh' }}</span>
           {{ loading ? 'Loading&hellip;' : 'Refresh' }}
         </button>
       </div>
     </div>
+
+    <!-- Status bar -->
+    <div *ngIf="lastRefreshed" class="px-6 pb-2">
+      <p class="text-[11px] text-white/40">
+        Last updated: {{ lastRefreshed | date:'d MMM yyyy, h:mm a' }}
+      </p>
+    </div>
+  </header>
+
+  <!-- Error banner -->
+  <div *ngIf="errorMsg"
+    class="mx-6 mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 flex items-center gap-2 text-sm text-red-700">
+    <span class="material-icons text-[18px] text-red-400">error_outline</span>
+    {{ errorMsg }}
+    <button (click)="loadData()" class="ml-auto text-red-500 hover:underline text-xs font-medium">Retry</button>
   </div>
 
-  <div class="p-4 md:p-5 space-y-5">
-
-    <!-- ══ Error Banner ══════════════════════════════════════════════════════ -->
-    <div *ngIf="errorMsg && !loading"
-      class="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50
-             px-4 py-3 text-sm text-red-700">
-      <span class="material-icons text-base shrink-0">error_outline</span>
-      {{ errorMsg }}
+  <!-- Loading overlay -->
+  <div *ngIf="loading" class="flex justify-center pt-16">
+    <div class="flex flex-col items-center gap-3">
+      <div class="w-12 h-12 rounded-full border-4 border-[#1e3a5f]/20 border-t-[#1e3a5f] animate-spin"></div>
+      <p class="text-sm text-slate-500">Loading dashboard&hellip;</p>
     </div>
+  </div>
 
-    <!-- ══ Loading Spinner ═══════════════════════════════════════════════════ -->
-    <div *ngIf="loading" class="flex items-center justify-center py-20">
-      <div class="flex flex-col items-center gap-3 text-[var(--app-ink-muted)]">
-        <div class="h-12 w-12 animate-spin rounded-full
-                    border-4 border-[var(--app-border)] border-t-[var(--app-primary)]"></div>
-        <span class="text-sm">Loading dashboard data&hellip;</span>
-      </div>
-    </div>
+  <!-- ═══════════════════════════════════════════════════════════════════
+       MAIN CONTENT
+  ═════════════════════════════════════════════════════════════════════ -->
+  <main *ngIf="!loading" class="p-6 space-y-6">
 
-    <ng-container *ngIf="!loading">
+    <!-- ────────────────────────────────────────────────────────────────
+         ROW 1 — 4 KPI cards
+    ──────────────────────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
 
-      <!-- ══ ROW 1: KPI Cards ══════════════════════════════════════════════ -->
-      <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-
-        <!-- Current Inpatients -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <div class="flex items-start justify-between mb-1">
-            <span class="rounded-xl bg-teal-50 p-2">
-              <span class="material-icons text-[var(--app-primary)] text-xl leading-none">hotel</span>
-            </span>
-            <span class="material-icons text-teal-300 text-base">bed</span>
-          </div>
-          <p class="text-2xl font-bold text-[var(--app-ink)] mt-2 leading-none">
-            {{ currentInpatients }}
-          </p>
-          <p class="text-xs font-medium text-[var(--app-ink-muted)] mt-1">Current Inpatients</p>
-          <p class="text-xs text-slate-400 mt-0.5">
-            Adm: {{ totalAdmissions }}&nbsp;&middot;&nbsp;Dis: {{ totalDischarges }}
-          </p>
-          <div class="mt-3 h-1.5 w-full rounded-full bg-slate-100">
-            <div class="h-full rounded-full bg-[var(--app-primary)]" style="width:100%"></div>
-          </div>
-        </div>
-
-        <!-- OPD Patients -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <div class="flex items-start justify-between mb-1">
-            <span class="rounded-xl bg-blue-50 p-2">
-              <span class="material-icons text-blue-600 text-xl leading-none">groups</span>
-            </span>
-            <span class="material-icons text-blue-300 text-base">trending_up</span>
-          </div>
-          <p class="text-2xl font-bold text-[var(--app-ink)] mt-2 leading-none">
-            {{ totalOpdPatients }}
-          </p>
-          <p class="text-xs font-medium text-[var(--app-ink-muted)] mt-1">OPD Patients</p>
-          <p class="text-xs text-slate-400 mt-0.5">
-            General: {{ summary.Opd_Gen }}&nbsp;&middot;&nbsp;Casualty: {{ summary.Opd_Casu }}
-          </p>
-          <div class="mt-3 h-1.5 w-full rounded-full bg-slate-100">
-            <div class="h-full rounded-full bg-blue-500" style="width:100%"></div>
-          </div>
-        </div>
-
-        <!-- Admissions Today -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <div class="flex items-start justify-between mb-1">
-            <span class="rounded-xl bg-green-50 p-2">
-              <span class="material-icons text-green-600 text-xl leading-none">person_add</span>
-            </span>
-            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-600">
-              +{{ totalAdmissions }}
-            </span>
-          </div>
-          <p class="text-2xl font-bold text-[var(--app-ink)] mt-2 leading-none">
-            {{ totalAdmissions }}
-          </p>
-          <p class="text-xs font-medium text-[var(--app-ink-muted)] mt-1">Admissions Today</p>
-          <p class="text-xs text-slate-400 mt-0.5">
-            Discharges: {{ totalDischarges }}
-          </p>
-          <div class="mt-3 h-1.5 w-full rounded-full bg-slate-100">
-            <div class="h-full rounded-full bg-green-500" style="width:100%"></div>
-          </div>
-        </div>
-
-        <!-- ER / Casualty -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <div class="flex items-start justify-between mb-1">
-            <span class="rounded-xl bg-red-50 p-2">
-              <span class="material-icons text-red-600 text-xl leading-none">emergency</span>
-            </span>
-            <span class="material-icons text-red-300 text-base">monitor_heart</span>
-          </div>
-          <p class="text-2xl font-bold text-[var(--app-ink)] mt-2 leading-none">
-            {{ erPatients }}
-          </p>
-          <p class="text-xs font-medium text-[var(--app-ink-muted)] mt-1">ER / Casualty</p>
-          <p class="text-xs text-slate-400 mt-0.5">
-            OT Cases: {{ totalOtCases }}
-          </p>
-          <div class="mt-3 h-1.5 w-full rounded-full bg-slate-100">
-            <div class="h-full rounded-full bg-red-500" style="width:100%"></div>
-          </div>
-        </div>
-
-      </div>
-      <!-- end Row 1 -->
-
-      <!-- ══ ROW 2: OPD Breakdown + Dept Activity + OT Distribution ══════ -->
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-
-        <!-- OPD Breakdown Donut (Gen vs Casualty) -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <h3 class="text-sm font-semibold text-[var(--app-ink)] mb-1">OPD Breakdown</h3>
-          <p class="text-xs text-[var(--app-ink-muted)] mb-2">
-            General: {{ summary.Opd_Gen }} &middot; Casualty: {{ summary.Opd_Casu }}
-          </p>
-          <apx-chart *ngIf="opdBreakdownDonut && totalOpdPatients > 0"
-            [series]="opdBreakdownDonut.series!"
-            [chart]="opdBreakdownDonut.chart!"
-            [labels]="opdBreakdownDonut.labels!"
-            [colors]="opdBreakdownDonut.colors!"
-            [legend]="opdBreakdownDonut.legend!"
-            [dataLabels]="opdBreakdownDonut.dataLabels!"
-            [stroke]="opdBreakdownDonut.stroke!"
-            [fill]="opdBreakdownDonut.fill!"
-            [tooltip]="opdBreakdownDonut.tooltip!">
+      <!-- Card 1: Inpatient Status — semicircle gauge -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col items-center">
+        <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">Inpatient Status</p>
+        <div class="w-full" style="margin-top:-12px;margin-bottom:-24px">
+          <apx-chart
+            [series]="inpatientsGauge.series!"
+            [chart]="inpatientsGauge.chart!"
+            [labels]="inpatientsGauge.labels!"
+            [colors]="inpatientsGauge.colors!"
+            [plotOptions]="inpatientsGauge.plotOptions!"
+            [fill]="inpatientsGauge.fill!"
+            [stroke]="inpatientsGauge.stroke!">
           </apx-chart>
-          <p *ngIf="totalOpdPatients === 0"
-             class="text-xs text-[var(--app-ink-muted)] text-center py-10">
-            No OPD data for this date.
-          </p>
         </div>
+        <div class="text-center mt-1">
+          <p class="text-3xl font-extrabold text-[#1e3a5f]">{{ currentInpatients }}</p>
+          <p class="text-xs text-slate-400 mt-0.5">currently admitted</p>
+        </div>
+        <div class="mt-3 w-full grid grid-cols-2 gap-2 text-center text-xs">
+          <div class="bg-slate-50 rounded-lg py-2">
+            <p class="font-bold text-slate-700 text-base">{{ totalAdmissions }}</p>
+            <p class="text-slate-400">Admitted</p>
+          </div>
+          <div class="bg-slate-50 rounded-lg py-2">
+            <p class="font-bold text-slate-700 text-base">{{ totalDischarges }}</p>
+            <p class="text-slate-400">Discharged</p>
+          </div>
+        </div>
+      </div>
 
-        <!-- Department Activity Bar -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <h3 class="text-sm font-semibold text-[var(--app-ink)] mb-1">Department Activity</h3>
-          <p class="text-xs text-[var(--app-ink-muted)] mb-2">OPD / Admissions / Discharges by dept</p>
-          <apx-chart *ngIf="deptActivityBar && deptDetails.length > 0"
+      <!-- Card 2: OPD Today -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col justify-between">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-400">OPD Today</p>
+            <p class="text-5xl font-extrabold text-slate-800 mt-2 leading-none">
+              {{ totalOpdPatients }}
+            </p>
+            <p class="text-sm text-slate-400 mt-1">Total patients</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
+            <span class="material-icons text-blue-600 text-[22px]">people</span>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0"></span>
+            <span class="text-slate-500">General</span>
+            <span class="ml-auto font-bold text-slate-700">{{ summary.Opd_Gen }}</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-orange-500 flex-shrink-0"></span>
+            <span class="text-slate-500">Casualty</span>
+            <span class="ml-auto font-bold text-slate-700">{{ erPatients }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: OT Cases Today -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col justify-between">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-400">OT Cases Today</p>
+            <p class="text-5xl font-extrabold text-slate-800 mt-2 leading-none">
+              {{ totalOtCases }}
+            </p>
+            <p class="text-sm text-slate-400 mt-1">Total surgeries</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
+            <span class="material-icons text-orange-600 text-[22px]">medical_services</span>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-3 gap-1 text-xs text-center">
+          <div class="bg-orange-50 rounded-lg py-1.5">
+            <p class="font-bold text-orange-700">{{ majorOt }}</p>
+            <p class="text-slate-400">Major</p>
+          </div>
+          <div class="bg-yellow-50 rounded-lg py-1.5">
+            <p class="font-bold text-yellow-700">{{ minorOt }}</p>
+            <p class="text-slate-400">Minor</p>
+          </div>
+          <div class="bg-amber-50 rounded-lg py-1.5">
+            <p class="font-bold text-amber-700">{{ dayCareOt }}</p>
+            <p class="text-slate-400">Day Care</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Investigations Today -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col justify-between">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-400">Investigations</p>
+            <p class="text-5xl font-extrabold text-slate-800 mt-2 leading-none">
+              {{ totalPathoCases + totalRadioCases }}
+            </p>
+            <p class="text-sm text-slate-400 mt-1">Tests ordered today</p>
+          </div>
+          <div class="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center flex-shrink-0">
+            <span class="material-icons text-teal-600 text-[22px]">biotech</span>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-teal-500 flex-shrink-0"></span>
+            <span class="text-slate-500">Pathology</span>
+            <span class="ml-auto font-bold text-slate-700">{{ totalPathoCases }}</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-purple-500 flex-shrink-0"></span>
+            <span class="text-slate-500">Radiology</span>
+            <span class="ml-auto font-bold text-slate-700">{{ totalRadioCases }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- end row 1 -->
+
+
+    <!-- ────────────────────────────────────────────────────────────────
+         ROW 2 — 3 chart panels (wide layout)
+    ──────────────────────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+      <!-- Dept Activity bar (span 2) -->
+      <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-sm font-bold text-slate-700">Department Activity</h2>
+            <p class="text-xs text-slate-400">OPD &middot; Admissions &middot; Discharges by department</p>
+          </div>
+          <div class="flex gap-3 text-xs">
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-blue-500"></span> OPD</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-teal-500"></span> Adm</span>
+            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-orange-500"></span> Dis</span>
+          </div>
+        </div>
+        <div *ngIf="deptDetails.length > 0; else noDataDept">
+          <apx-chart
             [series]="deptActivityBar.series!"
             [chart]="deptActivityBar.chart!"
             [xaxis]="deptActivityBar.xaxis!"
@@ -204,19 +236,54 @@
             [legend]="deptActivityBar.legend!"
             [tooltip]="deptActivityBar.tooltip!">
           </apx-chart>
-          <p *ngIf="!deptDetails.length"
-             class="text-xs text-[var(--app-ink-muted)] text-center py-10">
-            No department data available.
-          </p>
         </div>
+        <ng-template #noDataDept>
+          <div class="h-[280px] flex items-center justify-center text-sm text-slate-400">No data available</div>
+        </ng-template>
+      </div>
 
-        <!-- OT Distribution Donut -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <h3 class="text-sm font-semibold text-[var(--app-ink)] mb-1">OT Surgery Distribution</h3>
-          <p class="text-xs text-[var(--app-ink-muted)] mb-2">
-            Total: {{ totalOtCases }} cases
-          </p>
-          <apx-chart *ngIf="otDonut && totalOtCases > 0"
+      <!-- OPD Breakdown donut -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col">
+        <div class="mb-2">
+          <h2 class="text-sm font-bold text-slate-700">OPD Breakdown</h2>
+          <p class="text-xs text-slate-400">General vs Casualty visits</p>
+        </div>
+        <div class="flex-1 flex items-center justify-center" *ngIf="totalOpdPatients > 0; else noPieData">
+          <apx-chart
+            [series]="opdBreakdownDonut.series!"
+            [chart]="opdBreakdownDonut.chart!"
+            [labels]="opdBreakdownDonut.labels!"
+            [colors]="opdBreakdownDonut.colors!"
+            [legend]="opdBreakdownDonut.legend!"
+            [dataLabels]="opdBreakdownDonut.dataLabels!"
+            [stroke]="opdBreakdownDonut.stroke!"
+            [fill]="opdBreakdownDonut.fill!"
+            [tooltip]="opdBreakdownDonut.tooltip!"
+            [plotOptions]="opdBreakdownDonut.plotOptions!">
+          </apx-chart>
+        </div>
+        <ng-template #noPieData>
+          <div class="flex-1 flex items-center justify-center text-sm text-slate-400">No OPD data</div>
+        </ng-template>
+      </div>
+
+    </div>
+    <!-- end row 2 -->
+
+
+    <!-- ────────────────────────────────────────────────────────────────
+         ROW 3 — OT + Investigations donuts + Physiotherapy
+    ──────────────────────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+
+      <!-- OT Distribution donut -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col">
+        <div class="mb-2">
+          <h2 class="text-sm font-bold text-slate-700">OT Distribution</h2>
+          <p class="text-xs text-slate-400">Major &middot; Minor &middot; Day Care</p>
+        </div>
+        <div class="flex-1 flex items-center justify-center" *ngIf="totalOtCases > 0; else noOtData">
+          <apx-chart
             [series]="otDonut.series!"
             [chart]="otDonut.chart!"
             [labels]="otDonut.labels!"
@@ -225,42 +292,24 @@
             [dataLabels]="otDonut.dataLabels!"
             [stroke]="otDonut.stroke!"
             [fill]="otDonut.fill!"
-            [tooltip]="otDonut.tooltip!">
+            [tooltip]="otDonut.tooltip!"
+            [plotOptions]="otDonut.plotOptions!">
           </apx-chart>
-          <p *ngIf="totalOtCases === 0"
-             class="text-xs text-[var(--app-ink-muted)] text-center py-10">
-            No OT cases for this date.
-          </p>
-          <div *ngIf="totalOtCases > 0"
-               class="flex justify-center gap-4 text-xs text-[var(--app-ink-muted)] mt-1">
-            <span class="flex items-center gap-1">
-              <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#ef6c00]"></span>
-              Major: {{ majorOt }}
-            </span>
-            <span class="flex items-center gap-1">
-              <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#fb8c00]"></span>
-              Minor: {{ minorOt }}
-            </span>
-            <span class="flex items-center gap-1">
-              <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#ffa726]"></span>
-              DayCare: {{ dayCareOt }}
-            </span>
-          </div>
         </div>
-
+        <ng-template #noOtData>
+          <div class="flex-1 flex items-center justify-center text-sm text-slate-400">No OT data</div>
+        </ng-template>
       </div>
-      <!-- end Row 2 -->
 
-      <!-- ══ ROW 3: Investigations + Physio + Surgeon + Highlights ════════ -->
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
-
-        <!-- Investigation Donut -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <h3 class="text-sm font-semibold text-[var(--app-ink)] mb-1">Investigations</h3>
-          <p class="text-xs text-[var(--app-ink-muted)] mb-2">
-            Patho: {{ totalPathoCases }} &middot; Radio: {{ totalRadioCases }}
-          </p>
-          <apx-chart *ngIf="invDonut && (totalPathoCases + totalRadioCases) > 0"
+      <!-- Investigations donut -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col">
+        <div class="mb-2">
+          <h2 class="text-sm font-bold text-slate-700">Investigations Mix</h2>
+          <p class="text-xs text-slate-400">Pathology vs Radiology</p>
+        </div>
+        <div class="flex-1 flex items-center justify-center"
+             *ngIf="totalPathoCases + totalRadioCases > 0; else noInvData">
+          <apx-chart
             [series]="invDonut.series!"
             [chart]="invDonut.chart!"
             [labels]="invDonut.labels!"
@@ -269,21 +318,29 @@
             [dataLabels]="invDonut.dataLabels!"
             [stroke]="invDonut.stroke!"
             [fill]="invDonut.fill!"
-            [tooltip]="invDonut.tooltip!">
+            [tooltip]="invDonut.tooltip!"
+            [plotOptions]="invDonut.plotOptions!">
           </apx-chart>
-          <p *ngIf="(totalPathoCases + totalRadioCases) === 0"
-             class="text-xs text-[var(--app-ink-muted)] text-center py-8">
-            No investigation data.
-          </p>
         </div>
+        <ng-template #noInvData>
+          <div class="flex-1 flex items-center justify-center text-sm text-slate-400">No investigation data</div>
+        </ng-template>
+      </div>
 
-        <!-- Physiotherapy Bar -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <h3 class="text-sm font-semibold text-[var(--app-ink)] mb-1">Physiotherapy</h3>
-          <p class="text-xs text-[var(--app-ink-muted)] mb-2">
-            Total sessions: {{ totalPhysio }}
-          </p>
-          <apx-chart *ngIf="physioBar && physioData.length > 0"
+      <!-- Physiotherapy bar -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h2 class="text-sm font-bold text-slate-700">Physiotherapy</h2>
+            <p class="text-xs text-slate-400">New vs follow-up cases</p>
+          </div>
+          <div class="text-right">
+            <p class="text-2xl font-extrabold text-purple-700">{{ totalPhysio }}</p>
+            <p class="text-[10px] text-slate-400">total today</p>
+          </div>
+        </div>
+        <div class="flex-1" *ngIf="physioData.length > 0; else noPhysioData">
+          <apx-chart
             [series]="physioBar.series!"
             [chart]="physioBar.chart!"
             [xaxis]="physioBar.xaxis!"
@@ -294,17 +351,34 @@
             [legend]="physioBar.legend!"
             [tooltip]="physioBar.tooltip!">
           </apx-chart>
-          <p *ngIf="!physioData.length"
-             class="text-xs text-[var(--app-ink-muted)] text-center py-8">
-            No physiotherapy data.
-          </p>
         </div>
+        <ng-template #noPhysioData>
+          <div class="flex-1 flex items-center justify-center text-sm text-slate-400">No physiotherapy data</div>
+        </ng-template>
+      </div>
 
-        <!-- Surgeon Bar -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <h3 class="text-sm font-semibold text-[var(--app-ink)] mb-1">Surgeon Statistics</h3>
-          <p class="text-xs text-[var(--app-ink-muted)] mb-2">Top 15 by surgeries</p>
-          <apx-chart *ngIf="surgeonBar && surgeonData.length > 0"
+    </div>
+    <!-- end row 3 -->
+
+
+    <!-- ────────────────────────────────────────────────────────────────
+         ROW 4 — Surgeon stats + Inpatients by dept
+    ──────────────────────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+      <!-- Surgeon Performance -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-sm font-bold text-slate-700">Surgeon Performance</h2>
+            <p class="text-xs text-slate-400">Top surgeons by case count today</p>
+          </div>
+          <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+            <span class="material-icons text-orange-600 text-[16px]">workspace_premium</span>
+          </div>
+        </div>
+        <div *ngIf="surgeonData.length > 0; else noSurgeonData">
+          <apx-chart
             [series]="surgeonBar.series!"
             [chart]="surgeonBar.chart!"
             [xaxis]="surgeonBar.xaxis!"
@@ -315,128 +389,25 @@
             [legend]="surgeonBar.legend!"
             [tooltip]="surgeonBar.tooltip!">
           </apx-chart>
-          <p *ngIf="!surgeonData.length"
-             class="text-xs text-[var(--app-ink-muted)] text-center py-8">
-            No surgeon data.
-          </p>
         </div>
-
-        <!-- Highlights Panel -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <h3 class="text-sm font-semibold text-[var(--app-ink)] mb-3">Today&apos;s Highlights</h3>
-          <div class="space-y-2.5">
-            <div class="flex items-center justify-between rounded-lg bg-teal-50 px-3 py-2">
-              <div class="flex items-center gap-2">
-                <span class="material-icons text-[var(--app-primary)] text-base leading-none">hotel</span>
-                <span class="text-xs text-[var(--app-ink-muted)]">Inpatients</span>
-              </div>
-              <span class="text-sm font-bold text-[var(--app-primary)]">{{ currentInpatients }}</span>
-            </div>
-            <div class="flex items-center justify-between rounded-lg bg-green-50 px-3 py-2">
-              <div class="flex items-center gap-2">
-                <span class="material-icons text-green-600 text-base leading-none">logout</span>
-                <span class="text-xs text-[var(--app-ink-muted)]">Discharges</span>
-              </div>
-              <span class="text-sm font-bold text-green-600">{{ totalDischarges }}</span>
-            </div>
-            <div class="flex items-center justify-between rounded-lg bg-orange-50 px-3 py-2">
-              <div class="flex items-center gap-2">
-                <span class="material-icons text-orange-600 text-base leading-none">medical_services</span>
-                <span class="text-xs text-[var(--app-ink-muted)]">OT Cases</span>
-              </div>
-              <span class="text-sm font-bold text-orange-600">{{ totalOtCases }}</span>
-            </div>
-            <div class="flex items-center justify-between rounded-lg bg-indigo-50 px-3 py-2">
-              <div class="flex items-center gap-2">
-                <span class="material-icons text-indigo-600 text-base leading-none">self_improvement</span>
-                <span class="text-xs text-[var(--app-ink-muted)]">Physio Sessions</span>
-              </div>
-              <span class="text-sm font-bold text-indigo-600">{{ totalPhysio }}</span>
-            </div>
-            <div class="flex items-center justify-between rounded-lg bg-blue-50 px-3 py-2">
-              <div class="flex items-center gap-2">
-                <span class="material-icons text-blue-600 text-base leading-none">biotech</span>
-                <span class="text-xs text-[var(--app-ink-muted)]">Investigations</span>
-              </div>
-              <span class="text-sm font-bold text-blue-600">{{ totalPathoCases + totalRadioCases }}</span>
-            </div>
-          </div>
-        </div>
-
+        <ng-template #noSurgeonData>
+          <div class="h-[180px] flex items-center justify-center text-sm text-slate-400">No surgery data</div>
+        </ng-template>
       </div>
-      <!-- end Row 3 -->
 
-      <!-- ══ ROW 4: Pathology + Radiology + Inpatients by Dept ══════════ -->
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-
-        <!-- Pathology Detail -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <h3 class="text-sm font-semibold text-[var(--app-ink)]">Pathology Tests</h3>
-              <p class="text-xs text-[var(--app-ink-muted)]">Total: {{ totalPathoCases }}</p>
-            </div>
-            <span class="rounded-xl bg-teal-50 p-1.5">
-              <span class="material-icons text-[var(--app-primary)] text-base leading-none">biotech</span>
-            </span>
+      <!-- Inpatients by Dept -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-sm font-bold text-slate-700">Inpatients by Department</h2>
+            <p class="text-xs text-slate-400">Currently admitted patients per department</p>
           </div>
-          <apx-chart *ngIf="pathBar && totalPathoCases > 0"
-            [series]="pathBar.series!"
-            [chart]="pathBar.chart!"
-            [xaxis]="pathBar.xaxis!"
-            [yaxis]="pathBar.yaxis!"
-            [plotOptions]="pathBar.plotOptions!"
-            [dataLabels]="pathBar.dataLabels!"
-            [colors]="pathBar.colors!"
-            [legend]="pathBar.legend!"
-            [tooltip]="pathBar.tooltip!">
-          </apx-chart>
-          <p *ngIf="totalPathoCases === 0"
-             class="text-xs text-[var(--app-ink-muted)] text-center py-10">
-            No pathology data for this date.
-          </p>
+          <div class="w-8 h-8 rounded-lg bg-[#1e3a5f]/10 flex items-center justify-center">
+            <span class="material-icons text-[#1e3a5f] text-[16px]">bed</span>
+          </div>
         </div>
-
-        <!-- Radiology Detail -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <h3 class="text-sm font-semibold text-[var(--app-ink)]">Radiology Tests</h3>
-              <p class="text-xs text-[var(--app-ink-muted)]">Total: {{ totalRadioCases }}</p>
-            </div>
-            <span class="rounded-xl bg-indigo-50 p-1.5">
-              <span class="material-icons text-indigo-600 text-base leading-none">radiology</span>
-            </span>
-          </div>
-          <apx-chart *ngIf="radioBar && totalRadioCases > 0"
-            [series]="radioBar.series!"
-            [chart]="radioBar.chart!"
-            [xaxis]="radioBar.xaxis!"
-            [yaxis]="radioBar.yaxis!"
-            [plotOptions]="radioBar.plotOptions!"
-            [dataLabels]="radioBar.dataLabels!"
-            [colors]="radioBar.colors!"
-            [legend]="radioBar.legend!"
-            [tooltip]="radioBar.tooltip!">
-          </apx-chart>
-          <p *ngIf="totalRadioCases === 0"
-             class="text-xs text-[var(--app-ink-muted)] text-center py-10">
-            No radiology data for this date.
-          </p>
-        </div>
-
-        <!-- Current Inpatients by Dept -->
-        <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-black/[0.05]">
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <h3 class="text-sm font-semibold text-[var(--app-ink)]">Inpatients by Department</h3>
-              <p class="text-xs text-[var(--app-ink-muted)]">Current remaining patients</p>
-            </div>
-            <span class="rounded-xl bg-teal-50 p-1.5">
-              <span class="material-icons text-[var(--app-primary)] text-base leading-none">hotel</span>
-            </span>
-          </div>
-          <apx-chart *ngIf="inpatientBar && currentInpatients > 0"
+        <div *ngIf="currentInpatients > 0; else noInpData">
+          <apx-chart
             [series]="inpatientBar.series!"
             [chart]="inpatientBar.chart!"
             [xaxis]="inpatientBar.xaxis!"
@@ -447,76 +418,308 @@
             [legend]="inpatientBar.legend!"
             [tooltip]="inpatientBar.tooltip!">
           </apx-chart>
-          <p *ngIf="currentInpatients === 0"
-             class="text-xs text-[var(--app-ink-muted)] text-center py-10">
-            No inpatient data for this date.
-          </p>
         </div>
-
+        <ng-template #noInpData>
+          <div class="h-[180px] flex items-center justify-center text-sm text-slate-400">No inpatient data</div>
+        </ng-template>
       </div>
-      <!-- end Row 4 -->
 
-      <!-- ══ ROW 5: Department Summary Table ══════════════════════════════ -->
-      <div class="rounded-2xl bg-white shadow-sm ring-1 ring-black/[0.05] overflow-hidden">
-        <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+    </div>
+    <!-- end row 4 -->
+
+
+    <!-- ────────────────────────────────────────────────────────────────
+         ROW 5 — Pathology detail + Radiology detail
+    ──────────────────────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+      <!-- Pathology detail -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+        <div class="flex items-center justify-between mb-3">
           <div>
-            <h3 class="text-sm font-semibold text-[var(--app-ink)]">Department-wise Summary</h3>
-            <p class="text-xs text-[var(--app-ink-muted)] mt-0.5">{{ deptDetails.length }} departments</p>
+            <h2 class="text-sm font-bold text-slate-700">Pathology Tests</h2>
+            <p class="text-xs text-slate-400">Test-wise breakdown today</p>
           </div>
-          <span class="rounded-xl bg-teal-50 p-2">
-            <span class="material-icons text-[var(--app-primary)] text-base leading-none">table_chart</span>
-          </span>
+          <div class="text-right">
+            <p class="text-2xl font-extrabold text-teal-700">{{ totalPathoCases }}</p>
+            <p class="text-[10px] text-slate-400">total tests</p>
+          </div>
         </div>
+        <div *ngIf="pathBar.series && pathBar.series[0]?.data?.length; else noPathData">
+          <apx-chart
+            [series]="pathBar.series!"
+            [chart]="pathBar.chart!"
+            [xaxis]="pathBar.xaxis!"
+            [yaxis]="pathBar.yaxis!"
+            [plotOptions]="pathBar.plotOptions!"
+            [dataLabels]="pathBar.dataLabels!"
+            [colors]="pathBar.colors!"
+            [legend]="pathBar.legend!"
+            [tooltip]="pathBar.tooltip!">
+          </apx-chart>
+        </div>
+        <ng-template #noPathData>
+          <div class="h-[140px] flex items-center justify-center text-sm text-slate-400">No pathology data</div>
+        </ng-template>
+      </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full min-w-[700px] text-sm text-left">
-            <thead>
-              <tr class="bg-[var(--app-primary)] text-white text-xs uppercase tracking-wide">
-                <th class="px-4 py-3 font-semibold">Department</th>
-                <th class="px-4 py-3 font-semibold text-right">OPD</th>
-                <th class="px-4 py-3 font-semibold text-right">Admissions</th>
-                <th class="px-4 py-3 font-semibold text-right">Discharges</th>
-                <th class="px-4 py-3 font-semibold text-right">Inpatients</th>
-                <th class="px-4 py-3 font-semibold text-right">Major OT</th>
-                <th class="px-4 py-3 font-semibold text-right">Minor OT</th>
-                <th class="px-4 py-3 font-semibold text-right">Day Care</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let d of deptDetails; let i = index"
-                class="border-b border-slate-50 transition-colors hover:bg-teal-50/40"
-                [class.bg-white]="i % 2 === 0"
-                [class.bg-slate-50]="i % 2 !== 0">
-                <td class="px-4 py-2.5 font-medium text-[var(--app-ink)]">{{ d.DeptName }}</td>
-                <td class="px-4 py-2.5 text-right text-[var(--app-ink-muted)]">{{ d.Opd || 0 }}</td>
-                <td class="px-4 py-2.5 text-right text-[var(--app-ink-muted)]">{{ d.Adm || 0 }}</td>
-                <td class="px-4 py-2.5 text-right text-[var(--app-ink-muted)]">{{ d.Dis || 0 }}</td>
-                <td class="px-4 py-2.5 text-right">
-                  <span class="font-semibold text-[var(--app-primary)]">{{ d.Rem || 0 }}</span>
-                </td>
-                <td class="px-4 py-2.5 text-right text-[var(--app-ink-muted)]">{{ d.Major || 0 }}</td>
-                <td class="px-4 py-2.5 text-right text-[var(--app-ink-muted)]">{{ d.Minor || 0 }}</td>
-                <td class="px-4 py-2.5 text-right text-[var(--app-ink-muted)]">{{ d.DayCare || 0 }}</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr class="bg-[var(--app-primary)] text-white font-bold text-xs">
-                <td class="px-4 py-3">TOTAL</td>
-                <td class="px-4 py-3 text-right">{{ totalOpdDept }}</td>
-                <td class="px-4 py-3 text-right">{{ totalAdmissions }}</td>
-                <td class="px-4 py-3 text-right">{{ totalDischarges }}</td>
-                <td class="px-4 py-3 text-right">{{ currentInpatients }}</td>
-                <td class="px-4 py-3 text-right">{{ totalMajor }}</td>
-                <td class="px-4 py-3 text-right">{{ totalMinor }}</td>
-                <td class="px-4 py-3 text-right">{{ totalDayCare }}</td>
-              </tr>
-            </tfoot>
-          </table>
+      <!-- Radiology detail -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-sm font-bold text-slate-700">Radiology Tests</h2>
+            <p class="text-xs text-slate-400">Test-wise breakdown today</p>
+          </div>
+          <div class="text-right">
+            <p class="text-2xl font-extrabold text-purple-700">{{ totalRadioCases }}</p>
+            <p class="text-[10px] text-slate-400">total tests</p>
+          </div>
+        </div>
+        <div *ngIf="radioBar.series && radioBar.series[0]?.data?.length; else noRadioData">
+          <apx-chart
+            [series]="radioBar.series!"
+            [chart]="radioBar.chart!"
+            [xaxis]="radioBar.xaxis!"
+            [yaxis]="radioBar.yaxis!"
+            [plotOptions]="radioBar.plotOptions!"
+            [dataLabels]="radioBar.dataLabels!"
+            [colors]="radioBar.colors!"
+            [legend]="radioBar.legend!"
+            [tooltip]="radioBar.tooltip!">
+          </apx-chart>
+        </div>
+        <ng-template #noRadioData>
+          <div class="h-[140px] flex items-center justify-center text-sm text-slate-400">No radiology data</div>
+        </ng-template>
+      </div>
+
+    </div>
+    <!-- end row 5 -->
+
+
+    <!-- ────────────────────────────────────────────────────────────────
+         ROW 6 — 3 text summary panels (matches image bottom strip)
+    ──────────────────────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+      <!-- Clinical Outcomes -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+            <span class="material-icons text-blue-600 text-[16px]">monitor_heart</span>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-slate-700">Clinical Outcomes</h2>
+            <p class="text-[10px] text-slate-400 uppercase tracking-wide">Patient movement today</p>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between py-2 border-b border-slate-50">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+              <span class="text-sm text-slate-600">OPD Visits (General)</span>
+            </div>
+            <span class="text-sm font-bold text-slate-800">{{ summary.Opd_Gen }}</span>
+          </div>
+          <div class="flex items-center justify-between py-2 border-b border-slate-50">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+              <span class="text-sm text-slate-600">Emergency / Casualty</span>
+            </div>
+            <span class="text-sm font-bold text-slate-800">{{ erPatients }}</span>
+          </div>
+          <div class="flex items-center justify-between py-2 border-b border-slate-50">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-teal-400"></span>
+              <span class="text-sm text-slate-600">New Admissions</span>
+            </div>
+            <span class="text-sm font-bold text-slate-800">{{ totalAdmissions }}</span>
+          </div>
+          <div class="flex items-center justify-between py-2 border-b border-slate-50">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-green-400"></span>
+              <span class="text-sm text-slate-600">Discharges</span>
+            </div>
+            <span class="text-sm font-bold text-slate-800">{{ totalDischarges }}</span>
+          </div>
+          <div class="flex items-center justify-between py-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-[#1e3a5f]"></span>
+              <span class="text-sm text-slate-600">Current Inpatients</span>
+            </div>
+            <span class="text-sm font-bold text-[#1e3a5f]">{{ currentInpatients }}</span>
+          </div>
         </div>
       </div>
-      <!-- end Row 5 -->
 
-    </ng-container>
+      <!-- Operational Metrics -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 rounded-lg bg-teal-100 flex items-center justify-center">
+            <span class="material-icons text-teal-600 text-[16px]">analytics</span>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-slate-700">Operational Metrics</h2>
+            <p class="text-[10px] text-slate-400 uppercase tracking-wide">Diagnostics &amp; therapy</p>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between py-2 border-b border-slate-50">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-teal-400"></span>
+              <span class="text-sm text-slate-600">Pathology Tests</span>
+            </div>
+            <span class="text-sm font-bold text-slate-800">{{ totalPathoCases }}</span>
+          </div>
+          <div class="flex items-center justify-between py-2 border-b border-slate-50">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+              <span class="text-sm text-slate-600">Radiology Tests</span>
+            </div>
+            <span class="text-sm font-bold text-slate-800">{{ totalRadioCases }}</span>
+          </div>
+          <div class="flex items-center justify-between py-2 border-b border-slate-50">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-violet-400"></span>
+              <span class="text-sm text-slate-600">Physiotherapy Sessions</span>
+            </div>
+            <span class="text-sm font-bold text-slate-800">{{ totalPhysio }}</span>
+          </div>
+          <div class="flex items-center justify-between py-2 border-b border-slate-50">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-orange-400"></span>
+              <span class="text-sm text-slate-600">Total OT Cases</span>
+            </div>
+            <span class="text-sm font-bold text-slate-800">{{ totalOtCases }}</span>
+          </div>
+          <div class="flex items-center justify-between py-2">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-slate-300"></span>
+              <span class="text-sm text-slate-600">Total Investigations</span>
+            </div>
+            <span class="text-sm font-bold text-slate-800">{{ totalPathoCases + totalRadioCases }}</span>
+          </div>
+        </div>
+      </div>
 
-  </div>
+      <!-- Surgery Breakdown -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+        <div class="flex items-center gap-2 mb-4">
+          <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+            <span class="material-icons text-orange-600 text-[16px]">cut</span>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-slate-700">Surgery Breakdown</h2>
+            <p class="text-[10px] text-slate-400 uppercase tracking-wide">OT classification today</p>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between py-2 border-b border-slate-50">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+              <span class="text-sm text-slate-600">Major Surgeries</span>
+            </div>
+            <span class="text-sm font-bold text-slate-800">{{ totalMajor }}</span>
+          </div>
+          <div class="flex items-center justify-between py-2 border-b border-slate-50">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+              <span class="text-sm text-slate-600">Minor Surgeries</span>
+            </div>
+            <span class="text-sm font-bold text-slate-800">{{ totalMinor }}</span>
+          </div>
+          <div class="flex items-center justify-between py-2 border-b border-slate-50">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-300"></span>
+              <span class="text-sm text-slate-600">Day Care Procedures</span>
+            </div>
+            <span class="text-sm font-bold text-slate-800">{{ totalDayCare }}</span>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100" *ngIf="surgeonData.length > 0">
+            <p class="text-[10px] text-slate-400 uppercase tracking-wide mb-2">Top Surgeons</p>
+            <div *ngFor="let s of surgeonData | slice:0:4"
+                 class="flex items-center justify-between py-1.5 text-xs">
+              <span class="text-slate-600 truncate max-w-[160px]">{{ s.Doctname }}</span>
+              <span class="ml-2 px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 font-bold flex-shrink-0">
+                {{ s.Total }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- end row 6 -->
+
+
+    <!-- ────────────────────────────────────────────────────────────────
+         ROW 7 — Full-width dept summary table
+    ──────────────────────────────────────────────────────────────────── -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center gap-2">
+        <span class="material-icons text-[#1e3a5f] text-[18px]">table_chart</span>
+        <h2 class="text-sm font-bold text-slate-700">Department-wise Summary</h2>
+        <span class="ml-auto text-xs text-slate-400">{{ selectedToDate }}</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-[#1e3a5f] text-white">
+              <th class="px-4 py-3 text-left text-xs font-semibold tracking-wide">#</th>
+              <th class="px-4 py-3 text-left text-xs font-semibold tracking-wide">Department</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold tracking-wide">OPD</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold tracking-wide">Admissions</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold tracking-wide">Discharges</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold tracking-wide">Remaining</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold tracking-wide">Major OT</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold tracking-wide">Minor OT</th>
+              <th class="px-4 py-3 text-right text-xs font-semibold tracking-wide">Day Care</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of deptDetails; let i = index"
+                [class]="i % 2 === 0 ? 'bg-white hover:bg-blue-50/50' : 'bg-slate-50/60 hover:bg-blue-50/50'"
+                class="transition-colors">
+              <td class="px-4 py-2.5 text-slate-400 text-xs">{{ i + 1 }}</td>
+              <td class="px-4 py-2.5 font-medium text-slate-700">{{ d.DeptName }}</td>
+              <td class="px-4 py-2.5 text-right text-blue-700 font-semibold">{{ d.Opd || 0 }}</td>
+              <td class="px-4 py-2.5 text-right text-teal-700 font-semibold">{{ d.Adm || 0 }}</td>
+              <td class="px-4 py-2.5 text-right text-green-700 font-semibold">{{ d.Dis || 0 }}</td>
+              <td class="px-4 py-2.5 text-right">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold"
+                      [class]="(d.Rem || 0) > 0 ? 'bg-[#1e3a5f]/10 text-[#1e3a5f]' : 'text-slate-400'">
+                  {{ d.Rem || 0 }}
+                </span>
+              </td>
+              <td class="px-4 py-2.5 text-right text-orange-700">{{ d.Major || 0 }}</td>
+              <td class="px-4 py-2.5 text-right text-yellow-700">{{ d.Minor || 0 }}</td>
+              <td class="px-4 py-2.5 text-right text-amber-700">{{ d.DayCare || 0 }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="bg-[#1e3a5f]/5 border-t-2 border-[#1e3a5f]/20 font-bold">
+              <td class="px-4 py-3 text-xs text-slate-400" colspan="2">TOTAL</td>
+              <td class="px-4 py-3 text-right text-blue-700">{{ totalOpdDept }}</td>
+              <td class="px-4 py-3 text-right text-teal-700">{{ totalAdmissions }}</td>
+              <td class="px-4 py-3 text-right text-green-700">{{ totalDischarges }}</td>
+              <td class="px-4 py-3 text-right text-[#1e3a5f]">{{ currentInpatients }}</td>
+              <td class="px-4 py-3 text-right text-orange-700">{{ totalMajor }}</td>
+              <td class="px-4 py-3 text-right text-yellow-700">{{ totalMinor }}</td>
+              <td class="px-4 py-3 text-right text-amber-700">{{ totalDayCare }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div *ngIf="deptDetails.length === 0"
+           class="py-12 text-center text-sm text-slate-400">
+        No department data available for selected date.
+      </div>
+    </div>
+    <!-- end row 7 -->
+
+  </main>
+  <!-- end main content -->
+
 </div>

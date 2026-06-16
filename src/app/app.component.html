@@ -1,8 +1,8 @@
-<ng-container *ngIf="!isLoggedIn">
+<ng-container *ngIf="!isLoggedIn || isLoginPage">
   <router-outlet />
 </ng-container>
 
-<ng-container *ngIf="isLoggedIn">
+<ng-container *ngIf="isLoggedIn && !isLoginPage">
   <!-- Mobile drawer backdrop -->
   <div
     *ngIf="sidenavOpen"

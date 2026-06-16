@@ -1,0 +1,26 @@
+<div class="flex min-h-screen items-center justify-center bg-page px-4">
+  <div class="w-full max-w-md text-center">
+    <div class="rounded-2xl border border-border bg-surface shadow-[0_10px_40px_rgba(0,0,0,0.08)] px-8 py-10">
+      <div class="mb-4 flex items-center justify-center">
+        <span class="flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </span>
+      </div>
+      <h1 class="text-2xl font-semibold text-ink mb-2">Unauthorized Access</h1>
+      <p class="text-sm text-ink-muted mb-8">
+        You do not have permission to view this page.<br />
+        Please contact your administrator if you need access.
+      </p>
+      <button
+        (click)="goBack()"
+        class="rounded-lg border border-transparent bg-[var(--app-primary)] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition duration-200 hover:bg-[var(--app-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-light)]"
+      >
+        Go Back
+      </button>
+    </div>
+    <div class="mt-6 text-xs text-ink-faint">&copy; 2026 CUSMC &bull; IT Department</div>
+  </div>
+</div>

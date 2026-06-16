@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth/auth.service';
 import { NavService } from './nav/nav.service';
@@ -18,6 +19,7 @@ import { environment } from '../environments/environment';
 })
 export class AppComponent implements OnInit {
   isLoggedIn = false;
+  isLoginPage = false;
   username = '';
   sidenavOpen = false;
   userImageUrl: string | null = null;
@@ -38,6 +40,14 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Track login page so shell never wraps the login form, regardless of isLoggedIn timing
+    this.isLoginPage = this.router.url.startsWith('/login');
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe((e: NavigationEnd) => {
+        this.isLoginPage = e.urlAfterRedirects.startsWith('/login');
+      });
+
     this.authService.isLoggedIn$().subscribe((loggedIn) => {
       this.isLoggedIn = loggedIn;
       this.username = this.authService.getUsername() || '';
