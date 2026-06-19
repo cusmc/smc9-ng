@@ -41,6 +41,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () => import('./hims/hims.routes').then(m => m.HIMS_ROUTES)
   },
+  {
+    path: 'mis',
+    canActivate: [authGuard],
+    loadChildren: () => import('./mis/mis.routes').then(m => m.MIS_ROUTES)
+  },
   { path: '', redirectTo: '/elogbook/activities', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

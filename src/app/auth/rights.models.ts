@@ -1,5 +1,7 @@
 export interface ModuleRightsResponse {
   Permission: string; // 8-char Y/N string; PascalCase matches Web API serialization
+  Wmodule_id: number;
+  Wmodule_nm: string;
 }
 
 export interface RightModal {

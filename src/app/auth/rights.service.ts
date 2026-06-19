@@ -6,33 +6,36 @@ import { ModuleRightsResponse, RightModal } from './rights.models';
 
 @Injectable({ providedIn: 'root' })
 export class RightsService {
-  private cache = new Map<string, string>(); // key: "cont|view", value: 8-char permission string
+  private cache = new Map<string, ModuleRightsResponse>(); // key: "cont|view|menupara"
 
   constructor(private api: ApiService) {}
 
-  getPermission(cont: string, view: string): Observable<string> {
-    const key = `${cont.toLowerCase()}|${view.toLowerCase()}`;
+  getModuleInfo(cont: string, view: string, menupara = ''): Observable<ModuleRightsResponse> {
+    const key = `${cont.toLowerCase()}|${view.toLowerCase()}|${menupara.toLowerCase()}`;
     if (this.cache.has(key)) {
       return of(this.cache.get(key)!);
     }
+    const params: Record<string, string> = { cont, view };
+    if (menupara) params['menupara'] = menupara;
     return this.api.get<ModuleRightsResponse>(
-      '/api/Admin/UserRightsAPI/GetModuleRights',
-      { cont, view }
-    ).pipe(
-      map(res => res.Permission ?? 'NNNNNNNN'),
-      tap(perm => this.cache.set(key, perm))
+      '/api/Admin/UserRightsAPI/GetModuleRights', params
+    ).pipe(tap(res => this.cache.set(key, res)));
+  }
+
+  getPermission(cont: string, view: string, menupara = ''): Observable<string> {
+    return this.getModuleInfo(cont, view, menupara).pipe(
+      map(res => res.Permission ?? 'NNNNNNNN')
     );
   }
 
-  hasRights(cont: string, view: string): boolean {
-    const key = `${cont.toLowerCase()}|${view.toLowerCase()}`;
-    const perm = this.cache.get(key) ?? 'N';
-    return perm.charAt(0) === 'Y';
+  hasRights(cont: string, view: string, menupara = ''): boolean {
+    const key = `${cont.toLowerCase()}|${view.toLowerCase()}|${menupara.toLowerCase()}`;
+    return (this.cache.get(key)?.Permission ?? 'N').charAt(0) === 'Y';
   }
 
-  getRightsModal(cont: string, view: string): RightModal {
-    const key = `${cont.toLowerCase()}|${view.toLowerCase()}`;
-    const p = this.cache.get(key) ?? 'NNNNNNNN';
+  getRightsModal(cont: string, view: string, menupara = ''): RightModal {
+    const key = `${cont.toLowerCase()}|${view.toLowerCase()}|${menupara.toLowerCase()}`;
+    const p = this.cache.get(key)?.Permission ?? 'NNNNNNNN';
     return {
       View:   p.charAt(0) === 'Y',
       Add:    p.charAt(1) === 'Y',

@@ -1,0 +1,6 @@
+/* Component styles — layout handled by Tailwind */
+
+:host { display: block; }
+
+/* Prevent table from jumping when data loads */
+table { min-width: 100%; }

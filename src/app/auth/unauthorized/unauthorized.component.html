@@ -1,26 +1,76 @@
-<div class="flex min-h-screen items-center justify-center bg-page px-4">
-  <div class="w-full max-w-md text-center">
-    <div class="rounded-2xl border border-border bg-surface shadow-[0_10px_40px_rgba(0,0,0,0.08)] px-8 py-10">
-      <div class="mb-4 flex items-center justify-center">
-        <span class="flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          </svg>
-        </span>
+<div class="flex min-h-screen items-center justify-center bg-page px-4 py-10">
+  <div class="w-full max-w-[460px]">
+
+    <!-- Card -->
+    <div class="overflow-hidden rounded-xl border border-border bg-surface shadow-[0_4px_24px_rgba(0,0,0,0.18)]">
+
+      <!-- Header -->
+      <div class="flex items-center gap-2 bg-red-600 px-4 py-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+        </svg>
+        <span class="text-base font-bold tracking-wide text-white">Unauthorised Access</span>
       </div>
-      <h1 class="text-2xl font-semibold text-ink mb-2">Unauthorized Access</h1>
-      <p class="text-sm text-ink-muted mb-8">
-        You do not have permission to view this page.<br />
-        Please contact your administrator if you need access.
-      </p>
-      <button
-        (click)="goBack()"
-        class="rounded-lg border border-transparent bg-[var(--app-primary)] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition duration-200 hover:bg-[var(--app-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-light)]"
-      >
-        Go Back
-      </button>
+
+      <!-- Body -->
+      <div class="px-5 py-4">
+
+        <!-- Warning panel -->
+        <div class="rounded border-l-4 border-amber-400 bg-amber-50 px-4 py-3">
+          <p class="mb-2 text-sm leading-relaxed text-gray-700">
+            <ng-container *ngIf="moduleName">
+              <strong>{{ moduleName }}</strong> &mdash;
+            </ng-container>
+            If you think you need this access, you can send a request to the admin.
+          </p>
+
+          <!-- Request form -->
+          <ng-container *ngIf="!requested">
+            <textarea
+              [(ngModel)]="remarks"
+              rows="2"
+              placeholder="Optional: reason why you need this access"
+              class="mb-2 w-full resize-y rounded border border-border bg-white px-3 py-1.5 text-sm text-ink focus:border-transparent focus:outline-none focus:ring-2 focus:ring-accent"
+            ></textarea>
+
+            <button
+              (click)="requestAccess()"
+              [disabled]="requesting || !wmoduleId"
+              class="rounded border border-transparent bg-amber-500 px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition duration-200 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <span *ngIf="!requesting">&#9993; Request Access</span>
+              <span *ngIf="requesting">Sending&hellip;</span>
+            </button>
+          </ng-container>
+
+          <!-- Success -->
+          <p *ngIf="requested" class="mt-1 text-sm font-medium text-green-700">
+            &#10003; Your request has been sent to the admin.
+          </p>
+
+          <!-- Error -->
+          <p *ngIf="requestError" class="mt-1 text-xs text-red-700">{{ requestError }}</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex flex-wrap gap-2 border-t border-border bg-gray-50 px-5 py-3">
+        <button
+          (click)="goBack()"
+          class="flex-1 rounded border border-border bg-white px-4 py-2 text-sm font-medium text-ink shadow-sm transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+          &larr; Go Back
+        </button>
+        <button
+          (click)="loginDifferent()"
+          class="flex-1 rounded border border-transparent bg-[var(--app-primary)] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[var(--app-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-light)]"
+        >
+          &#8594; Login with different user
+        </button>
+      </div>
+
     </div>
-    <div class="mt-6 text-xs text-ink-faint">&copy; 2026 CUSMC &bull; IT Department</div>
+
+    <div class="mt-5 text-center text-xs text-ink-faint">&copy; 2026 CUSMC &bull; IT Department</div>
   </div>
 </div>
