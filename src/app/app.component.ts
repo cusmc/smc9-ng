@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { Router, RouterOutlet, RouterLink, NavigationEnd, NavigationError, NavigationCancel } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from './auth/auth.service';
 import { NavService } from './nav/nav.service';
 import { NavModule } from './nav/nav.types';
@@ -13,7 +13,7 @@ import { environment } from '../environments/environment';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, ModuleRailComponent, SidebarComponent],
+  imports: [CommonModule, RouterOutlet, RouterLink, ModuleRailComponent, SidebarComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -25,9 +25,14 @@ export class AppComponent implements OnInit {
   userImageUrl: string | null = null;
   ProfileName = '';
   userRoles: string[] = [];
+  dbgNavEvent = '—';
+  dbgNavError = '—';
+  serverUnavailable = false;
+  serverErrorMsg = '';
 
   visibleModules: NavModule[] = [];
   activeModule: NavModule | null = null;
+  profileMenuOpen = false;
 
   defaultAvatar =
     'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNlMGUwZTAiLz4KPHBhdGggZD0iTTIwIDIwYzIuNzYxNCAwIDUtMi4yMzg2IDUtNXMtMi4yMzg2LTUtNS01LTUgMi4yMzg2LTUgNSA1IDUgNSA1eiIgZmlsbD0iIzk5OTk5OSIvPgo8cGF0aCBkPSJNMTIgMzJ2LTNjMC00LjQxODMgMy41ODE3LTggOC04czggMy41ODE3IDggOHYzaC0xNnoiIGZpbGw9IiM5OTk5OTkiLz4KPC9zdmc+';
@@ -47,6 +52,16 @@ export class AppComponent implements OnInit {
       .subscribe((e: NavigationEnd) => {
         this.isLoginPage = e.urlAfterRedirects.startsWith('/login');
       });
+
+    this.router.events.subscribe(e => {
+      if (e instanceof NavigationEnd) {
+        this.dbgNavEvent = 'END → ' + e.urlAfterRedirects;
+      } else if (e instanceof NavigationError) {
+        this.dbgNavError = e.url + ' | ' + (e.error?.message || e.error);
+      } else if (e instanceof NavigationCancel) {
+        this.dbgNavEvent = 'CANCEL ' + e.url + ' | ' + e.reason;
+      }
+    });
 
     this.authService.isLoggedIn$().subscribe((loggedIn) => {
       this.isLoggedIn = loggedIn;
@@ -73,6 +88,8 @@ export class AppComponent implements OnInit {
 
     this.http.get<any>(url).subscribe({
       next: (res) => {
+        this.serverUnavailable = false;
+        this.serverErrorMsg = '';
         const data = Array.isArray(res) ? res[0] : res;
         const raw: string | undefined = data?.ImgProfile;
         this.ProfileName = data?.ProfileName || this.username || '';
@@ -95,9 +112,14 @@ export class AppComponent implements OnInit {
         }
         this.userImageUrl = src || this.defaultAvatar;
       },
-      error: () => {
+      error: (err: HttpErrorResponse) => {
+        this.ProfileName = this.username;
         this.visibleModules = this.nav.allModules;
         this.userImageUrl = this.defaultAvatar;
+        this.serverUnavailable = true;
+        this.serverErrorMsg = err.status === 0
+          ? 'Cannot reach the server. Please check your network or contact IT.'
+          : 'Server error (' + err.status + '). Some features may not work correctly.';
       },
     });
   }
@@ -145,8 +167,26 @@ export class AppComponent implements OnInit {
     (event.target as HTMLImageElement).src = this.defaultAvatar;
   }
 
+  toggleProfileMenu(event: Event): void {
+    event.stopPropagation();
+    this.profileMenuOpen = !this.profileMenuOpen;
+  }
+
+  @HostListener('document:click')
+  closeProfileMenu(): void {
+    this.profileMenuOpen = false;
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
+
+  retryProfile(): void {
+    this.serverUnavailable = false;
+    this.loadUserProfile();
+  }
+
+  get currentUrl(): string { return this.router.url; }
+  get hasToken(): boolean { return !!this.authService.getToken(); }
 }

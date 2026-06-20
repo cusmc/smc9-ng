@@ -1,0 +1,81 @@
+<div class="flex flex-col bg-white" style="width:780px; max-width:95vw;">
+
+  <!-- Header -->
+  <div class="flex items-center gap-3 border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+    <span class="material-icons text-[#2d8a7e]">
+      {{ renderMode === 'image' ? 'image' : renderMode === 'pdf' ? 'picture_as_pdf' : 'insert_drive_file' }}
+    </span>
+    <div>
+      <h3 class="text-base font-semibold text-[#333]">{{ data.title || 'Document Viewer' }}</h3>
+      <p class="text-xs text-[#888] font-mono">{{ data.filename }}</p>
+    </div>
+    <span class="flex-1"></span>
+    <button type="button" class="rounded p-1 hover:bg-[#eee]" (click)="onClose()" aria-label="Close">
+      <span class="material-icons text-[#999]">close</span>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="flex min-h-[300px] items-center justify-center bg-[#f5f5f5]">
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex flex-col items-center gap-3 py-16 text-[#777]">
+      <div class="h-10 w-10 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+      <span class="text-sm">Loading file&hellip;</span>
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="!loading && error"
+      class="flex flex-col items-center gap-3 py-16 text-center text-[#d00]">
+      <span class="material-icons text-4xl">error_outline</span>
+      <p class="text-sm">{{ error }}</p>
+    </div>
+
+    <!-- Image viewer -->
+    <img *ngIf="!loading && !error && renderMode === 'image'"
+      [src]="objectUrl"
+      alt="Document"
+      class="max-h-[70vh] max-w-full object-contain shadow-md" />
+
+    <!-- PDF viewer -->
+    <iframe *ngIf="!loading && !error && renderMode === 'pdf'"
+      [src]="safeUrl"
+      class="w-full border-0"
+      style="height:72vh;"
+      title="PDF viewer">
+    </iframe>
+
+    <!-- Other file types — offer download -->
+    <div *ngIf="!loading && !error && renderMode === 'other'"
+      class="flex flex-col items-center gap-4 py-16 text-center text-[#555]">
+      <span class="material-icons text-6xl text-[#c8a96a]">insert_drive_file</span>
+      <p class="text-sm text-[#777]">
+        Preview not available for this file type.<br />
+        Click below to download.
+      </p>
+      <button type="button" (click)="download()"
+        class="inline-flex items-center gap-2 rounded-lg bg-[#2d8a7e] px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#256f65]">
+        <span class="material-icons text-[18px]">download</span>
+        Download {{ data.filename }}
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="flex items-center justify-between border-t border-[#f0ebe3] px-5 py-3">
+    <button *ngIf="!loading && !error && renderMode !== 'other'" type="button"
+      (click)="download()"
+      class="inline-flex items-center gap-1.5 rounded-lg border border-[#e5e5e5] px-4 py-1.5 text-xs text-[#666] hover:bg-[#f5f5f5]">
+      <span class="material-icons text-[15px]">download</span>
+      Download
+    </button>
+    <span *ngIf="loading || error || renderMode === 'other'" class="flex-1"></span>
+    <button type="button"
+      class="rounded-lg border border-[#e5e5e5] px-4 py-1.5 text-sm text-[#666] hover:bg-[#f5f5f5]"
+      (click)="onClose()">
+      Close
+    </button>
+  </div>
+
+</div>

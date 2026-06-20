@@ -58,6 +58,12 @@ export class ApiService {
     return this.http.post(`${this.apiUrl}${endpoint}`, body, { responseType: 'blob' });
   }
 
+  postFormData<T>(endpoint: string, formData: FormData): Observable<T> {
+    return this.http
+      .post(`${this.apiUrl}${endpoint}`, formData, { responseType: 'text' })
+      .pipe(map(res => this.parseResponse<T>(res)));
+  }
+
   private parseResponse<T>(body: string): T {
     try {
       const parsed = JSON.parse(body);

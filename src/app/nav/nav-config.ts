@@ -230,7 +230,7 @@ export const APP_NAV: NavModule[] = [
     label: 'HR',
     icon: 'people',
     baseRoute: '/hr',
-    migrated: false,
+    migrated: true,
     groups: [
       {
         label: 'Employee',
@@ -239,6 +239,7 @@ export const APP_NAV: NavModule[] = [
           { label: 'Masters', icon: 'manage_accounts', externalUrl: '/HR/Master' },
           { label: 'Family Members', icon: 'group', externalUrl: '/HR/FamilyMember' },
           { label: 'Reports', icon: 'bar_chart', externalUrl: '/HR/Report' },
+          { label: 'Document Authorization', icon: 'approval', route: '/hr/docu-auth' },
         ],
       },
       {
