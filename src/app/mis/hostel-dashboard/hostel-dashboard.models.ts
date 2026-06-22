@@ -16,8 +16,8 @@ export interface InstInfo {
 export interface BuildingRow {
   Building_nm: string;
   Building_id: number;
-  cells:       Record<string, number>; // key: `${Inst_cd}_B`, `${Inst_cd}_G`, `${Inst_cd}_E`
-  instTotals:  Record<number, number>; // total per Inst_id (students + staff combined)
+  cells:       Record<string, number | undefined>; // key: `${Inst_cd}_B`, `${Inst_cd}_G`, `${Inst_cd}_E`
+  instTotals:  Record<number, number | undefined>; // total per Inst_id (students + staff combined)
   total:       number;
 }
 

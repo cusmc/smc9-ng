@@ -67,10 +67,10 @@ export class HostelDashboardService {
     };
     buildings.forEach(b => {
       Object.entries(b.cells).forEach(([k, v]) => {
-        totalRow.cells[k] = (totalRow.cells[k] ?? 0) + v;
+        totalRow.cells[k] = (totalRow.cells[k] ?? 0) + (v ?? 0);
       });
       Object.entries(b.instTotals).forEach(([k, v]) => {
-        totalRow.instTotals[+k] = (totalRow.instTotals[+k] ?? 0) + v;
+        totalRow.instTotals[+k] = (totalRow.instTotals[+k] ?? 0) + (v ?? 0);
       });
       totalRow.total += b.total;
     });
@@ -79,7 +79,7 @@ export class HostelDashboardService {
     const sumCells = (suffix: string) =>
       Object.entries(totalRow.cells)
         .filter(([k]) => k.endsWith(suffix))
-        .reduce((s, [, v]) => s + v, 0);
+        .reduce((s, [, v]) => s + (v ?? 0), 0);
 
     const kpi = {
       total: totalRow.total,

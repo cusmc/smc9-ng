@@ -7,6 +7,7 @@ export interface ChqSummaryRow {
   party_id: number;
   party_nm: string;
   paid_amt: number | null;
+  Paym_amt: number | null;
   chq_no: string | null;
   paym_dt: string | null;
   dept: string | null;
