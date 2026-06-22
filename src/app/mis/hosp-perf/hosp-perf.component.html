@@ -35,7 +35,7 @@
 
       <!-- Series rows -->
       <div *ngFor="let s of seriesList; let i = index"
-           class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 p-3 rounded-lg bg-slate-50 border border-slate-200">
+           class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 p-3 rounded-lg bg-slate-50 border border-slate-200">
 
         <div class="flex flex-col gap-1">
           <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Label</label>
@@ -65,6 +65,15 @@
         </div>
 
         <div class="flex flex-col gap-1">
+          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Sub Dept</label>
+          <select [(ngModel)]="s.Subdept_id"
+                  class="rounded border border-slate-200 px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+            <option [ngValue]="null">All</option>
+            <option *ngFor="let d of subdepts" [ngValue]="d.id">{{ d.nm }}</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col gap-1">
           <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Doctor</label>
           <select [(ngModel)]="s.Doctor_id"
                   class="rounded border border-slate-200 px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
@@ -83,13 +92,27 @@
       </div>
 
       <!-- Generate button -->
-      <div class="flex items-center gap-3 pt-1 border-t border-slate-100">
+      <div class="flex items-center gap-3 pt-1 border-t border-slate-100 flex-wrap">
         <button (click)="generate()" [disabled]="loading || !seriesList.length"
           class="inline-flex items-center gap-1.5 rounded bg-blue-600 px-5 py-2
                  text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 transition">
           <span class="material-icons text-[16px]">{{ loading ? 'hourglass_top' : 'play_arrow' }}</span>
           {{ loading ? 'Loading&hellip;' : 'Generate' }}
         </button>
+
+        <!-- Export buttons (visible once results are available) -->
+        <ng-container *ngIf="resultMode !== 'none'">
+          <button (click)="exportAllPdf()"
+            class="inline-flex items-center gap-1.5 rounded border border-red-300 px-4 py-2
+                   text-sm font-medium text-red-700 hover:bg-red-50 transition">
+            <span class="material-icons text-[16px]">picture_as_pdf</span> Export PDF
+          </button>
+          <button (click)="exportAllExcel()"
+            class="inline-flex items-center gap-1.5 rounded border border-green-300 px-4 py-2
+                   text-sm font-medium text-green-700 hover:bg-green-50 transition">
+            <span class="material-icons text-[16px]">table_view</span> Export Excel
+          </button>
+        </ng-container>
 
         <!-- Granularity (single-series only) -->
         <ng-container *ngIf="resultMode==='single'">
@@ -117,15 +140,17 @@
           <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <span class="material-icons text-[16px] text-blue-600">personal_injury</span> OPD
           </h2>
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-            <button (click)="opdView='table'"
-              [class.bg-blue-600]="opdView==='table'" [class.text-white]="opdView==='table'"
-              [class.text-slate-600]="opdView!=='table'"
-              class="px-3 py-1.5 font-medium transition">Table</button>
-            <button (click)="opdView='chart'"
-              [class.bg-blue-600]="opdView==='chart'" [class.text-white]="opdView==='chart'"
-              [class.text-slate-600]="opdView!=='chart'"
-              class="px-3 py-1.5 font-medium transition">Chart</button>
+          <div class="flex items-center gap-2">
+            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
+              <button (click)="opdView='table'"
+                [class.bg-blue-600]="opdView==='table'" [class.text-white]="opdView==='table'"
+                [class.text-slate-600]="opdView!=='table'"
+                class="px-3 py-1.5 font-medium transition">Table</button>
+              <button (click)="opdView='chart'"
+                [class.bg-blue-600]="opdView==='chart'" [class.text-white]="opdView==='chart'"
+                [class.text-slate-600]="opdView!=='chart'"
+                class="px-3 py-1.5 font-medium transition">Chart</button>
+            </div>
           </div>
         </div>
         <div *ngIf="opdView==='table'" class="overflow-x-auto">
@@ -174,15 +199,17 @@
           <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <span class="material-icons text-[16px] text-teal-600">hotel</span> IPD
           </h2>
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-            <button (click)="ipdView='table'"
-              [class.bg-teal-600]="ipdView==='table'" [class.text-white]="ipdView==='table'"
-              [class.text-slate-600]="ipdView!=='table'"
-              class="px-3 py-1.5 font-medium transition">Table</button>
-            <button (click)="ipdView='chart'"
-              [class.bg-teal-600]="ipdView==='chart'" [class.text-white]="ipdView==='chart'"
-              [class.text-slate-600]="ipdView!=='chart'"
-              class="px-3 py-1.5 font-medium transition">Chart</button>
+          <div class="flex items-center gap-2">
+            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
+              <button (click)="ipdView='table'"
+                [class.bg-teal-600]="ipdView==='table'" [class.text-white]="ipdView==='table'"
+                [class.text-slate-600]="ipdView!=='table'"
+                class="px-3 py-1.5 font-medium transition">Table</button>
+              <button (click)="ipdView='chart'"
+                [class.bg-teal-600]="ipdView==='chart'" [class.text-white]="ipdView==='chart'"
+                [class.text-slate-600]="ipdView!=='chart'"
+                class="px-3 py-1.5 font-medium transition">Chart</button>
+            </div>
           </div>
         </div>
         <div *ngIf="ipdView==='table'" class="overflow-x-auto">
@@ -231,15 +258,17 @@
           <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <span class="material-icons text-[16px] text-orange-500">content_cut</span> Surgery
           </h2>
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-            <button (click)="surgeryView='table'"
-              [class.bg-orange-500]="surgeryView==='table'" [class.text-white]="surgeryView==='table'"
-              [class.text-slate-600]="surgeryView!=='table'"
-              class="px-3 py-1.5 font-medium transition">Table</button>
-            <button (click)="surgeryView='chart'"
-              [class.bg-orange-500]="surgeryView==='chart'" [class.text-white]="surgeryView==='chart'"
-              [class.text-slate-600]="surgeryView!=='chart'"
-              class="px-3 py-1.5 font-medium transition">Chart</button>
+          <div class="flex items-center gap-2">
+            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
+              <button (click)="surgeryView='table'"
+                [class.bg-orange-500]="surgeryView==='table'" [class.text-white]="surgeryView==='table'"
+                [class.text-slate-600]="surgeryView!=='table'"
+                class="px-3 py-1.5 font-medium transition">Table</button>
+              <button (click)="surgeryView='chart'"
+                [class.bg-orange-500]="surgeryView==='chart'" [class.text-white]="surgeryView==='chart'"
+                [class.text-slate-600]="surgeryView!=='chart'"
+                class="px-3 py-1.5 font-medium transition">Chart</button>
+            </div>
           </div>
         </div>
         <div *ngIf="surgeryView==='table'" class="overflow-x-auto">
@@ -288,15 +317,17 @@
           <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <span class="material-icons text-[16px] text-green-600">currency_rupee</span> Revenue
           </h2>
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-            <button (click)="revenueView='table'"
-              [class.bg-green-600]="revenueView==='table'" [class.text-white]="revenueView==='table'"
-              [class.text-slate-600]="revenueView!=='table'"
-              class="px-3 py-1.5 font-medium transition">Table</button>
-            <button (click)="revenueView='chart'"
-              [class.bg-green-600]="revenueView==='chart'" [class.text-white]="revenueView==='chart'"
-              [class.text-slate-600]="revenueView!=='chart'"
-              class="px-3 py-1.5 font-medium transition">Chart</button>
+          <div class="flex items-center gap-2">
+            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
+              <button (click)="revenueView='table'"
+                [class.bg-green-600]="revenueView==='table'" [class.text-white]="revenueView==='table'"
+                [class.text-slate-600]="revenueView!=='table'"
+                class="px-3 py-1.5 font-medium transition">Table</button>
+              <button (click)="revenueView='chart'"
+                [class.bg-green-600]="revenueView==='chart'" [class.text-white]="revenueView==='chart'"
+                [class.text-slate-600]="revenueView!=='chart'"
+                class="px-3 py-1.5 font-medium transition">Chart</button>
+            </div>
           </div>
         </div>
         <div *ngIf="revenueView==='table'" class="overflow-x-auto">
@@ -352,15 +383,17 @@
           <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <span class="material-icons text-[16px] text-blue-600">personal_injury</span> OPD
           </h2>
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-            <button (click)="cOpdView='table'"
-              [class.bg-blue-600]="cOpdView==='table'" [class.text-white]="cOpdView==='table'"
-              [class.text-slate-600]="cOpdView!=='table'"
-              class="px-3 py-1.5 font-medium transition">Table</button>
-            <button (click)="cOpdView='chart'"
-              [class.bg-blue-600]="cOpdView==='chart'" [class.text-white]="cOpdView==='chart'"
-              [class.text-slate-600]="cOpdView!=='chart'"
-              class="px-3 py-1.5 font-medium transition">Chart</button>
+          <div class="flex items-center gap-2">
+            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
+              <button (click)="cOpdView='table'"
+                [class.bg-blue-600]="cOpdView==='table'" [class.text-white]="cOpdView==='table'"
+                [class.text-slate-600]="cOpdView!=='table'"
+                class="px-3 py-1.5 font-medium transition">Table</button>
+              <button (click)="cOpdView='chart'"
+                [class.bg-blue-600]="cOpdView==='chart'" [class.text-white]="cOpdView==='chart'"
+                [class.text-slate-600]="cOpdView!=='chart'"
+                class="px-3 py-1.5 font-medium transition">Chart</button>
+            </div>
           </div>
         </div>
         <div *ngIf="cOpdView==='table'" class="overflow-x-auto">
@@ -409,15 +442,17 @@
           <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <span class="material-icons text-[16px] text-teal-600">hotel</span> IPD
           </h2>
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-            <button (click)="cIpdView='table'"
-              [class.bg-teal-600]="cIpdView==='table'" [class.text-white]="cIpdView==='table'"
-              [class.text-slate-600]="cIpdView!=='table'"
-              class="px-3 py-1.5 font-medium transition">Table</button>
-            <button (click)="cIpdView='chart'"
-              [class.bg-teal-600]="cIpdView==='chart'" [class.text-white]="cIpdView==='chart'"
-              [class.text-slate-600]="cIpdView!=='chart'"
-              class="px-3 py-1.5 font-medium transition">Chart</button>
+          <div class="flex items-center gap-2">
+            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
+              <button (click)="cIpdView='table'"
+                [class.bg-teal-600]="cIpdView==='table'" [class.text-white]="cIpdView==='table'"
+                [class.text-slate-600]="cIpdView!=='table'"
+                class="px-3 py-1.5 font-medium transition">Table</button>
+              <button (click)="cIpdView='chart'"
+                [class.bg-teal-600]="cIpdView==='chart'" [class.text-white]="cIpdView==='chart'"
+                [class.text-slate-600]="cIpdView!=='chart'"
+                class="px-3 py-1.5 font-medium transition">Chart</button>
+            </div>
           </div>
         </div>
         <div *ngIf="cIpdView==='table'" class="overflow-x-auto">
@@ -466,15 +501,17 @@
           <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <span class="material-icons text-[16px] text-orange-500">content_cut</span> Surgery
           </h2>
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-            <button (click)="cSurgeryView='table'"
-              [class.bg-orange-500]="cSurgeryView==='table'" [class.text-white]="cSurgeryView==='table'"
-              [class.text-slate-600]="cSurgeryView!=='table'"
-              class="px-3 py-1.5 font-medium transition">Table</button>
-            <button (click)="cSurgeryView='chart'"
-              [class.bg-orange-500]="cSurgeryView==='chart'" [class.text-white]="cSurgeryView==='chart'"
-              [class.text-slate-600]="cSurgeryView!=='chart'"
-              class="px-3 py-1.5 font-medium transition">Chart</button>
+          <div class="flex items-center gap-2">
+            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
+              <button (click)="cSurgeryView='table'"
+                [class.bg-orange-500]="cSurgeryView==='table'" [class.text-white]="cSurgeryView==='table'"
+                [class.text-slate-600]="cSurgeryView!=='table'"
+                class="px-3 py-1.5 font-medium transition">Table</button>
+              <button (click)="cSurgeryView='chart'"
+                [class.bg-orange-500]="cSurgeryView==='chart'" [class.text-white]="cSurgeryView==='chart'"
+                [class.text-slate-600]="cSurgeryView!=='chart'"
+                class="px-3 py-1.5 font-medium transition">Chart</button>
+            </div>
           </div>
         </div>
         <div *ngIf="cSurgeryView==='table'" class="overflow-x-auto">
@@ -523,15 +560,17 @@
           <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
             <span class="material-icons text-[16px] text-green-600">currency_rupee</span> Revenue
           </h2>
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-            <button (click)="cRevenueView='table'"
-              [class.bg-green-600]="cRevenueView==='table'" [class.text-white]="cRevenueView==='table'"
-              [class.text-slate-600]="cRevenueView!=='table'"
-              class="px-3 py-1.5 font-medium transition">Table</button>
-            <button (click)="cRevenueView='chart'"
-              [class.bg-green-600]="cRevenueView==='chart'" [class.text-white]="cRevenueView==='chart'"
-              [class.text-slate-600]="cRevenueView!=='chart'"
-              class="px-3 py-1.5 font-medium transition">Chart</button>
+          <div class="flex items-center gap-2">
+            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
+              <button (click)="cRevenueView='table'"
+                [class.bg-green-600]="cRevenueView==='table'" [class.text-white]="cRevenueView==='table'"
+                [class.text-slate-600]="cRevenueView!=='table'"
+                class="px-3 py-1.5 font-medium transition">Table</button>
+              <button (click)="cRevenueView='chart'"
+                [class.bg-green-600]="cRevenueView==='chart'" [class.text-white]="cRevenueView==='chart'"
+                [class.text-slate-600]="cRevenueView!=='chart'"
+                class="px-3 py-1.5 font-medium transition">Chart</button>
+            </div>
           </div>
         </div>
         <div *ngIf="cRevenueView==='table'" class="overflow-x-auto">

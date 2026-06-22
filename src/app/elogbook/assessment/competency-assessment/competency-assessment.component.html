@@ -1,17 +1,17 @@
-<div class="min-h-screen bg-[#f8f5f0] p-6">
+﻿<div class="min-h-screen bg-[#f0f2f5] p-6">
   <div class="mx-auto max-w-6xl">
     <div
-      class="overflow-hidden rounded-2xl border border-[#ebe6df] bg-white shadow-[0_10px_40px_rgba(44,36,25,0.07)]"
+      class="overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-[0_4px_24px_rgba(70,128,255,0.10)]"
     >
       <div
-        class="relative border-b border-[#f0ebe3] bg-gradient-to-r from-[#f7faf9] via-white to-[#faf8f3] px-6 pt-7 pb-5"
+        class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-6 pt-7 pb-5"
       >
         <div
-          class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#2d8a7e] to-[#c8a96a]"
+          class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#4680ff] to-[#6b9bff]"
         ></div>
         <!-- <p class="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-[#2d8a7e]">Assessment</p> -->
         <h2
-          class="font-serif text-2xl font-normal tracking-tight text-[#2a2622] md:text-[1.65rem]"
+          class="font-serif text-2xl font-normal tracking-tight text-[#1e293b] md:text-[1.65rem]"
         >
           Competency Assessment
         </h2>
@@ -77,7 +77,7 @@
             (click)="setStatus('A')"
             [ngClass]="
               selectedStatus === 'A'
-                ? 'bg-[#f3eadb] text-[#8c6b2f]'
+                ? 'bg-[#f3eadb] text-[#4680ff]'
                 : 'text-[#8a8a8a]'
             "
             class="px-4 py-2 rounded-full text-sm transition"
@@ -282,7 +282,7 @@
             type="button"
             (click)="currentPage = currentPage - 1"
             [disabled]="currentPage === 1"
-            class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]"
+            class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]"
           >
             Prev
           </button>
@@ -293,7 +293,7 @@
             type="button"
             (click)="currentPage = currentPage + 1"
             [disabled]="currentPage === totalPages"
-            class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]"
+            class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]"
           >
             Next
           </button>

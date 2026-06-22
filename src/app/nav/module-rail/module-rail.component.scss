@@ -1,4 +1,4 @@
-.rail {
+﻿.rail {
   display: flex;
   flex-direction: column;
   width: 56px;
@@ -56,7 +56,7 @@
 }
 
 .rail-btn--active {
-  color: var(--app-sidenav-active, #38b294);
+  color: var(--app-sidenav-active, #6b9bff);
   background: rgba(255, 255, 255, 0.12);
 
   &::before {
@@ -66,7 +66,7 @@
     top: 8px;
     bottom: 8px;
     width: 3px;
-    background: var(--app-sidenav-active, #38b294);
+    background: var(--app-sidenav-active, #6b9bff);
     border-radius: 0 3px 3px 0;
   }
 }

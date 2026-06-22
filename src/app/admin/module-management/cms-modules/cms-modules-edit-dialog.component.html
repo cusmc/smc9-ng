@@ -1,6 +1,6 @@
-<div class="flex w-full flex-col bg-white" style="max-height:90vh">
+﻿<div class="flex w-full flex-col bg-white" style="max-height:90vh">
   <!-- Dialog header -->
-  <div class="flex items-center gap-3 border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+  <div class="flex items-center gap-3 border-b border-[#e2e8f0] bg-[#f8faff] px-5 py-4">
     <span class="material-icons text-[var(--app-primary)]">{{ isEdit ? 'edit' : 'add_circle' }}</span>
     <h3 class="text-base font-semibold text-[#333]">{{ isEdit ? 'Edit CMS Module' : 'Add CMS Module' }}</h3>
     <span class="flex-1"></span>
@@ -57,7 +57,7 @@
   </form>
 
   <!-- Footer buttons -->
-  <div class="flex items-center gap-2 border-t border-[#f0ebe3] px-5 py-4">
+  <div class="flex items-center gap-2 border-t border-[#e2e8f0] px-5 py-4">
     <button *ngIf="isEdit" type="button"
       class="inline-flex items-center gap-1 rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
       (click)="onDelete()" [disabled]="deleting">

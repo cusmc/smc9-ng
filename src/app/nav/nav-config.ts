@@ -132,7 +132,7 @@ export const APP_NAV: NavModule[] = [
           { label: 'Lecture Schedule', icon: 'event', externalUrl: '/ECampus/LectureSchedule' },
           { label: 'Student View', icon: 'person', route: '/student/students' },
           { label: 'Student Receipt', icon: 'receipt', externalUrl: '/ECampus/Receipt' },
-          { label: 'Certificate Request', icon: 'workspace_premium', externalUrl: '/ECampus/Certificate' },
+          { label: 'Certificate Request', icon: 'workspace_premium', route: '/student/certi-req' },
         ],
       },
       {
@@ -486,7 +486,7 @@ export const APP_NAV: NavModule[] = [
           { label: 'Hospital Dashboard', icon: 'local_hospital', route: '/hims/dashboard' },
           { label: 'Student Dashboard', icon: 'school', externalUrl: '/MIS/Student' },
           { label: 'HR Dashboard', icon: 'people', externalUrl: '/MIS/HR' },
-          { label: 'Hostel Dashboard', icon: 'holiday_village', externalUrl: '/MIS/Hostel' },
+          { label: 'Hostel Dashboard', icon: 'holiday_village', route: '/mis/hostel-dashboard' },
           { label: 'Complain Dashboard', icon: 'report_problem', externalUrl: '/MIS/Complain' },
         ],
       },

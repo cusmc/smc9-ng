@@ -1,4 +1,4 @@
-<div class="flex min-h-0 flex-1 flex-col bg-page">
+﻿<div class="flex min-h-0 flex-1 flex-col bg-page">
   <!-- Header -->
   <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
     <h2 class="text-lg font-semibold">User Listing</h2>
@@ -27,7 +27,7 @@
 
   <div class="flex flex-1 flex-col gap-4 p-4">
     <!-- Filter bar -->
-    <div class="rounded-xl border border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+    <div class="rounded-xl border border-[#e2e8f0] bg-[#f8faff] px-5 py-4">
       <div class="flex flex-wrap items-end gap-4">
         <div class="flex flex-col gap-1">
           <label class="text-xs font-semibold uppercase tracking-wide text-[#666]">User ID</label>
@@ -72,10 +72,10 @@
       </p>
 
       <!-- Table -->
-      <div *ngIf="!loading && users.length > 0" class="overflow-x-auto rounded-xl border border-[#f0ebe3]">
+      <div *ngIf="!loading && users.length > 0" class="overflow-x-auto rounded-xl border border-[#e2e8f0]">
         <table class="w-full min-w-[1000px] border-collapse text-left text-sm">
           <thead>
-            <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+            <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">User ID</th>
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Full Name</th>
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">User Type</th>
@@ -87,7 +87,7 @@
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Actions</th>
             </tr>
             <!-- Column search row -->
-            <tr class="border-b border-[#f0ebe3] bg-[#faf8f3]">
+            <tr class="border-b border-[#e2e8f0] bg-[#f8faff]">
               <td class="px-3 py-1">
                 <input [(ngModel)]="search.UserName" (ngModelChange)="onSearchChange()"
                   class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
@@ -127,7 +127,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let u of pagedData"
-              class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]">
+              class="border-b border-[#f5f0e8] transition hover:bg-[#f8faff]">
               <td class="px-3 py-2.5 font-mono text-xs text-[#888]">{{ u.UserName }}</td>
               <td class="px-3 py-2.5 font-medium text-[#333]">{{ u.FullName }}</td>
               <td class="px-3 py-2.5 text-[#555]">{{ u.usertype }}</td>
@@ -144,7 +144,7 @@
                 <div class="flex items-center gap-1">
                   <!-- Edit -->
                   <button type="button" (click)="openEditDialog(u)"
-                    class="rounded-lg p-1.5 text-[#8c6b2f] transition hover:bg-[#f3eadb]" title="Edit User">
+                    class="rounded-lg p-1.5 text-[#4680ff] transition hover:bg-[#e8eeff]" title="Edit User">
                     <span class="material-icons text-[18px]">edit</span>
                   </button>
                   <!-- Reset Password -->
@@ -180,10 +180,10 @@
         <span class="text-xs text-[#999]">{{ searchedData.length }} users</span>
         <div class="flex items-center gap-2">
           <button (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1"
-            class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">Prev</button>
+            class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]">Prev</button>
           <span class="text-[#666]">Page {{ currentPage }} of {{ totalPages }}</span>
           <button (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages"
-            class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">Next</button>
+            class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]">Next</button>
         </div>
       </div>
     </div>

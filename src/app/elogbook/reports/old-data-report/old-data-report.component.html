@@ -1,10 +1,10 @@
-<div class="p-6 bg-[#f8f5f0] min-h-screen">
+﻿<div class="p-6 bg-[#f0f2f5] min-h-screen">
   <div class="bg-white border border-[#eee] rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.06)]">
     <!-- Hero Header -->
-    <div class="relative border-b border-[#f0ebe3] bg-gradient-to-r from-[#f7faf9] via-white to-[#faf8f3] px-6 pt-7 pb-5">
-      <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#2d8a7e] to-[#c8a96a]"></div>
+    <div class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-6 pt-7 pb-5">
+      <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#4680ff] to-[#6b9bff]"></div>
       <!-- <p class="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-[#2d8a7e]">Reports</p> -->
-      <h2 class="font-serif text-2xl font-normal tracking-tight text-[#2a2622]">Old Data Report</h2>
+      <h2 class="font-serif text-2xl font-normal tracking-tight text-[#1e293b]">Old Data Report</h2>
       <!-- <p class="mt-2 text-sm leading-relaxed text-[#6b6560]">
         Select a student and output format to generate the old data report.
       </p> -->
@@ -30,7 +30,7 @@
           </select>
         </div>
         <button type="button" (click)="generate()" [disabled]="form.invalid || loading"
-                class="inline-flex items-center gap-2 rounded-lg bg-[#2d8a7e] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#257a6f] disabled:opacity-50">
+                class="inline-flex items-center gap-2 rounded-lg bg-[#4680ff] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#3670ee] disabled:opacity-50">
           <span class="material-icons text-lg">history</span>
           {{ loading ? 'Generating…' : 'Generate Report' }}
         </button>

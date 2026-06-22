@@ -15,7 +15,8 @@ import {
   NgApexchartsModule,
 } from 'ng-apexcharts';
 
-import { HospPerfService } from './hosp-perf.service';
+import { HospPerfService, ExcelExportReq, ExcelExportRow } from './hosp-perf.service';
+import { environment } from '../../../environments/environment';
 import { ToastService } from '../../core/toast/toast.service';
 import {
   PerfRow, PerfRequest, CompSeries, CompareSeries, LookupItem, TableRow,
@@ -54,8 +55,9 @@ export class HospPerfComponent implements OnInit, OnDestroy {
   })();
 
   // Lookups
-  depts:   LookupItem[] = [];
-  doctors: LookupItem[] = [];
+  depts:    LookupItem[] = [];
+  doctors:  LookupItem[] = [];
+  subdepts: LookupItem[] = [];
 
   private readonly PMJAY_IDS   = '103,99';
   private readonly PRIVATE_IDS = '153';
@@ -153,7 +155,7 @@ export class HospPerfComponent implements OnInit, OnDestroy {
     this.service.loadLookups()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: lk => { this.depts = lk.depts; this.doctors = lk.doctors; },
+        next: lk => { this.depts = lk.depts; this.doctors = lk.doctors; this.subdepts = lk.subdepts; },
         error: () => { /* non-critical */ },
       });
   }
@@ -409,6 +411,187 @@ export class HospPerfComponent implements OnInit, OnDestroy {
   setCRevenueTab(tab: string): void {
     this.cRevenueTab   = tab;
     this.cRevenueChart = this.makeCompareChart('Revenue', tab, '#16a34a', true);
+  }
+
+  // ── Export (full document — all sections) ─────────────────────────
+
+  /** Normalize whatever the server returns into an absolute URL.
+   *  Handles both "/Temp/file.pdf" (new) and "..//temp//file.pdf" (legacy). */
+  private toAbsoluteUrl(serverUrl: string): string {
+    if (serverUrl.startsWith('/')) return environment.apiUrl + serverUrl;
+    // Legacy relative — extract filename and rebuild
+    const file = serverUrl.replace(/\\/g, '/').split('/').filter(Boolean).pop() ?? serverUrl;
+    return environment.apiUrl + '/Temp/' + file;
+  }
+
+  exportAllPdf(): void {
+    const html = this.resultMode === 'compare'
+      ? this.buildCompareExportHtml()
+      : this.buildSingleExportHtml();
+    this.service.exportPdf(html)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ next: r => window.open(this.toAbsoluteUrl(r.url), '_blank') });
+  }
+
+  exportAllExcel(): void {
+    const req = this.resultMode === 'compare'
+      ? this.buildCompareExcelReq()
+      : this.buildSingleExcelReq();
+    this.service.exportExcel(req)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({ next: r => window.open(this.toAbsoluteUrl(r.url), '_blank') });
+  }
+
+  // Resolves a filter ID to its display name from the lookup lists
+  private filterTitle(): string {
+    const s    = this.seriesList[0];
+    const dept = s.Dept_id    ? (this.depts.find(d => d.id === s.Dept_id)?.nm    ?? '') : 'All Departments';
+    const sub  = s.Subdept_id ? (this.subdepts.find(d => d.id === s.Subdept_id)?.nm ?? '') : '';
+    const doc  = s.Doctor_id  ? ('Dr. ' + (this.doctors.find(d => d.id === s.Doctor_id)?.nm ?? '')) : 'All Doctors';
+    const parts = ['Hospital Performance Report', dept, sub, doc].filter(Boolean);
+    return parts.join(' | ');
+  }
+
+  private buildSingleExportHtml(): string {
+    const title   = this.filterTitle();
+    const s       = this.seriesList[0];
+    const period  = `Period: ${s.Fdate} to ${s.Tdate} &nbsp;|&nbsp; Granularity: ${this.sGranularity}`;
+    const periods = this.tablePeriods;
+
+    const thStyle  = 'border:1px solid #94a3b8;padding:5px 9px;background:#1e3a5f;color:#fff;font-size:10px;text-align:right;white-space:nowrap;';
+    const thLStyle = 'border:1px solid #94a3b8;padding:5px 9px;background:#1e3a5f;color:#fff;font-size:10px;text-align:left;white-space:nowrap;';
+    const tdStyle  = 'border:1px solid #e2e8f0;padding:4px 9px;font-size:10px;text-align:right;';
+    const tdLStyle = 'border:1px solid #e2e8f0;padding:4px 9px;font-size:10px;';
+    const totStyle = 'background:#eff6ff;font-weight:bold;border-top:2px solid #93c5fd;';
+    const secStyle = 'background:#1e3a5f;color:#fff;font-weight:bold;font-size:11px;padding:6px 9px;';
+
+    const sections = [
+      { label: 'OPD',     rows: this.opdTableRows     },
+      { label: 'IPD',     rows: this.ipdTableRows     },
+      { label: 'Surgery', rows: this.surgeryTableRows  },
+      { label: 'Revenue', rows: this.revenueTableRows  },
+    ];
+    const colCount = periods.length + 1;
+
+    let html = `<div style="font-family:Arial;padding:16px;">`;
+    html += `<h2 style="font-size:15px;margin:0 0 4px;">${title}</h2>`;
+    html += `<p style="font-size:10px;color:#475569;margin:0 0 12px;">${period}</p>`;
+    html += `<table style="border-collapse:collapse;width:100%;">`;
+
+    for (const sec of sections) {
+      // Section header spanning all columns
+      html += `<tr><td colspan="${colCount}" style="${secStyle}">${sec.label}</td></tr>`;
+      // Column headers
+      html += `<tr><th style="${thLStyle}">Category</th>`;
+      for (const p of periods) html += `<th style="${thStyle}">${p}</th>`;
+      html += `</tr>`;
+      // Data rows
+      for (const row of sec.rows) {
+        const rs = row.isTotal ? totStyle : '';
+        html += `<tr style="${rs}"><td style="${tdLStyle}${row.isTotal ? 'font-weight:bold;' : ''}">${row.label}</td>`;
+        for (const v of row.values) {
+          const d = row.isCurrency ? v.toLocaleString('en-IN') : v.toString();
+          html += `<td style="${tdStyle}${row.isTotal ? 'font-weight:bold;' : ''}">${d}</td>`;
+        }
+        html += `</tr>`;
+      }
+      // Spacer
+      html += `<tr><td colspan="${colCount}" style="height:10px;"></td></tr>`;
+    }
+
+    html += `</table></div>`;
+    return html;
+  }
+
+  private buildSingleExcelReq(): ExcelExportReq {
+    const s       = this.seriesList[0];
+    const dept    = s.Dept_id    ? (this.depts.find(d => d.id === s.Dept_id)?.nm    ?? '') : 'All Depts';
+    const sub     = s.Subdept_id ? (this.subdepts.find(d => d.id === s.Subdept_id)?.nm ?? '') : '';
+    const doc     = s.Doctor_id  ? ('Dr. ' + (this.doctors.find(d => d.id === s.Doctor_id)?.nm ?? '')) : 'All Doctors';
+    const title   = ['Hosp Performance', dept, sub, doc].filter(Boolean).join(' | ');
+    const headers = ['Section / Category', ...this.tablePeriods];
+    const rows: ExcelExportRow[] = [];
+
+    const sections = [
+      { label: 'OPD',     data: this.opdTableRows     },
+      { label: 'IPD',     data: this.ipdTableRows     },
+      { label: 'Surgery', data: this.surgeryTableRows  },
+      { label: 'Revenue', data: this.revenueTableRows  },
+    ];
+
+    for (const sec of sections) {
+      rows.push({ Label: sec.label, Values: [], IsTotal: false, IsCurrency: false, IsSection: true });
+      for (const r of sec.data) {
+        rows.push({ Label: r.label, Values: r.values, IsTotal: r.isTotal, IsCurrency: r.isCurrency, IsSection: false });
+      }
+    }
+
+    return { Title: title, Headers: headers, Rows: rows };
+  }
+
+  private buildCompareExportHtml(): string {
+    const labels   = this.compareTableLabels;
+    const colCount = labels.length + 1;
+    const thStyle  = 'border:1px solid #94a3b8;padding:5px 9px;background:#1e3a5f;color:#fff;font-size:10px;text-align:right;white-space:nowrap;';
+    const thLStyle = 'border:1px solid #94a3b8;padding:5px 9px;background:#1e3a5f;color:#fff;font-size:10px;text-align:left;white-space:nowrap;';
+    const tdStyle  = 'border:1px solid #e2e8f0;padding:4px 9px;font-size:10px;text-align:right;';
+    const tdLStyle = 'border:1px solid #e2e8f0;padding:4px 9px;font-size:10px;';
+    const totStyle = 'background:#eff6ff;font-weight:bold;border-top:2px solid #93c5fd;';
+    const secStyle = 'background:#1e3a5f;color:#fff;font-weight:bold;font-size:11px;padding:6px 9px;';
+
+    const sections = [
+      { label: 'OPD',     rows: this.cOpdTableRows     },
+      { label: 'IPD',     rows: this.cIpdTableRows     },
+      { label: 'Surgery', rows: this.cSurgeryTableRows  },
+      { label: 'Revenue', rows: this.cRevenueTableRows  },
+    ];
+
+    let html = `<div style="font-family:Arial;padding:16px;">`;
+    html += `<h2 style="font-size:15px;margin:0 0 4px;">Hospital Performance — Comparison</h2>`;
+    html += `<p style="font-size:10px;color:#475569;margin:0 0 12px;">Series: ${labels.join(' &nbsp;vs&nbsp; ')}</p>`;
+    html += `<table style="border-collapse:collapse;width:100%;">`;
+
+    for (const sec of sections) {
+      html += `<tr><td colspan="${colCount}" style="${secStyle}">${sec.label}</td></tr>`;
+      html += `<tr><th style="${thLStyle}">Category</th>`;
+      for (const lbl of labels) html += `<th style="${thStyle}">${lbl}</th>`;
+      html += `</tr>`;
+      for (const row of sec.rows) {
+        const rs = row.isTotal ? totStyle : '';
+        html += `<tr style="${rs}"><td style="${tdLStyle}${row.isTotal ? 'font-weight:bold;' : ''}">${row.label}</td>`;
+        for (const v of row.values) {
+          const d = row.isCurrency ? v.toLocaleString('en-IN') : v.toString();
+          html += `<td style="${tdStyle}${row.isTotal ? 'font-weight:bold;' : ''}">${d}</td>`;
+        }
+        html += `</tr>`;
+      }
+      html += `<tr><td colspan="${colCount}" style="height:10px;"></td></tr>`;
+    }
+
+    html += `</table></div>`;
+    return html;
+  }
+
+  private buildCompareExcelReq(): ExcelExportReq {
+    const labels  = this.compareTableLabels;
+    const headers = ['Section / Category', ...labels];
+    const rows: ExcelExportRow[] = [];
+
+    const sections = [
+      { label: 'OPD',     data: this.cOpdTableRows     },
+      { label: 'IPD',     data: this.cIpdTableRows     },
+      { label: 'Surgery', data: this.cSurgeryTableRows  },
+      { label: 'Revenue', data: this.cRevenueTableRows  },
+    ];
+
+    for (const sec of sections) {
+      rows.push({ Label: sec.label, Values: [], IsTotal: false, IsCurrency: false, IsSection: true });
+      for (const r of sec.data) {
+        rows.push({ Label: r.label, Values: r.values, IsTotal: r.isTotal, IsCurrency: r.isCurrency, IsSection: false });
+      }
+    }
+
+    return { Title: 'Hospital Performance — Comparison', Headers: headers, Rows: rows };
   }
 
   private getPeriodKey(tdate: string, granularity: string, fdate: string): { seq: number; label: string } {

@@ -1,19 +1,19 @@
-<div class="min-h-0 flex-1 bg-[#f8f5f0] p-6">
+﻿<div class="min-h-0 flex-1 bg-[#f0f2f5] p-6">
   <!-- Card -->
   <div
-    class="overflow-hidden rounded-2xl border border-[#ebe6df] bg-white shadow-[0_10px_40px_rgba(44,36,25,0.07)]"
+    class="overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-[0_4px_24px_rgba(70,128,255,0.10)]"
   >
     <!-- Header -->
     <div
-      class="relative border-b border-[#f0ebe3] bg-gradient-to-r from-[#f7faf9] via-white to-[#faf8f3] px-6 pt-7 pb-5"
+      class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-6 pt-7 pb-5"
     >
       <div
-        class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#2d8a7e] to-[#c8a96a]"
+        class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#4680ff] to-[#6b9bff]"
       ></div>
       <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="min-w-0 flex-1">
           <h2
-            class="font-serif text-2xl font-normal tracking-tight text-[#2a2622] md:text-[1.65rem]"
+            class="font-serif text-2xl font-normal tracking-tight text-[#1e293b] md:text-[1.65rem]"
           >
             Student Appraisal
           </h2>
@@ -53,18 +53,18 @@
         class="py-12 text-center text-sm text-[#999]"
       >
         No appraisals found. Click
-        <span class="font-medium text-[#8c6b2f]">View</span> to load data.
+        <span class="font-medium text-[#4680ff]">View</span> to load data.
       </p>
 
       <!-- Table -->
       <div
         *ngIf="!loading && dataSource.length > 0"
-        class="overflow-x-auto rounded-xl border border-[#f0ebe3]"
+        class="overflow-x-auto rounded-xl border border-[#e2e8f0]"
       >
         <table class="w-full min-w-[800px] border-collapse text-left text-sm">
           <!-- Header -->
           <thead>
-            <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+            <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
               <th
                 class="px-4 py-3 text-xs font-semibold uppercase tracking-wide"
               >
@@ -106,7 +106,7 @@
                 Action
               </th>
             </tr>
-            <tr class="border-b border-[#f0ebe3] bg-[#faf8f3]">
+            <tr class="border-b border-[#e2e8f0] bg-[#f8faff]">
               <td class="px-4 py-1">
                 <input
                   disabled
@@ -176,12 +176,12 @@
           <tbody>
             <tr
               *ngFor="let r of pagedData"
-              class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]"
+              class="border-b border-[#f5f0e8] transition hover:bg-[#f8faff]"
             >
               <td class="px-4 py-3 tabular-nums text-[#444]">
                 {{ r.Appraisalid }}
               </td>
-              <td class="px-4 py-3 font-medium text-[#2a2622]">
+              <td class="px-4 py-3 font-medium text-[#1e293b]">
                 {{ r.Studno }}
               </td>
               <td class="px-4 py-3 text-[#555]">{{ r.Courseid }}</td>
@@ -198,7 +198,7 @@
               <td class="px-4 py-3">
                 <button
                   type="button"
-                  class="rounded-lg p-1.5 text-[#8c6b2f] transition hover:bg-[#f3eadb]"
+                  class="rounded-lg p-1.5 text-[#4680ff] transition hover:bg-[#e8eeff]"
                   (click)="openDialog(r.Studno)"
                   title="Edit"
                 >
@@ -218,7 +218,7 @@
         <button
           (click)="currentPage = currentPage - 1"
           [disabled]="currentPage === 1"
-          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]"
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]"
         >
           Prev
         </button>
@@ -228,7 +228,7 @@
         <button
           (click)="currentPage = currentPage + 1"
           [disabled]="currentPage === totalPages"
-          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]"
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]"
         >
           Next
         </button>

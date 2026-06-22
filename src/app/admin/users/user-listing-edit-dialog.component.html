@@ -1,6 +1,6 @@
-<div class="flex w-full flex-col bg-white" style="max-height:90vh">
+﻿<div class="flex w-full flex-col bg-white" style="max-height:90vh">
   <!-- Header -->
-  <div class="flex items-center gap-3 border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+  <div class="flex items-center gap-3 border-b border-[#e2e8f0] bg-[#f8faff] px-5 py-4">
     <span class="material-icons text-[var(--app-primary)]">{{ isEdit ? 'manage_accounts' : 'person_add' }}</span>
     <h3 class="text-base font-semibold text-[#333]">{{ isEdit ? 'Edit User' : 'Create User' }}</h3>
     <span class="flex-1"></span>
@@ -95,7 +95,7 @@
           class="w-full max-w-xs rounded-lg border border-[#e5e5e5] px-3 py-1.5 text-sm focus:border-[var(--app-primary)] focus:outline-none"
           placeholder="Search roles…" />
       </div>
-      <div class="grid grid-cols-3 gap-2 rounded-lg border border-[#f0ebe3] bg-[#faf8f3] p-3">
+      <div class="grid grid-cols-3 gap-2 rounded-lg border border-[#e2e8f0] bg-[#f8faff] p-3">
         <label *ngFor="let r of filteredRoles" class="flex cursor-pointer items-center gap-2 text-sm">
           <input type="checkbox" [(ngModel)]="r.Assigned" [ngModelOptions]="{standalone: true}"
             class="h-4 w-4 rounded border-[#ccc] accent-[var(--app-primary)]" />
@@ -107,7 +107,7 @@
   </form>
 
   <!-- Footer -->
-  <div class="flex items-center justify-end gap-2 border-t border-[#f0ebe3] px-5 py-4">
+  <div class="flex items-center justify-end gap-2 border-t border-[#e2e8f0] px-5 py-4">
     <button type="button"
       class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm text-[#666] hover:bg-[#f5f5f5]"
       (click)="onCancel()">

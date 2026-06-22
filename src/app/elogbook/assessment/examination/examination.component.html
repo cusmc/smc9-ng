@@ -1,17 +1,17 @@
-<div class="min-h-screen bg-[#f8f5f0] p-6">
+﻿<div class="min-h-screen bg-[#f0f2f5] p-6">
   <div
-    class="overflow-hidden rounded-2xl border border-[#ebe6df] bg-white shadow-[0_10px_40px_rgba(44,36,25,0.07)]"
+    class="overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-[0_4px_24px_rgba(70,128,255,0.10)]"
   >
     <!-- Hero-style header: calm teal + warm gold echo Love & Care / seva branding -->
     <div
-      class="relative border-b border-[#f0ebe3] bg-gradient-to-r from-[#f7faf9] via-white to-[#faf8f3] px-6 pt-7 pb-5"
+      class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-6 pt-7 pb-5"
     >
       <div
-        class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#2d8a7e] to-[#c8a96a]"
+        class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#4680ff] to-[#6b9bff]"
       ></div>
       <!-- <p class="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-[#2d8a7e]">Assessment</p> -->
       <h2
-        class="font-serif text-2xl font-normal tracking-tight text-[#2a2622] md:text-[1.65rem]"
+        class="font-serif text-2xl font-normal tracking-tight text-[#1e293b] md:text-[1.65rem]"
       >
         Examination Assessment
       </h2>
@@ -66,7 +66,7 @@
           [ngClass]="
             selectedStatus === 'P'
               ? 'bg-[#fff3e0] font-medium text-[#c2410c] shadow-sm'
-              : 'text-[#777] hover:bg-[#f5f0e8]'
+              : 'text-[#777] hover:bg-[#f0f2f5]'
           "
           (click)="setStatus('P')"
         >
@@ -81,7 +81,7 @@
           [ngClass]="
             selectedStatus === 'A'
               ? 'bg-[#ecfdf5] font-medium text-[#047857] shadow-sm'
-              : 'text-[#777] hover:bg-[#f5f0e8]'
+              : 'text-[#777] hover:bg-[#f0f2f5]'
           "
           (click)="setStatus('A')"
         >
@@ -96,7 +96,7 @@
           [ngClass]="
             selectedStatus === 'R'
               ? 'bg-[#fef2f2] font-medium text-[#b91c1c] shadow-sm'
-              : 'text-[#777] hover:bg-[#f5f0e8]'
+              : 'text-[#777] hover:bg-[#f0f2f5]'
           "
           (click)="setStatus('R')"
         >
@@ -110,8 +110,8 @@
           class="rounded-full px-4 py-1.5 text-sm transition"
           [ngClass]="
             selectedStatus === 'X'
-              ? 'bg-[#f3eadb] font-medium text-[#8c6b2f] shadow-sm'
-              : 'text-[#777] hover:bg-[#f5f0e8]'
+              ? 'bg-[#f3eadb] font-medium text-[#4680ff] shadow-sm'
+              : 'text-[#777] hover:bg-[#f0f2f5]'
           "
           (click)="setStatus('X')"
         >
@@ -133,16 +133,16 @@
         class="py-12 text-center text-sm text-[#999]"
       >
         No records yet. Choose filters and click
-        <span class="font-medium text-[#8c6b2f]">View</span>.
+        <span class="font-medium text-[#4680ff]">View</span>.
       </p>
 
       <div
         *ngIf="!loading && filteredData.length > 0"
-        class="overflow-x-auto rounded-xl border border-[#f0ebe3]"
+        class="overflow-x-auto rounded-xl border border-[#e2e8f0]"
       >
         <table class="w-full min-w-[900px] border-collapse text-left text-sm">
           <thead>
-            <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+            <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
               <th
                 class="px-4 py-3 text-xs font-semibold uppercase tracking-wide"
               >
@@ -199,7 +199,7 @@
                 Action
               </th>
             </tr>
-            <tr class="border-b border-[#f0ebe3] bg-[#faf8f3]">
+            <tr class="border-b border-[#e2e8f0] bg-[#f8faff]">
               <td class="px-4 py-1">
                 <input
                   disabled
@@ -270,7 +270,7 @@
           <tbody>
             <tr
               *ngFor="let r of pagedData; let i = index"
-              class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]"
+              class="border-b border-[#f5f0e8] transition hover:bg-[#f8faff]"
             >
               <td class="px-4 py-3 tabular-nums text-[#444]">
                 {{ (currentPage - 1) * itemsPerPage + i + 1 }}
@@ -278,7 +278,7 @@
               <td class="px-4 py-3 tabular-nums text-[#444]">
                 {{ r.Exam_id }}
               </td>
-              <td class="px-4 py-3 font-medium text-[#2a2622]">
+              <td class="px-4 py-3 font-medium text-[#1e293b]">
                 {{ r.Studname }}
               </td>
               <td class="px-4 py-3 text-[#444]">{{ r.Exam_nm }}</td>
@@ -316,7 +316,7 @@
               <td class="px-4 py-3">
                 <button
                   type="button"
-                  class="rounded-lg border border-[#c8a96a] bg-white px-3 py-1.5 text-xs font-medium text-[#8c6b2f] transition hover:bg-[#f3eadb]"
+                  class="rounded-lg border border-[#c8a96a] bg-white px-3 py-1.5 text-xs font-medium text-[#4680ff] transition hover:bg-[#e8eeff]"
                   (click)="openAuth(r)"
                 >
                   Authenticate
@@ -335,7 +335,7 @@
         <button
           (click)="currentPage = currentPage - 1"
           [disabled]="currentPage === 1"
-          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]"
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]"
         >
           Prev
         </button>
@@ -345,7 +345,7 @@
         <button
           (click)="currentPage = currentPage + 1"
           [disabled]="currentPage === totalPages"
-          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]"
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]"
         >
           Next
         </button>
@@ -368,13 +368,13 @@
               >
                 Authenticate
               </p>
-              <h3 class="mt-1 font-serif text-xl font-normal text-[#2a2622]">
+              <h3 class="mt-1 font-serif text-xl font-normal text-[#1e293b]">
                 Exam result
               </h3>
             </div>
             <button
               type="button"
-              class="rounded-lg p-1.5 text-[#888] transition hover:bg-[#f5f0e8] hover:text-[#444]"
+              class="rounded-lg p-1.5 text-[#888] transition hover:bg-[#f0f2f5] hover:text-[#444]"
               (click)="closeAuth()"
               aria-label="Close"
             >
@@ -382,9 +382,9 @@
             </button>
           </div>
           <p
-            class="mb-5 border-b border-[#f0ebe3] pb-4 text-sm leading-relaxed text-[#6b6560]"
+            class="mb-5 border-b border-[#e2e8f0] pb-4 text-sm leading-relaxed text-[#6b6560]"
           >
-            <strong class="text-[#2a2622]">{{ authRow.Studname }}</strong>
+            <strong class="text-[#1e293b]">{{ authRow.Studname }}</strong>
             <span class="text-[#aaa]"> · </span>
             {{ authRow.Exam_nm }}
           </p>
@@ -400,7 +400,7 @@
           >
             <button
               type="button"
-              class="rounded-lg px-4 py-2 text-sm text-[#666] transition hover:bg-[#f5f0e8]"
+              class="rounded-lg px-4 py-2 text-sm text-[#64748b] transition hover:bg-[#f0f2f5]"
               (click)="closeAuth()"
             >
               Cancel
@@ -415,7 +415,7 @@
             </button>
             <button
               type="button"
-              class="rounded-lg bg-[#2d8a7e] px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-[#257a6f] disabled:opacity-50"
+              class="rounded-lg bg-[#4680ff] px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-[#3670ee] disabled:opacity-50"
               (click)="authData('A')"
               [disabled]="saving"
             >

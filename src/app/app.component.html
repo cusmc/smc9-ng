@@ -18,7 +18,7 @@
 <!-- Mobile drawer backdrop -->
 <div
   *ngIf="isLoggedIn && !isLoginPage && sidenavOpen"
-  class="fixed inset-0 z-40 bg-primary-dark/50 xl:hidden"
+  class="fixed inset-0 z-40 bg-[#0f172a]/50 xl:hidden"
   (click)="sidenavOpen = false"
   aria-hidden="true"
 ></div>
@@ -51,11 +51,11 @@
     <!-- Top bar: only when logged in -->
     <header
       *ngIf="isLoggedIn && !isLoginPage"
-      class="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-primary-soft bg-primary px-2 text-[var(--app-toolbar-fg)] shadow-md sm:px-3"
+      class="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-[#3670ee] bg-[#4680ff] px-2 text-white shadow-md sm:px-3"
     >
       <button
         type="button"
-        class="rounded-md p-2 hover:bg-white/10"
+        class="rounded-md p-2 hover:bg-white/15"
         (click)="sidenavOpen = !sidenavOpen"
         aria-label="Toggle menu"
       >
@@ -64,7 +64,7 @@
       <span class="flex-1"></span>
       <button
         type="button"
-        class="rounded-md p-2 opacity-80 hover:bg-white/10"
+        class="rounded-md p-2 opacity-80 hover:bg-white/15"
         aria-label="Notifications"
       >
         <span class="material-icons text-xl">notifications</span>
@@ -74,7 +74,7 @@
       <div class="relative">
         <button
           type="button"
-          class="flex items-center gap-2 rounded-md px-2 py-1 hover:bg-white/10 text-sm"
+          class="flex items-center gap-2 rounded-md px-2 py-1 hover:bg-white/15 text-sm"
           (click)="toggleProfileMenu($event)"
           aria-label="User menu"
         >
@@ -82,7 +82,7 @@
             [src]="userImageUrl || defaultAvatar"
             (error)="onImageError($event)"
             alt="User"
-            class="rounded-full object-cover border-2 border-white/20 shadow-sm shrink-0"
+            class="rounded-full object-cover border-2 border-white/30 shadow-sm shrink-0"
             style="width:38px;height:38px;object-fit:cover;"
           />
           <span class="hidden sm:block truncate max-w-[160px]">{{ ProfileName }}</span>

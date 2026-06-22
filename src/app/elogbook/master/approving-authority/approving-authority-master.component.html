@@ -1,4 +1,4 @@
-<div class="flex min-h-0 flex-1 flex-col bg-page p-4">
+﻿<div class="flex min-h-0 flex-1 flex-col bg-page p-4">
   <div
     class="overflow-hidden rounded-xl border border-[var(--app-border)] bg-[var(--app-surface)] shadow-sm"
   >
@@ -80,11 +80,11 @@
         <!-- Table -->
         <form
           [formGroup]="form"
-          class="overflow-x-auto rounded-xl border border-[#f0ebe3] mb-6"
+          class="overflow-x-auto rounded-xl border border-[#e2e8f0] mb-6"
         >
           <table class="w-full min-w-[800px] border-collapse text-left text-sm">
             <thead>
-              <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+              <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
                 <th
                   class="px-4 py-3 text-xs font-semibold uppercase tracking-wide"
                 >
@@ -112,7 +112,7 @@
                 *ngFor="let guide of guides.controls; let i = index"
                 [formGroupName]="i"
                 [hidden]="guide.get('CanTag')?.value"
-                class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]"
+                class="border-b border-[#f5f0e8] transition hover:bg-[#f8faff]"
               >
                 <td class="px-4 py-3 tabular-nums text-[#444]">{{ i + 1 }}</td>
                 <td class="px-4 py-3">
@@ -145,7 +145,7 @@
         <button
           (click)="onSave()"
           [disabled]="loading || !form.valid"
-          class="inline-flex items-center gap-2 rounded-lg bg-[#2d8a7e] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#257a6f] disabled:opacity-50"
+          class="inline-flex items-center gap-2 rounded-lg bg-[#4680ff] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#3670ee] disabled:opacity-50"
         >
           <span class="material-icons text-lg">save</span>
           Save

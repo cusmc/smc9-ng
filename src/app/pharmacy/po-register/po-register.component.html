@@ -1,10 +1,10 @@
-<div class="min-h-screen bg-[var(--app-bg)] p-6">
-  <div class="overflow-hidden rounded-2xl border border-[#ebe6df] bg-white shadow-[0_10px_40px_rgba(44,36,25,0.07)]">
+﻿<div class="min-h-screen bg-[var(--app-bg)] p-6">
+  <div class="overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-[0_4px_24px_rgba(70,128,255,0.10)]">
 
     <!-- Page Header -->
-    <div class="relative border-b border-[#f0ebe3] bg-gradient-to-r from-[#f7faf9] via-white to-[#faf8f3] px-6 pt-7 pb-5">
-      <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#2d8a7e] to-[#c8a96a]"></div>
-      <h2 class="font-serif text-2xl font-normal tracking-tight text-[#2a2622] md:text-[1.65rem]">
+    <div class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-6 pt-7 pb-5">
+      <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#4680ff] to-[#6b9bff]"></div>
+      <h2 class="font-serif text-2xl font-normal tracking-tight text-[#1e293b] md:text-[1.65rem]">
         PO Register
       </h2>
     </div>
@@ -101,7 +101,7 @@
 
       <!-- Table -->
       <div *ngIf="!loading && filteredData.length > 0"
-        class="overflow-x-auto rounded-xl border border-[#f0ebe3] bg-white shadow-sm ring-1 ring-black/[0.02] mt-4">
+        class="overflow-x-auto rounded-xl border border-[#e2e8f0] bg-white shadow-sm ring-1 ring-black/[0.02] mt-4">
         <table class="w-full min-w-[1100px] border-collapse text-left text-sm text-[#444]">
           <thead>
             <tr class="text-left text-[#666] border-b bg-[#fafafa]">
@@ -121,7 +121,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let r of pagedData; let i = index"
-              class="border-b hover:bg-[#faf8f3] transition"
+              class="border-b hover:bg-[#f8faff] transition"
               [ngClass]="{
                 'bg-[#fff8e1]': (r.BalQnt ?? 0) > 0,
                 'bg-[#f1f8e9]': (r.BalQnt ?? 0) === 0 && (r.Qnt ?? 0) > 0
@@ -154,12 +154,12 @@
       <!-- Pagination -->
       <div *ngIf="totalPages > 1" class="mt-4 flex items-center justify-center gap-2 text-sm">
         <button type="button" (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1"
-          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]">
           Prev
         </button>
         <span class="text-[#666]">Page {{ currentPage }} of {{ totalPages }}</span>
         <button type="button" (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages"
-          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">
+          class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]">
           Next
         </button>
       </div>

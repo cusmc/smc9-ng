@@ -1,4 +1,4 @@
-<div class="flex min-h-0 flex-1 flex-col bg-page">
+﻿<div class="flex min-h-0 flex-1 flex-col bg-page">
   <!-- Header -->
   <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
     <h2 class="text-lg font-semibold">Rights Requests</h2>
@@ -55,10 +55,10 @@
       </p>
 
       <div *ngIf="!loadingPending && pendingList.length > 0"
-        class="overflow-x-auto rounded-xl border border-[#f0ebe3]">
+        class="overflow-x-auto rounded-xl border border-[#e2e8f0]">
         <table class="w-full min-w-[800px] border-collapse text-left text-sm">
           <thead>
-            <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+            <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">#</th>
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">User</th>
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Module</th>
@@ -69,7 +69,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let r of pendingList; let i = index"
-              class="border-b border-[#f5f0e8] hover:bg-[#faf8f3]">
+              class="border-b border-[#f5f0e8] hover:bg-[#f8faff]">
               <td class="px-3 py-3 tabular-nums text-[#888]">{{ i + 1 }}</td>
               <td class="px-3 py-3">
                 <div class="font-medium text-[#333]">{{ r.Fullname }}</div>
@@ -119,10 +119,10 @@
       </p>
 
       <div *ngIf="!loadingHistory && historyList.length > 0"
-        class="overflow-x-auto rounded-xl border border-[#f0ebe3]">
+        class="overflow-x-auto rounded-xl border border-[#e2e8f0]">
         <table class="w-full min-w-[900px] border-collapse text-left text-sm">
           <thead>
-            <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+            <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">#</th>
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">User</th>
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Module</th>
@@ -135,7 +135,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let r of historyList; let i = index"
-              class="border-b border-[#f5f0e8] hover:bg-[#faf8f3]"
+              class="border-b border-[#f5f0e8] hover:bg-[#f8faff]"
               [class.bg-emerald-50]="r.Status === 'A'"
               [class.bg-red-50]="r.Status === 'R'">
               <td class="px-3 py-2.5 tabular-nums text-[#888]">{{ i + 1 }}</td>

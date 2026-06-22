@@ -1,4 +1,4 @@
-<div class="flex min-h-0 flex-1 flex-col bg-page">
+﻿<div class="flex min-h-0 flex-1 flex-col bg-page">
 
   <!-- Page header -->
   <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
@@ -16,10 +16,10 @@
   <div class="flex flex-1 flex-col gap-5 p-4">
 
     <!-- Upload card -->
-    <div class="overflow-hidden rounded-xl border border-[#f0ebe3] bg-white shadow-sm">
-      <div class="relative border-b border-[#f0ebe3] bg-gradient-to-r from-[#f7faf9] via-white to-[#faf8f3] px-5 py-4">
-        <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#2d8a7e] to-[#c8a96a]"></div>
-        <h3 class="font-serif text-lg text-[#2a2622]">Upload a Document</h3>
+    <div class="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm">
+      <div class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-5 py-4">
+        <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#4680ff] to-[#6b9bff]"></div>
+        <h3 class="font-serif text-lg text-[#1e293b]">Upload a Document</h3>
         <p class="mt-0.5 text-xs text-[#888]">Uploaded documents will be reviewed and approved by HR before becoming active.</p>
       </div>
 
@@ -47,11 +47,11 @@
               File <span class="text-red-500">*</span>
             </label>
             <input type="file" (change)="onFileChange($event)"
-              class="rounded-lg border border-[#e5e5e5] px-3 py-1.5 text-sm file:mr-3 file:rounded file:border-0 file:bg-[#f0ebe3] file:px-3 file:py-1 file:text-xs file:font-medium file:text-[#8c6b2f] hover:file:bg-[#e8dfd0]" />
+              class="rounded-lg border border-[#e5e5e5] px-3 py-1.5 text-sm file:mr-3 file:rounded file:border-0 file:bg-[#f0ebe3] file:px-3 file:py-1 file:text-xs file:font-medium file:text-[#4680ff] hover:file:bg-[#e8dfd0]" />
           </div>
 
           <button type="button" (click)="upload()" [disabled]="uploading"
-            class="inline-flex items-center gap-2 rounded-lg bg-[#2d8a7e] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#256f65] disabled:opacity-50">
+            class="inline-flex items-center gap-2 rounded-lg bg-[#4680ff] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#256f65] disabled:opacity-50">
             <span class="material-icons text-[18px]">{{ uploading ? 'hourglass_empty' : 'upload' }}</span>
             {{ uploading ? 'Uploading…' : 'Upload' }}
           </button>
@@ -65,9 +65,9 @@
     </div>
 
     <!-- Documents table card -->
-    <div class="overflow-hidden rounded-xl border border-[#f0ebe3] bg-white shadow-sm">
-      <div class="border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-3">
-        <h3 class="font-serif text-base text-[#2a2622]">Uploaded Documents</h3>
+    <div class="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm">
+      <div class="border-b border-[#e2e8f0] bg-[#f8faff] px-5 py-3">
+        <h3 class="font-serif text-base text-[#1e293b]">Uploaded Documents</h3>
       </div>
 
       <!-- Loading spinner -->
@@ -87,7 +87,7 @@
       <div *ngIf="!loading && documents.length > 0" class="overflow-x-auto">
         <table class="w-full border-collapse text-left text-sm">
           <thead>
-            <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+            <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Document Type</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Description</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Uploaded On</th>
@@ -98,7 +98,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let doc of documents"
-              class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]">
+              class="border-b border-[#f5f0e8] transition hover:bg-[#f8faff]">
               <td class="px-4 py-3 font-medium text-[#333]">{{ doc.DocType }}</td>
               <td class="px-4 py-3 text-[#555]">{{ doc.description || '—' }}</td>
               <td class="px-4 py-3 text-[#777] text-xs">{{ doc.create_dt | date:'dd MMM yyyy, HH:mm' }}</td>
@@ -114,7 +114,7 @@
               </td>
               <td class="px-4 py-3">
                 <button *ngIf="doc.auth_status === 'A'" type="button" (click)="viewFile(doc)"
-                  class="inline-flex items-center gap-1 rounded-lg border border-[#2d8a7e] px-3 py-1 text-xs font-medium text-[#2d8a7e] transition hover:bg-[#2d8a7e] hover:text-white">
+                  class="inline-flex items-center gap-1 rounded-lg border border-[#2d8a7e] px-3 py-1 text-xs font-medium text-[#2d8a7e] transition hover:bg-[#4680ff] hover:text-white">
                   <span class="material-icons text-[14px]">visibility</span>
                   View
                 </button>

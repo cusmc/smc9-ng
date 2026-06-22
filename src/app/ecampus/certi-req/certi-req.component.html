@@ -1,0 +1,178 @@
+<div class="flex min-h-0 flex-1 flex-col bg-page">
+
+  <!-- Header -->
+  <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
+    <span class="material-icons">workspace_premium</span>
+    <div>
+      <h2 class="text-lg font-semibold">Certificate Requests</h2>
+      <p class="text-xs opacity-70">Authenticate &bull; Payment &bull; Dispatch</p>
+    </div>
+    <span class="flex-1"></span>
+    <span class="rounded-full bg-white/20 px-3 py-0.5 text-xs font-medium">
+      {{ tabFiltered.length }} of {{ allData.length }}
+    </span>
+    <button type="button"
+      class="inline-flex items-center gap-2 rounded-lg bg-[var(--app-primary)] px-4 py-2 text-sm font-medium text-white shadow hover:bg-[var(--app-primary-dark)]"
+      (click)="load()" [disabled]="loading">
+      <span class="material-icons text-[18px]">refresh</span>
+      Refresh
+    </button>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="flex gap-1 border-b border-border bg-[#f8faff] px-4 pt-3">
+    <button *ngFor="let tab of tabs"
+      type="button"
+      class="rounded-t-lg px-5 py-2 text-sm font-medium transition"
+      [class]="tabActiveClass(tab)"
+      (click)="setTab(tab.key)">
+      {{ tab.label }}
+      <span class="ml-1 rounded-full bg-black/10 px-2 py-0.5 text-xs font-semibold">
+        {{ tabCount(tab) }}
+      </span>
+    </button>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-4 p-4">
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex items-center gap-3 py-10 text-[#777]">
+      <div class="h-9 w-9 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+      <span class="text-sm">Loading certificate requests&hellip;</span>
+    </div>
+
+    <ng-container *ngIf="!loading">
+
+      <!-- Table -->
+      <div class="overflow-x-auto rounded-xl border border-[#e2e8f0]">
+        <table class="w-full min-w-[1200px] border-collapse text-left text-sm">
+          <thead>
+            <!-- Column headers -->
+            <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide w-16">ID</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Student Name</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Certificate</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide w-28">Date</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide w-32">Status</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Remarks</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide w-20">Fees</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide w-28">Created By</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide w-28">Created Date</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide w-72">Actions</th>
+            </tr>
+            <!-- Column search -->
+            <tr class="border-b border-[#e2e8f0] bg-[#f8faff]">
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Pk_id"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Student_nm"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Certi_nm"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Tdate"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1"></td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Remarks"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Fees"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Create_by"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td class="px-3 py-1">
+                <input [(ngModel)]="search.Create_dt"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+              </td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of pagedData"
+              class="border-b border-[#f5f0e8] transition hover:bg-[#f8faff]">
+              <td class="px-3 py-2.5 text-xs text-[#888] tabular-nums">{{ row.Pk_id }}</td>
+              <td class="px-3 py-2.5">
+                <span class="font-medium text-[#333]">{{ row.Student_nm }}</span>
+                <span class="ml-1 text-xs text-[#999]">({{ row.Studno }})</span>
+              </td>
+              <td class="px-3 py-2.5 text-[#555]">{{ row.Certi_nm }}</td>
+              <td class="px-3 py-2.5 text-xs text-[#555] tabular-nums">
+                {{ row.Tdate | date:'dd/MM/yyyy' }}
+              </td>
+              <td class="px-3 py-2.5">
+                <span class="rounded-full px-2 py-0.5 text-xs font-semibold"
+                  [ngClass]="statusChipClass(row.Status)">
+                  {{ statusLabel(row.Status) }}
+                </span>
+              </td>
+              <td class="px-3 py-2.5 text-xs text-[#555]">{{ row.Remarks }}</td>
+              <td class="px-3 py-2.5 text-xs tabular-nums text-[#555]">{{ row.Fees ?? '&mdash;' }}</td>
+              <td class="px-3 py-2.5 text-xs text-[#888]">{{ row.Create_by }}</td>
+              <td class="px-3 py-2.5 text-xs text-[#888] tabular-nums">
+                {{ row.Create_dt | date:'dd/MM/yyyy' }}
+              </td>
+              <td class="px-3 py-2.5">
+                <div class="flex flex-wrap items-center gap-1">
+                  <button type="button"
+                    class="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium bg-teal-50 text-teal-700 hover:bg-teal-100 transition"
+                    (click)="printReceipt(row)" title="Print Receipt">
+                    <span class="material-icons text-[13px]">receipt</span>
+                    Receipt
+                  </button>
+                  <button type="button"
+                    class="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition disabled:opacity-40"
+                    (click)="updateStatus(row, 'A')" [disabled]="updating" title="Authenticate">
+                    <span class="material-icons text-[13px]">verified</span>
+                    Authenticate
+                  </button>
+                  <button type="button"
+                    class="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium bg-amber-50 text-amber-700 hover:bg-amber-100 transition disabled:opacity-40"
+                    (click)="updateStatus(row, 'P')" [disabled]="updating" title="Payment Done">
+                    <span class="material-icons text-[13px]">payments</span>
+                    Payment Done
+                  </button>
+                  <button type="button"
+                    class="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium bg-green-50 text-green-700 hover:bg-green-100 transition disabled:opacity-40"
+                    (click)="updateStatus(row, 'D')" [disabled]="updating" title="Dispatch">
+                    <span class="material-icons text-[13px]">local_shipping</span>
+                    Dispatch
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="pagedData.length === 0">
+              <td colspan="10" class="py-10 text-center text-sm text-[#999]">
+                No certificate requests found.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="tabFiltered.length > pageSize"
+        class="flex items-center justify-between pt-1 text-sm text-[#666]">
+        <span>{{ tabFiltered.length }} records &mdash; page {{ currentPage }} of {{ totalPages }}</span>
+        <div class="flex gap-2">
+          <button (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1"
+            class="rounded-lg border px-3 py-1 disabled:opacity-40">Prev</button>
+          <button (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages"
+            class="rounded-lg border px-3 py-1 disabled:opacity-40">Next</button>
+        </div>
+      </div>
+
+    </ng-container>
+
+  </div>
+</div>

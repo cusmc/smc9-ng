@@ -1,5 +1,5 @@
-<div class="flex max-h-[inherit] w-full flex-col overflow-hidden rounded-2xl bg-white">
-<h2 class="border-b border-[#f0ebe3] px-6 pb-3 pt-6 text-xl font-semibold text-[#2a2622]">{{ data ? 'Edit Parameter' : 'Add Parameter' }}</h2>
+﻿<div class="flex max-h-[inherit] w-full flex-col overflow-hidden rounded-2xl bg-white">
+<h2 class="border-b border-[#e2e8f0] px-6 pb-3 pt-6 text-xl font-semibold text-[#1e293b]">{{ data ? 'Edit Parameter' : 'Add Parameter' }}</h2>
 <div class="max-h-[min(70vh,calc(90vh-8rem))] flex-1 overflow-y-auto px-6 py-4">
   <form [formGroup]="form" class="flex flex-col gap-4">
     <div>
@@ -83,10 +83,10 @@
     Delete
   </button>
   <div class="flex gap-2 ml-auto">
-    <button type="button" class="rounded-lg px-4 py-2 text-sm text-[#666] transition hover:bg-[#f5f0e8]" (click)="onCancel()">Cancel</button>
+    <button type="button" class="rounded-lg px-4 py-2 text-sm text-[#64748b] transition hover:bg-[#f0f2f5]" (click)="onCancel()">Cancel</button>
     <button
       type="button"
-      class="rounded-lg bg-[#2d8a7e] px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-[#257a6f] disabled:opacity-50"
+      class="rounded-lg bg-[#4680ff] px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-[#3670ee] disabled:opacity-50"
       (click)="onSave()"
       [disabled]="!form.valid"
     >

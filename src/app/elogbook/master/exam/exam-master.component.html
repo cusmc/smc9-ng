@@ -1,4 +1,4 @@
-<div class="flex min-h-0 flex-1 flex-col bg-page">
+﻿<div class="flex min-h-0 flex-1 flex-col bg-page">
   <div
     class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]"
   >
@@ -15,7 +15,7 @@
   </div>
 
   <div class="flex flex-1 flex-col gap-4">
-    <div class="flex flex-wrap items-end gap-3 border-b border-[#f0ebe3] p-4">
+    <div class="flex flex-wrap items-end gap-3 border-b border-[#e2e8f0] p-4">
       <div class="min-w-[180px]">
         <label class="mb-1 block text-sm font-medium text-[#555]">Course</label>
         <select [(ngModel)]="filterCourseId" (ngModelChange)="onFilterCourseChange()"
@@ -33,7 +33,7 @@
         </select>
       </div>
       <button (click)="applyFilter()"
-              class="rounded-lg bg-[#2d8a7e] px-4 py-2 text-sm font-medium text-white hover:bg-[#257a6f]">
+              class="rounded-lg bg-[#4680ff] px-4 py-2 text-sm font-medium text-white hover:bg-[#3670ee]">
         View
       </button>
     </div>
@@ -52,10 +52,10 @@
       </p>
 
       <!-- Table -->
-      <div *ngIf="!loading && exams.length > 0" class="overflow-x-auto rounded-xl border border-[#f0ebe3]">
+      <div *ngIf="!loading && exams.length > 0" class="overflow-x-auto rounded-xl border border-[#e2e8f0]">
         <table class="w-full min-w-[1000px] border-collapse text-left text-sm">
           <thead>
-            <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+            <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Sr No</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Exam Name</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Admin Year</th>
@@ -66,7 +66,7 @@
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Created Date</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Action</th>
             </tr>
-            <tr class="border-b border-[#f0ebe3] bg-[#faf8f3]">
+            <tr class="border-b border-[#e2e8f0] bg-[#f8faff]">
               <td class="px-4 py-1"><input disabled class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" placeholder="N/A" /></td>
               <td class="px-4 py-1"><input [(ngModel)]="search.Exam_nm" (ngModelChange)="onSearchChange()" class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" /></td>
               <td class="px-4 py-1"><input [(ngModel)]="search.Admyear" (ngModelChange)="onSearchChange()" class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" /></td>
@@ -79,7 +79,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let r of pagedExams; let i = index" class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]">
+            <tr *ngFor="let r of pagedExams; let i = index" class="border-b border-[#f5f0e8] transition hover:bg-[#f8faff]">
               <td class="px-4 py-3 tabular-nums text-[#444]">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
               <td class="px-4 py-3 text-[#444]">{{ r.Exam_nm }}</td>
               <td class="px-4 py-3 text-[#444]">{{ r.Admyear }}</td>
@@ -90,7 +90,7 @@
               <td class="px-4 py-3 text-[#666]">{{ r.Create_dt }}</td>
               <td class="px-4 py-3 flex items-center gap-1">
                 <button type="button" (click)="openEditDialog(r)"
-                        class="rounded-lg p-1.5 text-[#8c6b2f] transition hover:bg-[#f3eadb]" title="Edit">
+                        class="rounded-lg p-1.5 text-[#4680ff] transition hover:bg-[#e8eeff]" title="Edit">
                   <span class="material-icons text-xl">edit</span>
                 </button>
                 <button type="button" (click)="deleteExam(r.Exam_id)"
@@ -106,10 +106,10 @@
       <!-- Pagination -->
       <div *ngIf="totalPages > 1" class="mt-4 flex items-center justify-center gap-2 text-sm">
         <button (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1"
-                class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">Prev</button>
+                class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]">Prev</button>
         <span class="text-[#666]">Page {{ currentPage }} of {{ totalPages }}</span>
         <button (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages"
-                class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f5f0e8]">Next</button>
+                class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]">Next</button>
       </div>
     </div>
   </div>

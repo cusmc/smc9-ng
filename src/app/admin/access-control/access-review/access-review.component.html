@@ -1,4 +1,4 @@
-<div class="flex min-h-0 flex-1 flex-col bg-page">
+﻿<div class="flex min-h-0 flex-1 flex-col bg-page">
 
   <!-- Header -->
   <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
@@ -16,7 +16,7 @@
   </div>
 
   <!-- Tab bar -->
-  <div class="flex gap-1 border-b border-border bg-[#faf8f3] px-4 pt-3">
+  <div class="flex gap-1 border-b border-border bg-[#f8faff] px-4 pt-3">
     <button type="button"
       class="rounded-t-lg px-5 py-2 text-sm font-medium transition"
       [class]="activeTab === 'users' ? 'bg-white border border-b-white border-[#e5e5e5] text-[var(--app-primary)]' : 'text-[#666] hover:text-[#333]'"
@@ -58,10 +58,10 @@
           </span>
         </div>
 
-        <div class="overflow-x-auto rounded-xl border border-[#f0ebe3]">
+        <div class="overflow-x-auto rounded-xl border border-[#e2e8f0]">
           <table class="w-full min-w-[800px] border-collapse text-left text-sm">
             <thead>
-              <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+              <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
                 <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Username</th>
                 <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Full Name</th>
                 <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Department</th>
@@ -71,7 +71,7 @@
                 <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Email</th>
               </tr>
               <!-- Column search -->
-              <tr class="border-b border-[#f0ebe3] bg-[#faf8f3]">
+              <tr class="border-b border-[#e2e8f0] bg-[#f8faff]">
                 <td class="px-3 py-1">
                   <input [(ngModel)]="userSearch.UserName"
                     class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
@@ -99,7 +99,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let u of pagedUsers"
-                class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]">
+                class="border-b border-[#f5f0e8] transition hover:bg-[#f8faff]">
                 <td class="px-3 py-2.5 font-mono text-xs text-[#888]">{{ u.UserName }}</td>
                 <td class="px-3 py-2.5 font-medium text-[#333]">{{ u.Fullname }}</td>
                 <td class="px-3 py-2.5 text-[#555]">{{ u.DeptName }}</td>
@@ -148,10 +148,10 @@
       </div>
 
       <div *ngIf="!loadingMatrix">
-        <div class="overflow-x-auto rounded-xl border border-[#f0ebe3]">
+        <div class="overflow-x-auto rounded-xl border border-[#e2e8f0]">
           <table class="w-full min-w-[900px] border-collapse text-left text-sm">
             <thead>
-              <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
+              <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
                 <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Username</th>
                 <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Full Name</th>
                 <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Module</th>
@@ -160,7 +160,7 @@
                 </th>
               </tr>
               <!-- Column search -->
-              <tr class="border-b border-[#f0ebe3] bg-[#faf8f3]">
+              <tr class="border-b border-[#e2e8f0] bg-[#f8faff]">
                 <td class="px-3 py-1">
                   <input [(ngModel)]="matrixSearch.Username"
                     class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
@@ -175,7 +175,7 @@
             </thead>
             <tbody>
               <tr *ngFor="let r of pagedMatrix"
-                class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]">
+                class="border-b border-[#f5f0e8] transition hover:bg-[#f8faff]">
                 <td class="px-3 py-2 font-mono text-xs text-[#888]">{{ r.Username }}</td>
                 <td class="px-3 py-2 font-medium text-[#333]">{{ r.Fullname }}</td>
                 <td class="px-3 py-2 text-[#555]">{{ r.ModuleName }}</td>

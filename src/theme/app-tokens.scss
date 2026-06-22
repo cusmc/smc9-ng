@@ -1,37 +1,37 @@
-/* Soft neutral + teal design tokens */
+/* Able Pro — blue admin theme tokens */
 :root {
   --app-font-sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
   --app-font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
 
   /* Surfaces */
-  --app-page-bg: #f2f4f3;
+  --app-page-bg: #f0f2f5;
   --app-surface: #ffffff;
-  --app-border: #d8e4e1;
+  --app-border: #e2e8f0;
 
-  /* Primary — teal */
-  --app-primary: #1a8f72;
-  --app-primary-dark: #0f7a62;
-  --app-primary-deeper: #0a5546;
-  --app-primary-light: #38b294;
-  --app-primary-surface: #e6f4f1;
-  --app-primary-soft: rgba(26, 143, 114, 0.10);
-  --app-primary-hover: rgba(26, 143, 114, 0.06);
+  /* Primary — blue */
+  --app-primary: #4680ff;
+  --app-primary-dark: #3670ee;
+  --app-primary-deeper: #2456cc;
+  --app-primary-light: #6b9bff;
+  --app-primary-surface: #e8eeff;
+  --app-primary-soft: rgba(70, 128, 255, 0.10);
+  --app-primary-hover: rgba(70, 128, 255, 0.06);
 
-  /* Sidenav — deep teal-charcoal */
-  --app-sidenav-bg: #1c2422;
-  --app-sidenav-brand-bg: #243029;
-  --app-sidenav-text: #d5e8e3;
-  --app-sidenav-muted: #7a9b93;
-  --app-sidenav-active: #38b294;
+  /* Sidenav — white panel + dark navy rail */
+  --app-sidenav-bg: #ffffff;
+  --app-sidenav-brand-bg: #1e2a4a;
+  --app-sidenav-text: #3d4049;
+  --app-sidenav-muted: #9b9fa6;
+  --app-sidenav-active: #4680ff;
 
   /* Toolbar */
-  --app-toolbar-bg: #2c4a42;
-  --app-toolbar-fg: #d5e8e3;
+  --app-toolbar-bg: #4680ff;
+  --app-toolbar-fg: #ffffff;
 
   /* Ink */
-  --app-ink: #1e3530;
-  --app-ink-muted: #5c706a;
-  --app-ink-faint: #8a9e98;
+  --app-ink: #1e293b;
+  --app-ink-muted: #64748b;
+  --app-ink-faint: #94a3b8;
 
   /* Semantic — success */
   --app-success: #1e5c3e;
@@ -42,23 +42,23 @@
   --app-error-bg: #fdecea;
   --app-danger: #b93232;
 
-  /* Semantic — info (teal-tinted) */
-  --app-info: #0f5a4a;
-  --app-info-bg: #e6f4f1;
+  /* Semantic — info (blue-tinted) */
+  --app-info: #0f4acc;
+  --app-info-bg: #e8eeff;
 
   /* Semantic — warning */
   --app-warn: #8a5e0a;
   --app-warn-bg: #fef8e8;
 
   /* Borders */
-  --app-border-strong: #b8ccc8;
-  --app-border-emphasis: #8aada7;
+  --app-border-strong: #cbd5e1;
+  --app-border-emphasis: #94a3b8;
 
   /* Overlay */
-  --app-scrim: rgba(18, 38, 34, 0.50);
+  --app-scrim: rgba(15, 23, 42, 0.50);
 
   /* Shadow */
-  --app-shadow: 0 4px 24px rgba(10, 85, 70, 0.10);
+  --app-shadow: 0 4px 24px rgba(70, 128, 255, 0.10);
 }
 
 html {

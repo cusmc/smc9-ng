@@ -1,4 +1,4 @@
-<div class="flex min-h-0 flex-1 flex-col bg-page">
+﻿<div class="flex min-h-0 flex-1 flex-col bg-page">
   <!-- Header -->
   <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
     <h2 class="text-lg font-semibold">Scheme Discount Rates</h2>
@@ -13,7 +13,7 @@
 
   <div class="flex flex-1 flex-col gap-4 p-4">
     <!-- Filter bar -->
-    <div class="rounded-xl border border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+    <div class="rounded-xl border border-[#e2e8f0] bg-[#f8faff] px-5 py-4">
       <div class="flex flex-wrap items-end gap-4">
         <div class="flex flex-col gap-1">
           <label class="text-xs font-semibold uppercase tracking-wide text-[#666]">Scheme</label>
@@ -39,7 +39,7 @@
     </div>
 
     <!-- Grid -->
-    <div *ngIf="!loading && rows.length > 0" class="rounded-xl border border-[#f0ebe3] bg-white overflow-x-auto">
+    <div *ngIf="!loading && rows.length > 0" class="rounded-xl border border-[#e2e8f0] bg-white overflow-x-auto">
       <table class="w-full text-sm">
         <thead class="bg-[#404040] text-white">
           <tr>
@@ -72,7 +72,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let r of pagedRows" class="border-b border-[#f0ebe3] hover:bg-[#fafafa]">
+          <tr *ngFor="let r of pagedRows" class="border-b border-[#e2e8f0] hover:bg-[#fafafa]">
             <td class="px-3 py-2">
               <span class="rounded-full px-2 py-0.5 text-xs font-medium" [ngClass]="levelBadgeClass(r.Level)">
                 {{ r.Level }}
@@ -97,7 +97,7 @@
       </table>
 
       <!-- Pagination -->
-      <div class="flex items-center justify-between border-t border-[#f0ebe3] px-4 py-2 text-sm text-[#555]">
+      <div class="flex items-center justify-between border-t border-[#e2e8f0] px-4 py-2 text-sm text-[#555]">
         <span>{{ filteredRows.length }} rule(s)</span>
         <div class="flex items-center gap-1">
           <button class="rounded px-2 py-1 hover:bg-[#eee] disabled:opacity-40"
@@ -111,7 +111,7 @@
 
     <!-- Empty state -->
     <div *ngIf="!loading && rows.length === 0 && selectedSchmastId"
-      class="rounded-xl border border-[#f0ebe3] bg-white px-6 py-10 text-center text-[#aaa]">
+      class="rounded-xl border border-[#e2e8f0] bg-white px-6 py-10 text-center text-[#aaa]">
       <span class="material-icons text-4xl">discount</span>
       <p class="mt-2 text-sm">No discount rules configured for this scheme.</p>
     </div>

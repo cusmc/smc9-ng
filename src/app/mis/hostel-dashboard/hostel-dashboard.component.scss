@@ -1,0 +1,8 @@
+// Sticky first column needs explicit z-index to sit above scrolling cells
+td.sticky, th.sticky {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+}
+
+// Smooth row hover transition already declared via Tailwind; nothing extra needed

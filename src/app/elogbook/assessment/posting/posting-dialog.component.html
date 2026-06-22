@@ -1,8 +1,8 @@
-<div class="flex max-h-[90vh] w-full flex-col overflow-hidden rounded-2xl border border-[#ebe6df] bg-white">
-  <div class="relative shrink-0 border-b border-[#f0ebe3] bg-gradient-to-r from-[#f7faf9] via-white to-[#faf8f3] px-6 pb-4 pt-6">
-    <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#2d8a7e] to-[#c8a96a]"></div>
+﻿<div class="flex max-h-[90vh] w-full flex-col overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white">
+  <div class="relative shrink-0 border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-6 pb-4 pt-6">
+    <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#4680ff] to-[#6b9bff]"></div>
     <p class="mb-1 text-xs font-medium uppercase tracking-[0.12em] text-[#2d8a7e]">Rotational posting</p>
-    <h2 class="font-serif text-xl font-normal tracking-tight text-[#2a2622] md:text-2xl">
+    <h2 class="font-serif text-xl font-normal tracking-tight text-[#1e293b] md:text-2xl">
       {{ data.Pk_id === -1 ? 'New Posting' : 'Edit Posting' }}
     </h2>
     <!-- <p class="mt-1.5 max-w-xl text-sm leading-relaxed text-[#6b6560]">
@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <div class="rounded-xl border border-[#e8e4dc] bg-[#faf8f3] p-4" formArrayName="SubData">
+    <div class="rounded-xl border border-[#e8e4dc] bg-[#f8faff] p-4" formArrayName="SubData">
       <div class="mb-3 grid grid-cols-[1fr_1fr_1fr_1fr_auto] gap-2 text-xs font-semibold uppercase tracking-wide text-[#666] max-md:hidden">
         <span>Start Date</span>
         <span>End Date</span>
@@ -52,7 +52,7 @@
       <ng-container *ngFor="let ctrl of rows.controls; let i = index" [formGroupName]="i">
         <div
           *ngIf="ctrl.get('CanTag')?.value !== 'Y'"
-          class="mb-3 flex flex-wrap items-end gap-2 border-b border-[#ebe6df] pb-3 last:mb-0 last:border-0 last:pb-0 md:grid md:grid-cols-[1fr_1fr_1fr_1fr_auto]"
+          class="mb-3 flex flex-wrap items-end gap-2 border-b border-[#e2e8f0] pb-3 last:mb-0 last:border-0 last:pb-0 md:grid md:grid-cols-[1fr_1fr_1fr_1fr_auto]"
         >
           <div>
             <label class="mb-1 block text-xs text-[#6b6b6b] md:hidden">Start</label>
@@ -106,7 +106,7 @@
 
       <button
         type="button"
-        class="mt-1 inline-flex items-center gap-1.5 rounded-lg border border-[#c8a96a] bg-white px-4 py-2.5 text-sm font-medium text-[#8c6b2f] shadow-sm transition hover:bg-[#f3eadb] disabled:cursor-not-allowed disabled:opacity-45"
+        class="mt-1 inline-flex items-center gap-1.5 rounded-lg border border-[#c8a96a] bg-white px-4 py-2.5 text-sm font-medium text-[#4680ff] shadow-sm transition hover:bg-[#e8eeff] disabled:cursor-not-allowed disabled:opacity-45"
         (click)="addRow()"
         [disabled]="!form.get('Subject_id')?.value"
       >
@@ -129,7 +129,7 @@
       </div>
       <button
         type="button"
-        class="rounded-lg bg-[#2d8a7e] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#257a6f]"
+        class="rounded-lg bg-[#4680ff] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#3670ee]"
         (click)="saveSpeciality()"
       >
         Save
@@ -144,17 +144,17 @@
     </div>
   </div>
 
-  <div class="flex shrink-0 justify-end gap-2 border-t border-[#f0ebe3] bg-[#fdfcfa] px-6 py-4">
+  <div class="flex shrink-0 justify-end gap-2 border-t border-[#e2e8f0] bg-[#fdfcfa] px-6 py-4">
     <button
       type="button"
-      class="rounded-lg px-4 py-2.5 text-sm text-[#666] transition hover:bg-[#f5f0e8]"
+      class="rounded-lg px-4 py-2.5 text-sm text-[#64748b] transition hover:bg-[#f0f2f5]"
       (click)="cancel()"
     >
       Cancel
     </button>
     <button
       type="button"
-      class="rounded-lg bg-[#2d8a7e] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#257a6f] disabled:cursor-not-allowed disabled:opacity-50"
+      class="rounded-lg bg-[#4680ff] px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-[#3670ee] disabled:cursor-not-allowed disabled:opacity-50"
       (click)="save()"
       [disabled]="form.invalid || saving"
     >

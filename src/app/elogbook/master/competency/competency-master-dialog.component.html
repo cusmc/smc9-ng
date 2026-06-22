@@ -1,6 +1,6 @@
-<div class="flex max-h-[inherit] w-full flex-col overflow-hidden rounded-2xl bg-white">
-  <div class="border-b border-[#f0ebe3] px-6 py-5">
-    <h2 class="text-lg font-semibold text-[#2a2622]">{{ competency ? 'Edit Competency' : 'Add Competency' }}</h2>
+﻿<div class="flex max-h-[inherit] w-full flex-col overflow-hidden rounded-2xl bg-white">
+  <div class="border-b border-[#e2e8f0] px-6 py-5">
+    <h2 class="text-lg font-semibold text-[#1e293b]">{{ competency ? 'Edit Competency' : 'Add Competency' }}</h2>
   </div>
   <div class="max-h-[65vh] overflow-y-auto px-6 py-4">
     <form [formGroup]="form" class="flex flex-col gap-4">
@@ -61,8 +61,8 @@
       </div>
     </form>
   </div>
-  <div class="flex justify-end gap-2 border-t border-[#f0ebe3] px-6 py-4">
-    <button type="button" class="rounded-lg px-4 py-2 text-sm text-[#666] hover:bg-[#f5f0e8]" (click)="onCancel()">Cancel</button>
+  <div class="flex justify-end gap-2 border-t border-[#e2e8f0] px-6 py-4">
+    <button type="button" class="rounded-lg px-4 py-2 text-sm text-[#666] hover:bg-[#f0f2f5]" (click)="onCancel()">Cancel</button>
     <button *ngIf="competency"
             type="button"
             class="rounded-lg px-4 py-2 text-sm text-white bg-[#d97706] hover:bg-[#b45309]"
@@ -71,7 +71,7 @@
     </button>
     <button
       type="button"
-      class="rounded-lg px-4 py-2 text-sm font-medium text-white bg-[#2d8a7e] hover:bg-[#257a6f] disabled:opacity-50"
+      class="rounded-lg px-4 py-2 text-sm font-medium text-white bg-[#4680ff] hover:bg-[#3670ee] disabled:opacity-50"
       (click)="onSave()"
       [disabled]="!form.valid"
     >

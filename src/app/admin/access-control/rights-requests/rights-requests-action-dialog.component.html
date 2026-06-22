@@ -1,6 +1,6 @@
-<div class="flex w-full flex-col bg-white" style="max-height:80vh">
+﻿<div class="flex w-full flex-col bg-white" style="max-height:80vh">
   <!-- Header -->
-  <div class="flex items-center gap-3 border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-4">
+  <div class="flex items-center gap-3 border-b border-[#e2e8f0] bg-[#f8faff] px-5 py-4">
     <span class="material-icons"
       [class]="data.mode === 'reject' ? 'text-red-500' : 'text-emerald-600'">
       {{ data.mode === 'reject' ? 'cancel' : data.mode === 'approve-role' ? 'groups' : 'person_check' }}
@@ -13,7 +13,7 @@
   </div>
 
   <!-- Request summary -->
-  <div class="border-b border-[#f0ebe3] bg-[#fffdf9] px-5 py-3">
+  <div class="border-b border-[#e2e8f0] bg-[#fffdf9] px-5 py-3">
     <dl class="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
       <div>
         <dt class="text-xs font-semibold uppercase tracking-wide text-[#999]">User</dt>
@@ -33,7 +33,7 @@
   </div>
 
   <!-- Role selector (approve-role only) -->
-  <div *ngIf="data.mode === 'approve-role'" class="border-b border-[#f0ebe3] px-5 py-4">
+  <div *ngIf="data.mode === 'approve-role'" class="border-b border-[#e2e8f0] px-5 py-4">
     <label class="mb-2 block text-xs font-semibold uppercase tracking-wide text-[#666]">
       Select Role <span class="text-red-500">*</span>
     </label>
@@ -67,7 +67,7 @@
   </div>
 
   <!-- Footer -->
-  <div class="flex items-center justify-end gap-2 border-t border-[#f0ebe3] px-5 py-4">
+  <div class="flex items-center justify-end gap-2 border-t border-[#e2e8f0] px-5 py-4">
     <button type="button"
       class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm text-[#666] hover:bg-[#f5f5f5]"
       (click)="onCancel()">
