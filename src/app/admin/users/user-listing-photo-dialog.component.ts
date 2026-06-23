@@ -38,8 +38,8 @@ export class UserListingPhotoDialogComponent implements OnInit {
         this.loading = false;
       },
       error: () => {
-        this.toast.show('Error loading photo', {
-          variant: 'error',
+        this.toast.show('photo is not available', {
+          variant: 'info',
           duration: 3000,
         });
         this.photoUrl = null;
