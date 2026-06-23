@@ -16,6 +16,7 @@ export class LoginComponent {
   loading = false;
   submitted = false;
   error: string | null = null;
+  currentYear = new Date().getFullYear();
   private returnUrl: string;
 
   constructor(

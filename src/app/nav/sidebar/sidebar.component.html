@@ -6,13 +6,14 @@
     <span *ngIf="!module.migrated" class="legacy-badge">Legacy</span>
   </div>
 
+  <div class="sidebar-search">
+    <span class="material-icons">search</span>
+
+    <input type="text" placeholder="Search menu..." />
+  </div>
   <!-- Nav groups -->
   <nav class="sidebar-nav app-scrollbar">
-    <details
-      *ngFor="let group of module.groups"
-      class="nav-group"
-      open
-    >
+    <details *ngFor="let group of module.groups" class="nav-group" open>
       <summary class="nav-group-summary">
         <span class="material-icons group-icon">{{ group.icon }}</span>
         <span class="group-label">{{ group.label }}</span>

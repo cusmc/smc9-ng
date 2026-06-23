@@ -1,24 +1,29 @@
-<div class="min-h-screen bg-slate-100">
-
+<div
+  class="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200"
+>
   <!-- ═══════════════════════════ PAGE HEADER ═══════════════════════════════ -->
-  <header class="bg-[#1e3a5f] shadow-lg">
-    <div class="px-6 py-4 flex items-center gap-3">
-      <div class="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center">
-        <span class="material-icons text-white text-[22px]">bar_chart</span>
+  <header
+    class="bg-gradient-to-r from-slate-900 via-[#1e3a5f] to-blue-900 shadow-lg rounded-xl overflow-hidden"
+  >
+    <div class="px-5 py-3 flex items-center gap-3">
+      <div
+        class="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center"
+      >
+        <span class="material-icons text-white text-[20px]">bar_chart</span>
       </div>
-      <div>
-        <h1 class="text-lg font-bold text-white leading-tight tracking-wide">
-          DOCTOR PERFORMANCE REPORT
-        </h1>
-      </div>
+
+      <h1 class="text-lg font-bold text-white tracking-wide">
+        DOCTOR PERFORMANCE REPORT
+      </h1>
     </div>
   </header>
 
   <!-- ═══════════════════════════ MAIN CONTENT ══════════════════════════════ -->
-  <div class="p-4 space-y-4">
-
+  <div class="p-6 space-y-6 max-w-[1800px] mx-auto">
     <!-- Series builder panel -->
-    <div class="bg-white rounded-xl shadow-sm p-4 space-y-3">
+    <div
+      class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/70 p-6 space-y-5"
+    >
       <div class="flex items-center justify-between">
         <h2 class="text-sm font-semibold text-slate-700">
           Series
@@ -26,103 +31,169 @@
             (1 series = summary &nbsp;|&nbsp; 2+ series = comparison)
           </span>
         </h2>
-        <button (click)="addSeries()"
-          class="inline-flex items-center gap-1 rounded border border-blue-300 px-3 py-1
-                 text-xs font-medium text-blue-700 hover:bg-blue-50 transition">
+        <button
+          (click)="addSeries()"
+          class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 shadow-md hover:shadow-lg transition-all duration-300"
+        >
           <span class="material-icons text-[14px]">add</span> Add Series
         </button>
       </div>
 
       <!-- Series rows -->
-      <div *ngFor="let s of seriesList; let i = index"
-           class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 p-3 rounded-lg bg-slate-50 border border-slate-200">
-
+      <div
+        *ngFor="let s of seriesList; let i = index"
+        class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4 p-5 rounded-2xl bg-gradient-to-br from-white to-slate-50 border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300"
+      >
         <div class="flex flex-col gap-1">
-          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Label</label>
-          <input type="text" [(ngModel)]="s.Label"
-                 class="rounded border border-slate-200 px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" />
+          <label
+            class="text-[10px] font-medium text-slate-500 uppercase tracking-wide"
+            >Label</label
+          >
+          <input
+            type="text"
+            [(ngModel)]="s.Label"
+            class="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm shadow-sm transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none"
+          />
         </div>
 
         <div class="flex flex-col gap-1">
-          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">From</label>
-          <input type="date" [(ngModel)]="s.Fdate" [max]="s.Tdate"
-                 class="rounded border border-slate-200 px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" />
+          <label
+            class="text-[10px] font-medium text-slate-500 uppercase tracking-wide"
+            >From</label
+          >
+          <input
+            type="date"
+            [(ngModel)]="s.Fdate"
+            [max]="s.Tdate"
+            class="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm shadow-sm transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none"
+          />
         </div>
 
         <div class="flex flex-col gap-1">
-          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">To</label>
-          <input type="date" [(ngModel)]="s.Tdate" [min]="s.Fdate" [max]="todayIso"
-                 class="rounded border border-slate-200 px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400" />
+          <label
+            class="text-[10px] font-medium text-slate-500 uppercase tracking-wide"
+            >To</label
+          >
+          <input
+            type="date"
+            [(ngModel)]="s.Tdate"
+            [min]="s.Fdate"
+            [max]="todayIso"
+            class="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm shadow-sm transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none"
+          />
         </div>
 
         <div class="flex flex-col gap-1">
-          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Department</label>
-          <select [(ngModel)]="s.Dept_id"
-                  class="rounded border border-slate-200 px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+          <label
+            class="text-[10px] font-medium text-slate-500 uppercase tracking-wide"
+            >Department</label
+          >
+          <select
+            [(ngModel)]="s.Dept_id"
+            class="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm shadow-sm transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none"
+          >
             <option [ngValue]="null">All</option>
             <option *ngFor="let d of depts" [ngValue]="d.id">{{ d.nm }}</option>
           </select>
         </div>
 
         <div class="flex flex-col gap-1">
-          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Sub Dept</label>
-          <select [(ngModel)]="s.Subdept_id"
-                  class="rounded border border-slate-200 px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+          <label
+            class="text-[10px] font-medium text-slate-500 uppercase tracking-wide"
+            >Sub Dept</label
+          >
+          <select
+            [(ngModel)]="s.Subdept_id"
+            class="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm shadow-sm transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none"
+          >
             <option [ngValue]="null">All</option>
-            <option *ngFor="let d of subdepts" [ngValue]="d.id">{{ d.nm }}</option>
+            <option *ngFor="let d of subdepts" [ngValue]="d.id">
+              {{ d.nm }}
+            </option>
           </select>
         </div>
 
         <div class="flex flex-col gap-1">
-          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Doctor</label>
-          <select [(ngModel)]="s.Doctor_id"
-                  class="rounded border border-slate-200 px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+          <label
+            class="text-[10px] font-medium text-slate-500 uppercase tracking-wide"
+            >Doctor</label
+          >
+          <select
+            [(ngModel)]="s.Doctor_id"
+            class="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm shadow-sm transition-all duration-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none"
+          >
             <option [ngValue]="null">All</option>
-            <option *ngFor="let d of doctors" [ngValue]="d.id">{{ d.nm }}</option>
+            <option *ngFor="let d of doctors" [ngValue]="d.id">
+              {{ d.nm }}
+            </option>
           </select>
         </div>
 
         <div class="flex flex-col gap-1 items-start">
-          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">&nbsp;</label>
-          <button (click)="removeSeries(i)"
-            class="inline-flex items-center justify-center w-8 h-8 rounded text-red-500 hover:bg-red-50 transition">
-            <span class="material-icons text-[18px]">remove_circle_outline</span>
+          <label
+            class="text-[10px] font-medium text-slate-500 uppercase tracking-wide"
+            >&nbsp;</label
+          >
+          <button
+            (click)="removeSeries(i)"
+            class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-all duration-300"
+          >
+            <span class="material-icons text-[18px]"
+              >remove_circle_outline</span
+            >
           </button>
         </div>
       </div>
 
       <!-- Generate button -->
-      <div class="flex items-center gap-3 pt-1 border-t border-slate-100 flex-wrap">
-        <button (click)="generate()" [disabled]="loading || !seriesList.length"
-          class="inline-flex items-center gap-1.5 rounded bg-blue-600 px-5 py-2
-                 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 transition">
-          <span class="material-icons text-[16px]">{{ loading ? 'hourglass_top' : 'play_arrow' }}</span>
-          {{ loading ? 'Loading&hellip;' : 'Generate' }}
+      <div
+        class="flex items-center gap-3 pt-1 border-t border-slate-100 flex-wrap"
+      >
+        <button
+          (click)="generate()"
+          [disabled]="loading || !seriesList.length"
+          class="inline-flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 px-5 py-3 text-sm font-semibold text-green-700 hover:bg-green-100 transition-all duration-300"
+        >
+          <span class="material-icons text-[16px]">{{
+            loading ? "hourglass_top" : "play_arrow"
+          }}</span>
+          {{ loading ? "Loading&hellip;" : "Generate" }}
         </button>
 
         <!-- Export buttons (visible once results are available) -->
         <ng-container *ngIf="resultMode !== 'none'">
-          <button (click)="exportAllPdf()"
-            class="inline-flex items-center gap-1.5 rounded border border-red-300 px-4 py-2
-                   text-sm font-medium text-red-700 hover:bg-red-50 transition">
-            <span class="material-icons text-[16px]">picture_as_pdf</span> Export PDF
+          <button
+            (click)="exportAllPdf()"
+            class="inline-flex items-center gap-1.5 rounded border border-red-300 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 transition"
+          >
+            <span class="material-icons text-[16px]">picture_as_pdf</span>
+            Export PDF
           </button>
-          <button (click)="exportAllExcel()"
-            class="inline-flex items-center gap-1.5 rounded border border-green-300 px-4 py-2
-                   text-sm font-medium text-green-700 hover:bg-green-50 transition">
-            <span class="material-icons text-[16px]">table_view</span> Export Excel
+          <button
+            (click)="exportAllExcel()"
+            class="inline-flex items-center gap-1.5 rounded border border-green-300 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-50 transition"
+          >
+            <span class="material-icons text-[16px]">table_view</span> Export
+            Excel
           </button>
         </ng-container>
 
         <!-- Granularity (single-series only) -->
-        <ng-container *ngIf="resultMode==='single'">
-          <span class="text-xs font-medium text-slate-500 uppercase tracking-wide ml-2">Granularity</span>
+        <ng-container *ngIf="resultMode === 'single'">
+          <span
+            class="text-xs font-medium text-slate-500 uppercase tracking-wide ml-2"
+            >Granularity</span
+          >
           <div class="flex rounded-lg border border-slate-200 overflow-hidden">
-            <button *ngFor="let g of granularities"
-              (click)="sGranularity=g; applyGranularity()"
-              [class.bg-blue-600]="sGranularity===g" [class.text-white]="sGranularity===g"
-              [class.text-slate-600]="sGranularity!==g"
-              class="px-3 py-1.5 text-xs font-medium transition">{{ g }}
+            <button
+              *ngFor="let g of granularities"
+              (click)="sGranularity = g; applyGranularity()"
+              [class.bg-blue-600]="sGranularity === g"
+              [class.text-white]="sGranularity === g"
+              [class.text-slate-600]="sGranularity !== g"
+              class="px-3 py-1.5 text-xs font-medium transition"
+            >
+              {{ g }}
             </button>
           </div>
         </ng-container>
@@ -132,497 +203,960 @@
     </div>
 
     <!-- ── Single-series results (4 section cards) ───────────────────── -->
-    <ng-container *ngIf="resultMode==='single'">
-
+    <ng-container *ngIf="resultMode === 'single'">
       <!-- OPD card -->
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-            <span class="material-icons text-[16px] text-blue-600">personal_injury</span> OPD
+      <div
+        class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+      >
+        <div
+          class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200 flex items-center justify-between"
+        >
+          <h2
+            class="text-base font-bold text-slate-800 flex items-center gap-3"
+          >
+            <span class="material-icons text-[16px] text-blue-600"
+              >personal_injury</span
+            >
+            OPD
           </h2>
           <div class="flex items-center gap-2">
-            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-              <button (click)="opdView='table'"
-                [class.bg-blue-600]="opdView==='table'" [class.text-white]="opdView==='table'"
-                [class.text-slate-600]="opdView!=='table'"
-                class="px-3 py-1.5 font-medium transition">Table</button>
-              <button (click)="opdView='chart'"
-                [class.bg-blue-600]="opdView==='chart'" [class.text-white]="opdView==='chart'"
-                [class.text-slate-600]="opdView!=='chart'"
-                class="px-3 py-1.5 font-medium transition">Chart</button>
+            <div
+              class="flex rounded-xl border border-slate-200 overflow-hidden text-xs bg-slate-50 shadow-sm"
+            >
+              <button
+                (click)="opdView = 'table'"
+                [class.bg-blue-600]="opdView === 'table'"
+                [class.text-white]="opdView === 'table'"
+                [class.text-slate-600]="opdView !== 'table'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Table
+              </button>
+              <button
+                (click)="opdView = 'chart'"
+                [class.bg-blue-600]="opdView === 'chart'"
+                [class.text-white]="opdView === 'chart'"
+                [class.text-slate-600]="opdView !== 'chart'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Chart
+              </button>
             </div>
           </div>
         </div>
-        <div *ngIf="opdView==='table'" class="overflow-x-auto">
-          <table class="w-full text-sm">
+        <div *ngIf="opdView === 'table'" class="overflow-x-auto">
+          <table class="w-full text-sm border-separate border-spacing-0">
             <thead>
-              <tr class="bg-slate-50">
-                <th class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap">Category</th>
-                <th *ngFor="let p of tablePeriods"
-                    class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap">
+              <tr class="bg-gradient-to-r from-slate-100 to-slate-50">
+                <th
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap"
+                >
+                  Category
+                </th>
+                <th
+                  *ngFor="let p of tablePeriods"
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap"
+                >
                   {{ p }}
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let row of opdTableRows"
-                  [class.bg-blue-50]="row.isTotal" [class.font-semibold]="row.isTotal"
-                  [class.border-t-2]="row.isTotal" [class.border-blue-100]="row.isTotal"
-                  class="border-b border-slate-50 hover:bg-slate-50 transition">
-                <td class="px-3 py-2 text-slate-700 whitespace-nowrap">{{ row.label }}</td>
-                <td *ngFor="let v of row.values"
-                    class="px-3 py-2 text-right text-slate-800 tabular-nums whitespace-nowrap">{{ v }}</td>
+              <tr
+                *ngFor="let row of opdTableRows"
+                [class.bg-blue-50]="row.isTotal"
+                [class.font-semibold]="row.isTotal"
+                [class.border-t-2]="row.isTotal"
+                [class.border-blue-100]="row.isTotal"
+                class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200"
+              >
+                <td class="px-4 py-3 text-slate-700 whitespace-nowrap">
+                  {{ row.label }}
+                </td>
+                <td
+                  *ngFor="let v of row.values"
+                  class="px-4 py-3 text-right text-slate-800 tabular-nums whitespace-nowrap"
+                >
+                  {{ v }}
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div *ngIf="opdView==='chart'" class="p-4">
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3">
-            <button *ngFor="let t of [{l:'PMJAY',c:'PMJY+'},{l:'Private',c:'Private'},{l:'Others',c:'Others'},{l:'Total',c:'Total'}]"
+        <div *ngIf="opdView === 'chart'" class="p-6">
+          <div
+            class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3"
+          >
+            <button
+              *ngFor="
+                let t of [
+                  { l: 'PMJAY', c: 'PMJY+' },
+                  { l: 'Private', c: 'Private' },
+                  { l: 'Others', c: 'Others' },
+                  { l: 'Total', c: 'Total' },
+                ]
+              "
               (click)="setOpdTab(t.c)"
-              [class.bg-blue-600]="opdTab===t.c" [class.text-white]="opdTab===t.c"
-              [class.text-slate-600]="opdTab!==t.c"
-              class="px-2.5 py-1 font-medium transition">{{ t.l }}</button>
+              [class.bg-blue-600]="opdTab === t.c"
+              [class.text-white]="opdTab === t.c"
+              [class.text-slate-600]="opdTab !== t.c"
+              class="px-2.5 py-1 font-medium transition"
+            >
+              {{ t.l }}
+            </button>
           </div>
-          <apx-chart *ngIf="opdChart"
-            [series]="opdChart.series!" [chart]="opdChart.chart!" [plotOptions]="opdChart.plotOptions!"
-            [xaxis]="opdChart.xaxis!" [yaxis]="opdChart.yaxis!" [dataLabels]="opdChart.dataLabels!"
-            [colors]="opdChart.colors!" [legend]="opdChart.legend!" [tooltip]="opdChart.tooltip!"
-            [stroke]="opdChart.stroke!">
+          <apx-chart
+            *ngIf="opdChart"
+            [series]="opdChart.series!"
+            [chart]="opdChart.chart!"
+            [plotOptions]="opdChart.plotOptions!"
+            [xaxis]="opdChart.xaxis!"
+            [yaxis]="opdChart.yaxis!"
+            [dataLabels]="opdChart.dataLabels!"
+            [colors]="opdChart.colors!"
+            [legend]="opdChart.legend!"
+            [tooltip]="opdChart.tooltip!"
+            [stroke]="opdChart.stroke!"
+          >
           </apx-chart>
         </div>
       </div>
 
       <!-- IPD card -->
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-            <span class="material-icons text-[16px] text-teal-600">hotel</span> IPD
+      <div
+        class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+      >
+        <div
+          class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200 flex items-center justify-between"
+        >
+          <h2
+            class="text-base font-bold text-slate-800 flex items-center gap-3"
+          >
+            <span class="material-icons text-[16px] text-teal-600">hotel</span>
+            IPD
           </h2>
           <div class="flex items-center gap-2">
-            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-              <button (click)="ipdView='table'"
-                [class.bg-teal-600]="ipdView==='table'" [class.text-white]="ipdView==='table'"
-                [class.text-slate-600]="ipdView!=='table'"
-                class="px-3 py-1.5 font-medium transition">Table</button>
-              <button (click)="ipdView='chart'"
-                [class.bg-teal-600]="ipdView==='chart'" [class.text-white]="ipdView==='chart'"
-                [class.text-slate-600]="ipdView!=='chart'"
-                class="px-3 py-1.5 font-medium transition">Chart</button>
+            <div
+              class="flex rounded-xl border border-slate-200 overflow-hidden text-xs bg-slate-50 shadow-sm"
+            >
+              <button
+                (click)="ipdView = 'table'"
+                [class.bg-teal-600]="ipdView === 'table'"
+                [class.text-white]="ipdView === 'table'"
+                [class.text-slate-600]="ipdView !== 'table'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Table
+              </button>
+              <button
+                (click)="ipdView = 'chart'"
+                [class.bg-teal-600]="ipdView === 'chart'"
+                [class.text-white]="ipdView === 'chart'"
+                [class.text-slate-600]="ipdView !== 'chart'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Chart
+              </button>
             </div>
           </div>
         </div>
-        <div *ngIf="ipdView==='table'" class="overflow-x-auto">
-          <table class="w-full text-sm">
+        <div *ngIf="ipdView === 'table'" class="overflow-x-auto">
+          <table class="w-full text-sm border-separate border-spacing-0">
             <thead>
-              <tr class="bg-slate-50">
-                <th class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap">Category</th>
-                <th *ngFor="let p of tablePeriods"
-                    class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap">
+              <tr class="bg-gradient-to-r from-slate-100 to-slate-50">
+                <th
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap"
+                >
+                  Category
+                </th>
+                <th
+                  *ngFor="let p of tablePeriods"
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap"
+                >
                   {{ p }}
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let row of ipdTableRows"
-                  [class.bg-teal-50]="row.isTotal" [class.font-semibold]="row.isTotal"
-                  [class.border-t-2]="row.isTotal" [class.border-teal-100]="row.isTotal"
-                  class="border-b border-slate-50 hover:bg-slate-50 transition">
-                <td class="px-3 py-2 text-slate-700 whitespace-nowrap">{{ row.label }}</td>
-                <td *ngFor="let v of row.values"
-                    class="px-3 py-2 text-right text-slate-800 tabular-nums whitespace-nowrap">{{ v }}</td>
+              <tr
+                *ngFor="let row of ipdTableRows"
+                [class.bg-teal-50]="row.isTotal"
+                [class.font-semibold]="row.isTotal"
+                [class.border-t-2]="row.isTotal"
+                [class.border-teal-100]="row.isTotal"
+                class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200"
+              >
+                <td class="px-4 py-3 text-slate-700 whitespace-nowrap">
+                  {{ row.label }}
+                </td>
+                <td
+                  *ngFor="let v of row.values"
+                  class="px-4 py-3 text-right text-slate-800 tabular-nums whitespace-nowrap"
+                >
+                  {{ v }}
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div *ngIf="ipdView==='chart'" class="p-4">
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3">
-            <button *ngFor="let t of [{l:'PMJAY',c:'PMJY+'},{l:'Private',c:'Private'},{l:'Others',c:'Others'},{l:'Total',c:'Total'}]"
+        <div *ngIf="ipdView === 'chart'" class="p-4">
+          <div
+            class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3"
+          >
+            <button
+              *ngFor="
+                let t of [
+                  { l: 'PMJAY', c: 'PMJY+' },
+                  { l: 'Private', c: 'Private' },
+                  { l: 'Others', c: 'Others' },
+                  { l: 'Total', c: 'Total' },
+                ]
+              "
               (click)="setIpdTab(t.c)"
-              [class.bg-teal-600]="ipdTab===t.c" [class.text-white]="ipdTab===t.c"
-              [class.text-slate-600]="ipdTab!==t.c"
-              class="px-2.5 py-1 font-medium transition">{{ t.l }}</button>
+              [class.bg-teal-600]="ipdTab === t.c"
+              [class.text-white]="ipdTab === t.c"
+              [class.text-slate-600]="ipdTab !== t.c"
+              class="px-2.5 py-1 font-medium transition"
+            >
+              {{ t.l }}
+            </button>
           </div>
-          <apx-chart *ngIf="ipdChart"
-            [series]="ipdChart.series!" [chart]="ipdChart.chart!" [plotOptions]="ipdChart.plotOptions!"
-            [xaxis]="ipdChart.xaxis!" [yaxis]="ipdChart.yaxis!" [dataLabels]="ipdChart.dataLabels!"
-            [colors]="ipdChart.colors!" [legend]="ipdChart.legend!" [tooltip]="ipdChart.tooltip!"
-            [stroke]="ipdChart.stroke!">
+          <apx-chart
+            *ngIf="ipdChart"
+            [series]="ipdChart.series!"
+            [chart]="ipdChart.chart!"
+            [plotOptions]="ipdChart.plotOptions!"
+            [xaxis]="ipdChart.xaxis!"
+            [yaxis]="ipdChart.yaxis!"
+            [dataLabels]="ipdChart.dataLabels!"
+            [colors]="ipdChart.colors!"
+            [legend]="ipdChart.legend!"
+            [tooltip]="ipdChart.tooltip!"
+            [stroke]="ipdChart.stroke!"
+          >
           </apx-chart>
         </div>
       </div>
 
       <!-- Surgery card -->
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-            <span class="material-icons text-[16px] text-orange-500">content_cut</span> Surgery
+      <div
+        class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+      >
+        <div
+          class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200 flex items-center justify-between"
+        >
+          <h2
+            class="text-base font-bold text-slate-800 flex items-center gap-3"
+          >
+            <span class="material-icons text-[16px] text-orange-500"
+              >content_cut</span
+            >
+            Surgery
           </h2>
           <div class="flex items-center gap-2">
-            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-              <button (click)="surgeryView='table'"
-                [class.bg-orange-500]="surgeryView==='table'" [class.text-white]="surgeryView==='table'"
-                [class.text-slate-600]="surgeryView!=='table'"
-                class="px-3 py-1.5 font-medium transition">Table</button>
-              <button (click)="surgeryView='chart'"
-                [class.bg-orange-500]="surgeryView==='chart'" [class.text-white]="surgeryView==='chart'"
-                [class.text-slate-600]="surgeryView!=='chart'"
-                class="px-3 py-1.5 font-medium transition">Chart</button>
+            <div
+              class="flex rounded-xl border border-slate-200 overflow-hidden text-xs bg-slate-50 shadow-sm"
+            >
+              <button
+                (click)="surgeryView = 'table'"
+                [class.bg-orange-500]="surgeryView === 'table'"
+                [class.text-white]="surgeryView === 'table'"
+                [class.text-slate-600]="surgeryView !== 'table'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Table
+              </button>
+              <button
+                (click)="surgeryView = 'chart'"
+                [class.bg-orange-500]="surgeryView === 'chart'"
+                [class.text-white]="surgeryView === 'chart'"
+                [class.text-slate-600]="surgeryView !== 'chart'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Chart
+              </button>
             </div>
           </div>
         </div>
-        <div *ngIf="surgeryView==='table'" class="overflow-x-auto">
-          <table class="w-full text-sm">
+        <div *ngIf="surgeryView === 'table'" class="overflow-x-auto">
+          <table class="w-full text-sm border-separate border-spacing-0">
             <thead>
-              <tr class="bg-slate-50">
-                <th class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap">Category</th>
-                <th *ngFor="let p of tablePeriods"
-                    class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap">
+              <tr class="bg-gradient-to-r from-slate-100 to-slate-50">
+                <th
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap"
+                >
+                  Category
+                </th>
+                <th
+                  *ngFor="let p of tablePeriods"
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap"
+                >
                   {{ p }}
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let row of surgeryTableRows"
-                  [class.bg-orange-50]="row.isTotal" [class.font-semibold]="row.isTotal"
-                  [class.border-t-2]="row.isTotal" [class.border-orange-100]="row.isTotal"
-                  class="border-b border-slate-50 hover:bg-slate-50 transition">
-                <td class="px-3 py-2 text-slate-700 whitespace-nowrap">{{ row.label }}</td>
-                <td *ngFor="let v of row.values"
-                    class="px-3 py-2 text-right text-slate-800 tabular-nums whitespace-nowrap">{{ v }}</td>
+              <tr
+                *ngFor="let row of surgeryTableRows"
+                [class.bg-orange-50]="row.isTotal"
+                [class.font-semibold]="row.isTotal"
+                [class.border-t-2]="row.isTotal"
+                [class.border-orange-100]="row.isTotal"
+                class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200"
+              >
+                <td class="px-4 py-3 text-slate-700 whitespace-nowrap">
+                  {{ row.label }}
+                </td>
+                <td
+                  *ngFor="let v of row.values"
+                  class="px-4 py-3 text-right text-slate-800 tabular-nums whitespace-nowrap"
+                >
+                  {{ v }}
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div *ngIf="surgeryView==='chart'" class="p-4">
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3">
-            <button *ngFor="let t of [{l:'Supra',c:'Supra'},{l:'Major',c:'Major'},{l:'Minor',c:'Minor'},{l:'Total',c:'Total'}]"
+        <div *ngIf="surgeryView === 'chart'" class="p-4">
+          <div
+            class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3"
+          >
+            <button
+              *ngFor="
+                let t of [
+                  { l: 'Supra', c: 'Supra' },
+                  { l: 'Major', c: 'Major' },
+                  { l: 'Minor', c: 'Minor' },
+                  { l: 'Total', c: 'Total' },
+                ]
+              "
               (click)="setSurgeryTab(t.c)"
-              [class.bg-orange-500]="surgeryTab===t.c" [class.text-white]="surgeryTab===t.c"
-              [class.text-slate-600]="surgeryTab!==t.c"
-              class="px-2.5 py-1 font-medium transition">{{ t.l }}</button>
+              [class.bg-orange-500]="surgeryTab === t.c"
+              [class.text-white]="surgeryTab === t.c"
+              [class.text-slate-600]="surgeryTab !== t.c"
+              class="px-2.5 py-1 font-medium transition"
+            >
+              {{ t.l }}
+            </button>
           </div>
-          <apx-chart *ngIf="surgeryChart"
-            [series]="surgeryChart.series!" [chart]="surgeryChart.chart!" [plotOptions]="surgeryChart.plotOptions!"
-            [xaxis]="surgeryChart.xaxis!" [yaxis]="surgeryChart.yaxis!" [dataLabels]="surgeryChart.dataLabels!"
-            [colors]="surgeryChart.colors!" [legend]="surgeryChart.legend!" [tooltip]="surgeryChart.tooltip!"
-            [stroke]="surgeryChart.stroke!">
+          <apx-chart
+            *ngIf="surgeryChart"
+            [series]="surgeryChart.series!"
+            [chart]="surgeryChart.chart!"
+            [plotOptions]="surgeryChart.plotOptions!"
+            [xaxis]="surgeryChart.xaxis!"
+            [yaxis]="surgeryChart.yaxis!"
+            [dataLabels]="surgeryChart.dataLabels!"
+            [colors]="surgeryChart.colors!"
+            [legend]="surgeryChart.legend!"
+            [tooltip]="surgeryChart.tooltip!"
+            [stroke]="surgeryChart.stroke!"
+          >
           </apx-chart>
         </div>
       </div>
 
       <!-- Revenue card -->
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-            <span class="material-icons text-[16px] text-green-600">currency_rupee</span> Revenue
+      <div
+        class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+      >
+        <div
+          class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200 flex items-center justify-between"
+        >
+          <h2
+            class="text-base font-bold text-slate-800 flex items-center gap-3"
+          >
+            <span class="material-icons text-[16px] text-green-600"
+              >currency_rupee</span
+            >
+            Revenue
           </h2>
           <div class="flex items-center gap-2">
-            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-              <button (click)="revenueView='table'"
-                [class.bg-green-600]="revenueView==='table'" [class.text-white]="revenueView==='table'"
-                [class.text-slate-600]="revenueView!=='table'"
-                class="px-3 py-1.5 font-medium transition">Table</button>
-              <button (click)="revenueView='chart'"
-                [class.bg-green-600]="revenueView==='chart'" [class.text-white]="revenueView==='chart'"
-                [class.text-slate-600]="revenueView!=='chart'"
-                class="px-3 py-1.5 font-medium transition">Chart</button>
+            <div
+              class="flex rounded-xl border border-slate-200 overflow-hidden text-xs bg-slate-50 shadow-sm"
+            >
+              <button
+                (click)="revenueView = 'table'"
+                [class.bg-green-600]="revenueView === 'table'"
+                [class.text-white]="revenueView === 'table'"
+                [class.text-slate-600]="revenueView !== 'table'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Table
+              </button>
+              <button
+                (click)="revenueView = 'chart'"
+                [class.bg-green-600]="revenueView === 'chart'"
+                [class.text-white]="revenueView === 'chart'"
+                [class.text-slate-600]="revenueView !== 'chart'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Chart
+              </button>
             </div>
           </div>
         </div>
-        <div *ngIf="revenueView==='table'" class="overflow-x-auto">
-          <table class="w-full text-sm">
+        <div *ngIf="revenueView === 'table'" class="overflow-x-auto">
+          <table class="w-full text-sm border-separate border-spacing-0">
             <thead>
-              <tr class="bg-slate-50">
-                <th class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap">Category</th>
-                <th *ngFor="let p of tablePeriods"
-                    class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap">
+              <tr class="bg-gradient-to-r from-slate-100 to-slate-50">
+                <th
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap"
+                >
+                  Category
+                </th>
+                <th
+                  *ngFor="let p of tablePeriods"
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap"
+                >
                   {{ p }}
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let row of revenueTableRows"
-                  [class.bg-green-50]="row.isTotal" [class.font-semibold]="row.isTotal"
-                  [class.border-t-2]="row.isTotal" [class.border-green-100]="row.isTotal"
-                  class="border-b border-slate-50 hover:bg-slate-50 transition">
-                <td class="px-3 py-2 text-slate-700 whitespace-nowrap">{{ row.label }}</td>
-                <td *ngFor="let v of row.values"
-                    class="px-3 py-2 text-right text-slate-800 tabular-nums whitespace-nowrap">
-                  {{ v | number:'1.0-0' }}
+              <tr
+                *ngFor="let row of revenueTableRows"
+                [class.bg-green-50]="row.isTotal"
+                [class.font-semibold]="row.isTotal"
+                [class.border-t-2]="row.isTotal"
+                [class.border-green-100]="row.isTotal"
+                class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200"
+              >
+                <td class="px-4 py-3 text-slate-700 whitespace-nowrap">
+                  {{ row.label }}
+                </td>
+                <td
+                  *ngFor="let v of row.values"
+                  class="px-4 py-3 text-right text-slate-800 tabular-nums whitespace-nowrap"
+                >
+                  {{ v | number: "1.0-0" }}
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div *ngIf="revenueView==='chart'" class="p-4">
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3">
-            <button *ngFor="let t of [{l:'Hospital',c:'Hospital'},{l:'Diagnostic',c:'Diagnostic'},{l:'Pharmacy',c:'Pharmacy'},{l:'Total',c:'Total'}]"
+        <div *ngIf="revenueView === 'chart'" class="p-4">
+          <div
+            class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3"
+          >
+            <button
+              *ngFor="
+                let t of [
+                  { l: 'Hospital', c: 'Hospital' },
+                  { l: 'Diagnostic', c: 'Diagnostic' },
+                  { l: 'Pharmacy', c: 'Pharmacy' },
+                  { l: 'Total', c: 'Total' },
+                ]
+              "
               (click)="setRevenueTab(t.c)"
-              [class.bg-green-600]="revenueTab===t.c" [class.text-white]="revenueTab===t.c"
-              [class.text-slate-600]="revenueTab!==t.c"
-              class="px-2.5 py-1 font-medium transition">{{ t.l }}</button>
+              [class.bg-green-600]="revenueTab === t.c"
+              [class.text-white]="revenueTab === t.c"
+              [class.text-slate-600]="revenueTab !== t.c"
+              class="px-2.5 py-1 font-medium transition"
+            >
+              {{ t.l }}
+            </button>
           </div>
-          <apx-chart *ngIf="revenueChart"
-            [series]="revenueChart.series!" [chart]="revenueChart.chart!" [plotOptions]="revenueChart.plotOptions!"
-            [xaxis]="revenueChart.xaxis!" [yaxis]="revenueChart.yaxis!" [dataLabels]="revenueChart.dataLabels!"
-            [colors]="revenueChart.colors!" [legend]="revenueChart.legend!" [tooltip]="revenueChart.tooltip!"
-            [stroke]="revenueChart.stroke!">
+          <apx-chart
+            *ngIf="revenueChart"
+            [series]="revenueChart.series!"
+            [chart]="revenueChart.chart!"
+            [plotOptions]="revenueChart.plotOptions!"
+            [xaxis]="revenueChart.xaxis!"
+            [yaxis]="revenueChart.yaxis!"
+            [dataLabels]="revenueChart.dataLabels!"
+            [colors]="revenueChart.colors!"
+            [legend]="revenueChart.legend!"
+            [tooltip]="revenueChart.tooltip!"
+            [stroke]="revenueChart.stroke!"
+          >
           </apx-chart>
         </div>
       </div>
-
     </ng-container>
 
     <!-- ── Comparison results — same card design as single-series ───── -->
-    <ng-container *ngIf="resultMode==='compare'">
-
+    <ng-container *ngIf="resultMode === 'compare'">
       <!-- Compare OPD card -->
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-            <span class="material-icons text-[16px] text-blue-600">personal_injury</span> OPD
+      <div
+        class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+      >
+        <div
+          class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200 flex items-center justify-between"
+        >
+          <h2
+            class="text-base font-bold text-slate-800 flex items-center gap-3"
+          >
+            <span class="material-icons text-[16px] text-blue-600"
+              >personal_injury</span
+            >
+            OPD
           </h2>
           <div class="flex items-center gap-2">
-            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-              <button (click)="cOpdView='table'"
-                [class.bg-blue-600]="cOpdView==='table'" [class.text-white]="cOpdView==='table'"
-                [class.text-slate-600]="cOpdView!=='table'"
-                class="px-3 py-1.5 font-medium transition">Table</button>
-              <button (click)="cOpdView='chart'"
-                [class.bg-blue-600]="cOpdView==='chart'" [class.text-white]="cOpdView==='chart'"
-                [class.text-slate-600]="cOpdView!=='chart'"
-                class="px-3 py-1.5 font-medium transition">Chart</button>
+            <div
+              class="flex rounded-xl border border-slate-200 overflow-hidden text-xs bg-slate-50 shadow-sm"
+            >
+              <button
+                (click)="cOpdView = 'table'"
+                [class.bg-blue-600]="cOpdView === 'table'"
+                [class.text-white]="cOpdView === 'table'"
+                [class.text-slate-600]="cOpdView !== 'table'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Table
+              </button>
+              <button
+                (click)="cOpdView = 'chart'"
+                [class.bg-blue-600]="cOpdView === 'chart'"
+                [class.text-white]="cOpdView === 'chart'"
+                [class.text-slate-600]="cOpdView !== 'chart'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Chart
+              </button>
             </div>
           </div>
         </div>
-        <div *ngIf="cOpdView==='table'" class="overflow-x-auto">
-          <table class="w-full text-sm">
+        <div *ngIf="cOpdView === 'table'" class="overflow-x-auto">
+          <table class="w-full text-sm border-separate border-spacing-0">
             <thead>
-              <tr class="bg-slate-50">
-                <th class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap">Category</th>
-                <th *ngFor="let lbl of compareTableLabels"
-                    class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap">
+              <tr class="bg-gradient-to-r from-slate-100 to-slate-50">
+                <th
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap"
+                >
+                  Category
+                </th>
+                <th
+                  *ngFor="let lbl of compareTableLabels"
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap"
+                >
                   {{ lbl }}
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let row of cOpdTableRows"
-                  [class.bg-blue-50]="row.isTotal" [class.font-semibold]="row.isTotal"
-                  [class.border-t-2]="row.isTotal" [class.border-blue-100]="row.isTotal"
-                  class="border-b border-slate-50 hover:bg-slate-50 transition">
-                <td class="px-3 py-2 text-slate-700 whitespace-nowrap">{{ row.label }}</td>
-                <td *ngFor="let v of row.values"
-                    class="px-3 py-2 text-right text-slate-800 tabular-nums whitespace-nowrap">{{ v }}</td>
+              <tr
+                *ngFor="let row of cOpdTableRows"
+                [class.bg-blue-50]="row.isTotal"
+                [class.font-semibold]="row.isTotal"
+                [class.border-t-2]="row.isTotal"
+                [class.border-blue-100]="row.isTotal"
+                class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200"
+              >
+                <td class="px-4 py-3 text-slate-700 whitespace-nowrap">
+                  {{ row.label }}
+                </td>
+                <td
+                  *ngFor="let v of row.values"
+                  class="px-4 py-3 text-right text-slate-800 tabular-nums whitespace-nowrap"
+                >
+                  {{ v }}
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div *ngIf="cOpdView==='chart'" class="p-4">
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3">
-            <button *ngFor="let t of [{l:'PMJAY',c:'PMJY+'},{l:'Private',c:'Private'},{l:'Others',c:'Others'},{l:'Total',c:'Total'}]"
+        <div *ngIf="cOpdView === 'chart'" class="p-4">
+          <div
+            class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3"
+          >
+            <button
+              *ngFor="
+                let t of [
+                  { l: 'PMJAY', c: 'PMJY+' },
+                  { l: 'Private', c: 'Private' },
+                  { l: 'Others', c: 'Others' },
+                  { l: 'Total', c: 'Total' },
+                ]
+              "
               (click)="setCOpdTab(t.c)"
-              [class.bg-blue-600]="cOpdTab===t.c" [class.text-white]="cOpdTab===t.c"
-              [class.text-slate-600]="cOpdTab!==t.c"
-              class="px-2.5 py-1 font-medium transition">{{ t.l }}</button>
+              [class.bg-blue-600]="cOpdTab === t.c"
+              [class.text-white]="cOpdTab === t.c"
+              [class.text-slate-600]="cOpdTab !== t.c"
+              class="px-2.5 py-1 font-medium transition"
+            >
+              {{ t.l }}
+            </button>
           </div>
-          <apx-chart *ngIf="cOpdChart"
-            [series]="cOpdChart.series!" [chart]="cOpdChart.chart!" [plotOptions]="cOpdChart.plotOptions!"
-            [xaxis]="cOpdChart.xaxis!" [yaxis]="cOpdChart.yaxis!" [dataLabels]="cOpdChart.dataLabels!"
-            [colors]="cOpdChart.colors!" [legend]="cOpdChart.legend!" [tooltip]="cOpdChart.tooltip!"
-            [stroke]="cOpdChart.stroke!">
+          <apx-chart
+            *ngIf="cOpdChart"
+            [series]="cOpdChart.series!"
+            [chart]="cOpdChart.chart!"
+            [plotOptions]="cOpdChart.plotOptions!"
+            [xaxis]="cOpdChart.xaxis!"
+            [yaxis]="cOpdChart.yaxis!"
+            [dataLabels]="cOpdChart.dataLabels!"
+            [colors]="cOpdChart.colors!"
+            [legend]="cOpdChart.legend!"
+            [tooltip]="cOpdChart.tooltip!"
+            [stroke]="cOpdChart.stroke!"
+          >
           </apx-chart>
         </div>
       </div>
 
       <!-- Compare IPD card -->
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-            <span class="material-icons text-[16px] text-teal-600">hotel</span> IPD
+      <div
+        class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+      >
+        <div
+          class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200 flex items-center justify-between"
+        >
+          <h2
+            class="text-base font-bold text-slate-800 flex items-center gap-3"
+          >
+            <span class="material-icons text-[16px] text-teal-600">hotel</span>
+            IPD
           </h2>
           <div class="flex items-center gap-2">
-            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-              <button (click)="cIpdView='table'"
-                [class.bg-teal-600]="cIpdView==='table'" [class.text-white]="cIpdView==='table'"
-                [class.text-slate-600]="cIpdView!=='table'"
-                class="px-3 py-1.5 font-medium transition">Table</button>
-              <button (click)="cIpdView='chart'"
-                [class.bg-teal-600]="cIpdView==='chart'" [class.text-white]="cIpdView==='chart'"
-                [class.text-slate-600]="cIpdView!=='chart'"
-                class="px-3 py-1.5 font-medium transition">Chart</button>
+            <div
+              class="flex rounded-xl border border-slate-200 overflow-hidden text-xs bg-slate-50 shadow-sm"
+            >
+              <button
+                (click)="cIpdView = 'table'"
+                [class.bg-teal-600]="cIpdView === 'table'"
+                [class.text-white]="cIpdView === 'table'"
+                [class.text-slate-600]="cIpdView !== 'table'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Table
+              </button>
+              <button
+                (click)="cIpdView = 'chart'"
+                [class.bg-teal-600]="cIpdView === 'chart'"
+                [class.text-white]="cIpdView === 'chart'"
+                [class.text-slate-600]="cIpdView !== 'chart'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Chart
+              </button>
             </div>
           </div>
         </div>
-        <div *ngIf="cIpdView==='table'" class="overflow-x-auto">
-          <table class="w-full text-sm">
+        <div *ngIf="cIpdView === 'table'" class="overflow-x-auto">
+          <table class="w-full text-sm border-separate border-spacing-0">
             <thead>
-              <tr class="bg-slate-50">
-                <th class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap">Category</th>
-                <th *ngFor="let lbl of compareTableLabels"
-                    class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap">
+              <tr class="bg-gradient-to-r from-slate-100 to-slate-50">
+                <th
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap"
+                >
+                  Category
+                </th>
+                <th
+                  *ngFor="let lbl of compareTableLabels"
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap"
+                >
                   {{ lbl }}
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let row of cIpdTableRows"
-                  [class.bg-teal-50]="row.isTotal" [class.font-semibold]="row.isTotal"
-                  [class.border-t-2]="row.isTotal" [class.border-teal-100]="row.isTotal"
-                  class="border-b border-slate-50 hover:bg-slate-50 transition">
-                <td class="px-3 py-2 text-slate-700 whitespace-nowrap">{{ row.label }}</td>
-                <td *ngFor="let v of row.values"
-                    class="px-3 py-2 text-right text-slate-800 tabular-nums whitespace-nowrap">{{ v }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div *ngIf="cIpdView==='chart'" class="p-4">
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3">
-            <button *ngFor="let t of [{l:'PMJAY',c:'PMJY+'},{l:'Private',c:'Private'},{l:'Others',c:'Others'},{l:'Total',c:'Total'}]"
-              (click)="setCIpdTab(t.c)"
-              [class.bg-teal-600]="cIpdTab===t.c" [class.text-white]="cIpdTab===t.c"
-              [class.text-slate-600]="cIpdTab!==t.c"
-              class="px-2.5 py-1 font-medium transition">{{ t.l }}</button>
-          </div>
-          <apx-chart *ngIf="cIpdChart"
-            [series]="cIpdChart.series!" [chart]="cIpdChart.chart!" [plotOptions]="cIpdChart.plotOptions!"
-            [xaxis]="cIpdChart.xaxis!" [yaxis]="cIpdChart.yaxis!" [dataLabels]="cIpdChart.dataLabels!"
-            [colors]="cIpdChart.colors!" [legend]="cIpdChart.legend!" [tooltip]="cIpdChart.tooltip!"
-            [stroke]="cIpdChart.stroke!">
-          </apx-chart>
-        </div>
-      </div>
-
-      <!-- Compare Surgery card -->
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-            <span class="material-icons text-[16px] text-orange-500">content_cut</span> Surgery
-          </h2>
-          <div class="flex items-center gap-2">
-            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-              <button (click)="cSurgeryView='table'"
-                [class.bg-orange-500]="cSurgeryView==='table'" [class.text-white]="cSurgeryView==='table'"
-                [class.text-slate-600]="cSurgeryView!=='table'"
-                class="px-3 py-1.5 font-medium transition">Table</button>
-              <button (click)="cSurgeryView='chart'"
-                [class.bg-orange-500]="cSurgeryView==='chart'" [class.text-white]="cSurgeryView==='chart'"
-                [class.text-slate-600]="cSurgeryView!=='chart'"
-                class="px-3 py-1.5 font-medium transition">Chart</button>
-            </div>
-          </div>
-        </div>
-        <div *ngIf="cSurgeryView==='table'" class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="bg-slate-50">
-                <th class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap">Category</th>
-                <th *ngFor="let lbl of compareTableLabels"
-                    class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap">
-                  {{ lbl }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let row of cSurgeryTableRows"
-                  [class.bg-orange-50]="row.isTotal" [class.font-semibold]="row.isTotal"
-                  [class.border-t-2]="row.isTotal" [class.border-orange-100]="row.isTotal"
-                  class="border-b border-slate-50 hover:bg-slate-50 transition">
-                <td class="px-3 py-2 text-slate-700 whitespace-nowrap">{{ row.label }}</td>
-                <td *ngFor="let v of row.values"
-                    class="px-3 py-2 text-right text-slate-800 tabular-nums whitespace-nowrap">{{ v }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div *ngIf="cSurgeryView==='chart'" class="p-4">
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3">
-            <button *ngFor="let t of [{l:'Supra',c:'Supra'},{l:'Major',c:'Major'},{l:'Minor',c:'Minor'},{l:'Total',c:'Total'}]"
-              (click)="setCSurgeryTab(t.c)"
-              [class.bg-orange-500]="cSurgeryTab===t.c" [class.text-white]="cSurgeryTab===t.c"
-              [class.text-slate-600]="cSurgeryTab!==t.c"
-              class="px-2.5 py-1 font-medium transition">{{ t.l }}</button>
-          </div>
-          <apx-chart *ngIf="cSurgeryChart"
-            [series]="cSurgeryChart.series!" [chart]="cSurgeryChart.chart!" [plotOptions]="cSurgeryChart.plotOptions!"
-            [xaxis]="cSurgeryChart.xaxis!" [yaxis]="cSurgeryChart.yaxis!" [dataLabels]="cSurgeryChart.dataLabels!"
-            [colors]="cSurgeryChart.colors!" [legend]="cSurgeryChart.legend!" [tooltip]="cSurgeryChart.tooltip!"
-            [stroke]="cSurgeryChart.stroke!">
-          </apx-chart>
-        </div>
-      </div>
-
-      <!-- Compare Revenue card -->
-      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-          <h2 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-            <span class="material-icons text-[16px] text-green-600">currency_rupee</span> Revenue
-          </h2>
-          <div class="flex items-center gap-2">
-            <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs">
-              <button (click)="cRevenueView='table'"
-                [class.bg-green-600]="cRevenueView==='table'" [class.text-white]="cRevenueView==='table'"
-                [class.text-slate-600]="cRevenueView!=='table'"
-                class="px-3 py-1.5 font-medium transition">Table</button>
-              <button (click)="cRevenueView='chart'"
-                [class.bg-green-600]="cRevenueView==='chart'" [class.text-white]="cRevenueView==='chart'"
-                [class.text-slate-600]="cRevenueView!=='chart'"
-                class="px-3 py-1.5 font-medium transition">Chart</button>
-            </div>
-          </div>
-        </div>
-        <div *ngIf="cRevenueView==='table'" class="overflow-x-auto">
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="bg-slate-50">
-                <th class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap">Category</th>
-                <th *ngFor="let lbl of compareTableLabels"
-                    class="px-3 py-2 font-semibold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap">
-                  {{ lbl }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let row of cRevenueTableRows"
-                  [class.bg-green-50]="row.isTotal" [class.font-semibold]="row.isTotal"
-                  [class.border-t-2]="row.isTotal" [class.border-green-100]="row.isTotal"
-                  class="border-b border-slate-50 hover:bg-slate-50 transition">
-                <td class="px-3 py-2 text-slate-700 whitespace-nowrap">{{ row.label }}</td>
-                <td *ngFor="let v of row.values"
-                    class="px-3 py-2 text-right text-slate-800 tabular-nums whitespace-nowrap">
-                  {{ v | number:'1.0-0' }}
+              <tr
+                *ngFor="let row of cIpdTableRows"
+                [class.bg-teal-50]="row.isTotal"
+                [class.font-semibold]="row.isTotal"
+                [class.border-t-2]="row.isTotal"
+                [class.border-teal-100]="row.isTotal"
+                class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200"
+              >
+                <td class="px-4 py-3 text-slate-700 whitespace-nowrap">
+                  {{ row.label }}
+                </td>
+                <td
+                  *ngFor="let v of row.values"
+                  class="px-4 py-3 text-right text-slate-800 tabular-nums whitespace-nowrap"
+                >
+                  {{ v }}
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div *ngIf="cRevenueView==='chart'" class="p-4">
-          <div class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3">
-            <button *ngFor="let t of [{l:'Hospital',c:'Hospital'},{l:'Diagnostic',c:'Diagnostic'},{l:'Pharmacy',c:'Pharmacy'},{l:'Total',c:'Total'}]"
-              (click)="setCRevenueTab(t.c)"
-              [class.bg-green-600]="cRevenueTab===t.c" [class.text-white]="cRevenueTab===t.c"
-              [class.text-slate-600]="cRevenueTab!==t.c"
-              class="px-2.5 py-1 font-medium transition">{{ t.l }}</button>
+        <div *ngIf="cIpdView === 'chart'" class="p-4">
+          <div
+            class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3"
+          >
+            <button
+              *ngFor="
+                let t of [
+                  { l: 'PMJAY', c: 'PMJY+' },
+                  { l: 'Private', c: 'Private' },
+                  { l: 'Others', c: 'Others' },
+                  { l: 'Total', c: 'Total' },
+                ]
+              "
+              (click)="setCIpdTab(t.c)"
+              [class.bg-teal-600]="cIpdTab === t.c"
+              [class.text-white]="cIpdTab === t.c"
+              [class.text-slate-600]="cIpdTab !== t.c"
+              class="px-2.5 py-1 font-medium transition"
+            >
+              {{ t.l }}
+            </button>
           </div>
-          <apx-chart *ngIf="cRevenueChart"
-            [series]="cRevenueChart.series!" [chart]="cRevenueChart.chart!" [plotOptions]="cRevenueChart.plotOptions!"
-            [xaxis]="cRevenueChart.xaxis!" [yaxis]="cRevenueChart.yaxis!" [dataLabels]="cRevenueChart.dataLabels!"
-            [colors]="cRevenueChart.colors!" [legend]="cRevenueChart.legend!" [tooltip]="cRevenueChart.tooltip!"
-            [stroke]="cRevenueChart.stroke!">
+          <apx-chart
+            *ngIf="cIpdChart"
+            [series]="cIpdChart.series!"
+            [chart]="cIpdChart.chart!"
+            [plotOptions]="cIpdChart.plotOptions!"
+            [xaxis]="cIpdChart.xaxis!"
+            [yaxis]="cIpdChart.yaxis!"
+            [dataLabels]="cIpdChart.dataLabels!"
+            [colors]="cIpdChart.colors!"
+            [legend]="cIpdChart.legend!"
+            [tooltip]="cIpdChart.tooltip!"
+            [stroke]="cIpdChart.stroke!"
+          >
           </apx-chart>
         </div>
       </div>
 
+      <!-- Compare Surgery card -->
+      <div
+        class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+      >
+        <div
+          class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200 flex items-center justify-between"
+        >
+          <h2
+            class="text-base font-bold text-slate-800 flex items-center gap-3"
+          >
+            <span class="material-icons text-[16px] text-orange-500"
+              >content_cut</span
+            >
+            Surgery
+          </h2>
+          <div class="flex items-center gap-2">
+            <div
+              class="flex rounded-xl border border-slate-200 overflow-hidden text-xs bg-slate-50 shadow-sm"
+            >
+              <button
+                (click)="cSurgeryView = 'table'"
+                [class.bg-orange-500]="cSurgeryView === 'table'"
+                [class.text-white]="cSurgeryView === 'table'"
+                [class.text-slate-600]="cSurgeryView !== 'table'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Table
+              </button>
+              <button
+                (click)="cSurgeryView = 'chart'"
+                [class.bg-orange-500]="cSurgeryView === 'chart'"
+                [class.text-white]="cSurgeryView === 'chart'"
+                [class.text-slate-600]="cSurgeryView !== 'chart'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Chart
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="cSurgeryView === 'table'" class="overflow-x-auto">
+          <table class="w-full text-sm border-separate border-spacing-0">
+            <thead>
+              <tr class="bg-gradient-to-r from-slate-100 to-slate-50">
+                <th
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap"
+                >
+                  Category
+                </th>
+                <th
+                  *ngFor="let lbl of compareTableLabels"
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap"
+                >
+                  {{ lbl }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let row of cSurgeryTableRows"
+                [class.bg-orange-50]="row.isTotal"
+                [class.font-semibold]="row.isTotal"
+                [class.border-t-2]="row.isTotal"
+                [class.border-orange-100]="row.isTotal"
+                class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200"
+              >
+                <td class="px-4 py-3 text-slate-700 whitespace-nowrap">
+                  {{ row.label }}
+                </td>
+                <td
+                  *ngFor="let v of row.values"
+                  class="px-4 py-3 text-right text-slate-800 tabular-nums whitespace-nowrap"
+                >
+                  {{ v }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="cSurgeryView === 'chart'" class="p-4">
+          <div
+            class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3"
+          >
+            <button
+              *ngFor="
+                let t of [
+                  { l: 'Supra', c: 'Supra' },
+                  { l: 'Major', c: 'Major' },
+                  { l: 'Minor', c: 'Minor' },
+                  { l: 'Total', c: 'Total' },
+                ]
+              "
+              (click)="setCSurgeryTab(t.c)"
+              [class.bg-orange-500]="cSurgeryTab === t.c"
+              [class.text-white]="cSurgeryTab === t.c"
+              [class.text-slate-600]="cSurgeryTab !== t.c"
+              class="px-2.5 py-1 font-medium transition"
+            >
+              {{ t.l }}
+            </button>
+          </div>
+          <apx-chart
+            *ngIf="cSurgeryChart"
+            [series]="cSurgeryChart.series!"
+            [chart]="cSurgeryChart.chart!"
+            [plotOptions]="cSurgeryChart.plotOptions!"
+            [xaxis]="cSurgeryChart.xaxis!"
+            [yaxis]="cSurgeryChart.yaxis!"
+            [dataLabels]="cSurgeryChart.dataLabels!"
+            [colors]="cSurgeryChart.colors!"
+            [legend]="cSurgeryChart.legend!"
+            [tooltip]="cSurgeryChart.tooltip!"
+            [stroke]="cSurgeryChart.stroke!"
+          >
+          </apx-chart>
+        </div>
+      </div>
+
+      <!-- Compare Revenue card -->
+      <div
+        class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
+      >
+        <div
+          class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200 flex items-center justify-between"
+        >
+          <h2
+            class="text-base font-bold text-slate-800 flex items-center gap-3"
+          >
+            <span class="material-icons text-[16px] text-green-600"
+              >currency_rupee</span
+            >
+            Revenue
+          </h2>
+          <div class="flex items-center gap-2">
+            <div
+              class="flex rounded-xl border border-slate-200 overflow-hidden text-xs bg-slate-50 shadow-sm"
+            >
+              <button
+                (click)="cRevenueView = 'table'"
+                [class.bg-green-600]="cRevenueView === 'table'"
+                [class.text-white]="cRevenueView === 'table'"
+                [class.text-slate-600]="cRevenueView !== 'table'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Table
+              </button>
+              <button
+                (click)="cRevenueView = 'chart'"
+                [class.bg-green-600]="cRevenueView === 'chart'"
+                [class.text-white]="cRevenueView === 'chart'"
+                [class.text-slate-600]="cRevenueView !== 'chart'"
+                class="px-4 py-2 font-semibold transition-all duration-300"
+              >
+                Chart
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="cRevenueView === 'table'" class="overflow-x-auto">
+          <table class="w-full text-sm border-separate border-spacing-0">
+            <thead>
+              <tr class="bg-gradient-to-r from-slate-100 to-slate-50">
+                <th
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left whitespace-nowrap"
+                >
+                  Category
+                </th>
+                <th
+                  *ngFor="let lbl of compareTableLabels"
+                  class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right whitespace-nowrap"
+                >
+                  {{ lbl }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let row of cRevenueTableRows"
+                [class.bg-green-50]="row.isTotal"
+                [class.font-semibold]="row.isTotal"
+                [class.border-t-2]="row.isTotal"
+                [class.border-green-100]="row.isTotal"
+                class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200"
+              >
+                <td class="px-4 py-3 text-slate-700 whitespace-nowrap">
+                  {{ row.label }}
+                </td>
+                <td
+                  *ngFor="let v of row.values"
+                  class="px-4 py-3 text-right text-slate-800 tabular-nums whitespace-nowrap"
+                >
+                  {{ v | number: "1.0-0" }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="cRevenueView === 'chart'" class="p-4">
+          <div
+            class="flex rounded-lg border border-slate-200 overflow-hidden text-xs mb-3"
+          >
+            <button
+              *ngFor="
+                let t of [
+                  { l: 'Hospital', c: 'Hospital' },
+                  { l: 'Diagnostic', c: 'Diagnostic' },
+                  { l: 'Pharmacy', c: 'Pharmacy' },
+                  { l: 'Total', c: 'Total' },
+                ]
+              "
+              (click)="setCRevenueTab(t.c)"
+              [class.bg-green-600]="cRevenueTab === t.c"
+              [class.text-white]="cRevenueTab === t.c"
+              [class.text-slate-600]="cRevenueTab !== t.c"
+              class="px-2.5 py-1 font-medium transition"
+            >
+              {{ t.l }}
+            </button>
+          </div>
+          <apx-chart
+            *ngIf="cRevenueChart"
+            [series]="cRevenueChart.series!"
+            [chart]="cRevenueChart.chart!"
+            [plotOptions]="cRevenueChart.plotOptions!"
+            [xaxis]="cRevenueChart.xaxis!"
+            [yaxis]="cRevenueChart.yaxis!"
+            [dataLabels]="cRevenueChart.dataLabels!"
+            [colors]="cRevenueChart.colors!"
+            [legend]="cRevenueChart.legend!"
+            [tooltip]="cRevenueChart.tooltip!"
+            [stroke]="cRevenueChart.stroke!"
+          >
+          </apx-chart>
+        </div>
+      </div>
     </ng-container>
 
     <!-- Empty state -->
-    <div *ngIf="resultMode==='none' && !loading"
-         class="flex flex-col items-center justify-center py-16 text-slate-400 gap-2">
-      <span class="material-icons text-5xl">bar_chart</span>
-      <p class="text-sm">Set a date range and click <strong>Generate</strong> to view the report</p>
+    <div
+      *ngIf="resultMode === 'none' && !loading"
+      class="flex flex-col items-center justify-center py-24 text-slate-500 gap-4 bg-white rounded-2xl shadow-lg border border-slate-200"
+    >
+      <span class="material-icons text-7xl text-blue-500">bar_chart</span>
+      <p class="text-sm">
+        Set a date range and click <strong>Generate</strong> to view the report
+      </p>
     </div>
-
   </div>
 </div>
