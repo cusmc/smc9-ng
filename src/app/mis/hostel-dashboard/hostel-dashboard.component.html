@@ -1,29 +1,36 @@
 <div class="min-h-screen bg-slate-100 font-sans">
-
   <!-- ═══ Header ════════════════════════════════════════════════════════ -->
   <header class="bg-[#1e3a5f] text-white px-6 py-4 shadow-lg">
     <div class="flex items-center justify-between flex-wrap gap-3">
       <div class="flex items-center gap-3">
         <span class="material-icons text-3xl opacity-75">holiday_village</span>
         <div>
-          <h1 class="text-xl font-semibold tracking-wide">Hostel Occupancy Dashboard</h1>
+          <h1 class="text-xl font-semibold tracking-wide">
+            Hostel Occupancy Dashboard
+          </h1>
           <p class="text-xs text-slate-300 mt-0.5" *ngIf="lastRefreshed">
-            Last updated: {{ lastRefreshed | date:'dd MMM yyyy, hh:mm a' }}
+            Last updated: {{ lastRefreshed | date: "dd MMM yyyy, hh:mm a" }}
           </p>
         </div>
       </div>
-      <button (click)="load()" [disabled]="loading"
-        class="flex items-center gap-2 bg-white/10 hover:bg-white/20 disabled:opacity-50
-               text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-        <span class="material-icons text-base" [class.animate-spin]="loading">refresh</span>
+      <button
+        (click)="load()"
+        [disabled]="loading"
+        class="flex items-center gap-2 bg-white/10 hover:bg-white/20 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+      >
+        <span class="material-icons text-base" [class.animate-spin]="loading"
+          >refresh</span
+        >
         Refresh
       </button>
     </div>
   </header>
 
   <!-- ═══ Error banner ══════════════════════════════════════════════════ -->
-  <div *ngIf="errorMsg"
-    class="mx-6 mt-4 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 flex items-center gap-2 text-sm">
+  <div
+    *ngIf="errorMsg"
+    class="mx-6 mt-4 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 flex items-center gap-2 text-sm"
+  >
     <span class="material-icons text-base">error_outline</span>
     {{ errorMsg }}
   </div>
@@ -31,7 +38,10 @@
   <!-- ═══ Loading skeleton ══════════════════════════════════════════════ -->
   <div *ngIf="loading" class="p-6 space-y-5 animate-pulse">
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div *ngFor="let i of [1,2,3,4]" class="h-28 bg-slate-200 rounded-2xl"></div>
+      <div
+        *ngFor="let i of [1, 2, 3, 4]"
+        class="h-28 bg-slate-200 rounded-2xl"
+      ></div>
     </div>
     <div class="grid grid-cols-1 xl:grid-cols-5 gap-5">
       <div class="xl:col-span-3 h-64 bg-slate-200 rounded-2xl"></div>
@@ -46,80 +56,111 @@
 
   <!-- ═══ Main content ══════════════════════════════════════════════════ -->
   <main *ngIf="!loading && pivot" class="p-6 space-y-6">
-
     <!-- ── KPI strip ─────────────────────────────────────────────────── -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl bg-[#1e3a5f]/10 flex items-center justify-center shrink-0">
+      <div
+        class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex items-center gap-4"
+      >
+        <div
+          class="w-12 h-12 rounded-xl bg-[#1e3a5f]/10 flex items-center justify-center shrink-0"
+        >
           <span class="material-icons text-[#1e3a5f]">people</span>
         </div>
         <div>
-          <p class="text-3xl font-bold text-slate-800 leading-none">{{ pivot.kpi.total }}</p>
+          <p class="text-3xl font-bold text-slate-800 leading-none">
+            {{ pivot.kpi.total }}
+          </p>
           <p class="text-xs text-slate-500 mt-1">Total (Students + Staff)</p>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+      <div
+        class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex items-center gap-4"
+      >
+        <div
+          class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center shrink-0"
+        >
           <span class="material-icons text-blue-600">man</span>
         </div>
         <div>
-          <p class="text-3xl font-bold text-blue-700 leading-none">{{ pivot.kpi.boys }}</p>
+          <p class="text-3xl font-bold text-blue-700 leading-none">
+            {{ pivot.kpi.boys }}
+          </p>
           <p class="text-xs text-slate-500 mt-1">Students — Boys</p>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl bg-pink-50 flex items-center justify-center shrink-0">
+      <div
+        class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex items-center gap-4"
+      >
+        <div
+          class="w-12 h-12 rounded-xl bg-pink-50 flex items-center justify-center shrink-0"
+        >
           <span class="material-icons text-pink-600">woman</span>
         </div>
         <div>
-          <p class="text-3xl font-bold text-pink-700 leading-none">{{ pivot.kpi.girls }}</p>
+          <p class="text-3xl font-bold text-pink-700 leading-none">
+            {{ pivot.kpi.girls }}
+          </p>
           <p class="text-xs text-slate-500 mt-1">Students — Girls</p>
         </div>
       </div>
 
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+      <div
+        class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex items-center gap-4"
+      >
+        <div
+          class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0"
+        >
           <span class="material-icons text-amber-600">badge</span>
         </div>
         <div>
-          <p class="text-3xl font-bold text-amber-700 leading-none">{{ pivot.kpi.staff }}</p>
+          <p class="text-3xl font-bold text-amber-700 leading-none">
+            {{ pivot.kpi.staff }}
+          </p>
           <p class="text-xs text-slate-500 mt-1">Staff</p>
         </div>
       </div>
-
     </div>
 
     <!-- ── Table + Donut ──────────────────────────────────────────────── -->
     <div class="grid grid-cols-1 xl:grid-cols-5 gap-5">
-
       <!-- Pivot table (3 / 5) -->
-      <div class="xl:col-span-3 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div class="px-5 pt-4 pb-2 border-b border-slate-100 flex items-center gap-2">
+      <div
+        class="xl:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden"
+      >
+        <div
+          class="px-5 pt-4 pb-2 border-b border-slate-100 flex items-center gap-2"
+        >
           <span class="material-icons text-slate-400 text-lg">table_chart</span>
-          <h2 class="text-sm font-semibold text-slate-700">Building-wise Occupancy</h2>
+          <h2 class="text-sm font-semibold text-slate-700">
+            Building-wise Occupancy
+          </h2>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-xs border-collapse">
             <!-- Row 1: institute name headers -->
             <thead>
               <tr>
-                <th class="text-left px-4 py-2.5 text-slate-600 font-semibold sticky left-0 z-10 bg-slate-50
-                            border-b-2 border-slate-200 min-w-[150px] text-xs">
+                <th
+                  class="text-left px-4 py-2.5 text-slate-600 font-semibold sticky left-0 z-10 bg-slate-50 border-b-2 border-slate-200 min-w-[150px] text-xs"
+                >
                   Building
                 </th>
-                <ng-container *ngFor="let inst of pivot.institutes; let i = index">
-                  <th colspan="3"
-                    class="text-center py-2.5 text-white text-[11px] font-semibold tracking-wide
-                           border-x border-white/30 border-b-2 border-white/50"
-                    [style.background-color]="instColor(i)">
+                <ng-container
+                  *ngFor="let inst of pivot.institutes; let i = index"
+                >
+                  <th
+                    colspan="3"
+                    class="text-center py-2.5 text-white text-[11px] font-semibold tracking-wide border-x border-white/30 border-b-2 border-white/50"
+                    [style.background-color]="instColor(i)"
+                  >
                     {{ formatInst(inst.Inst_cd) }}
                   </th>
                 </ng-container>
-                <th class="text-center px-3 py-2.5 text-slate-600 font-semibold bg-slate-100
-                            border-b-2 border-slate-200 min-w-[56px] text-xs">
+                <th
+                  class="text-center px-3 py-2.5 text-slate-600 font-semibold bg-slate-100 border-b-2 border-slate-200 min-w-[56px] text-xs"
+                >
                   Total
                 </th>
               </tr>
@@ -127,53 +168,97 @@
               <tr class="bg-slate-50 border-b border-slate-200">
                 <th class="sticky left-0 z-10 bg-slate-50 px-4 py-1.5"></th>
                 <ng-container *ngFor="let inst of pivot.institutes">
-                  <th class="text-center py-1.5 text-[10px] font-semibold text-blue-600
-                              border-l border-slate-200 min-w-[44px]">B</th>
-                  <th class="text-center py-1.5 text-[10px] font-semibold text-pink-600 min-w-[44px]">G</th>
-                  <th class="text-center py-1.5 text-[10px] font-semibold text-amber-600
-                              border-r border-slate-200 min-w-[44px]">Stf</th>
+                  <th
+                    class="text-center py-1.5 text-[10px] font-semibold text-blue-600 border-l border-slate-200 min-w-[44px]"
+                  >
+                    B
+                  </th>
+                  <th
+                    class="text-center py-1.5 text-[10px] font-semibold text-pink-600 min-w-[44px]"
+                  >
+                    G
+                  </th>
+                  <th
+                    class="text-center py-1.5 text-[10px] font-semibold text-amber-600 border-r border-slate-200 min-w-[44px]"
+                  >
+                    Stf
+                  </th>
                 </ng-container>
                 <th class="bg-slate-100"></th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let row of pivot.buildings; let odd = odd; let last = last"
-                  class="hover:bg-indigo-50/40 transition-colors border-b border-slate-100"
-                  [class.bg-slate-50]="odd">
+              <tr
+                *ngFor="
+                  let row of pivot.buildings;
+                  let odd = odd;
+                  let last = last
+                "
+                class="hover:bg-indigo-50/40 transition-colors border-b border-slate-100"
+                [class.bg-slate-50]="odd"
+              >
                 <!-- Building name — sticky -->
-                <td class="px-4 py-2.5 font-medium text-slate-700 sticky left-0 z-10 whitespace-nowrap
-                            border-r border-slate-200 text-xs"
-                    [class.bg-slate-50]="odd" [class.bg-white]="!odd">
+                <td
+                  class="px-4 py-2.5 font-medium text-slate-700 sticky left-0 z-10 whitespace-nowrap border-r border-slate-200 text-xs"
+                  [class.bg-slate-50]="odd"
+                  [class.bg-white]="!odd"
+                >
                   {{ row.Building_nm }}
                 </td>
                 <!-- Cells per institute -->
                 <ng-container *ngFor="let inst of pivot.institutes">
                   <td class="text-center py-2 border-l border-slate-100">
-                    <span class="inline-block min-w-[28px]"
-                      [class.text-blue-700]="(row.cells[cellKey(inst.Inst_cd,'B')] ?? 0) > 0"
-                      [class.font-semibold]="(row.cells[cellKey(inst.Inst_cd,'B')] ?? 0) > 0"
-                      [class.text-slate-300]="!(row.cells[cellKey(inst.Inst_cd,'B')] ?? 0)">
-                      {{ row.cells[cellKey(inst.Inst_cd, 'B')] ?? 0 }}
+                    <span
+                      class="inline-block min-w-[28px]"
+                      [class.text-blue-700]="
+                        (row.cells[cellKey(inst.Inst_cd, 'B')] ?? 0) > 0
+                      "
+                      [class.font-semibold]="
+                        (row.cells[cellKey(inst.Inst_cd, 'B')] ?? 0) > 0
+                      "
+                      [class.text-slate-300]="
+                        !(row.cells[cellKey(inst.Inst_cd, 'B')] ?? 0)
+                      "
+                    >
+                      {{ row.cells[cellKey(inst.Inst_cd, "B")] ?? 0 }}
                     </span>
                   </td>
                   <td class="text-center py-2">
-                    <span class="inline-block min-w-[28px]"
-                      [class.text-pink-700]="(row.cells[cellKey(inst.Inst_cd,'G')] ?? 0) > 0"
-                      [class.font-semibold]="(row.cells[cellKey(inst.Inst_cd,'G')] ?? 0) > 0"
-                      [class.text-slate-300]="!(row.cells[cellKey(inst.Inst_cd,'G')] ?? 0)">
-                      {{ row.cells[cellKey(inst.Inst_cd, 'G')] ?? 0 }}
+                    <span
+                      class="inline-block min-w-[28px]"
+                      [class.text-pink-700]="
+                        (row.cells[cellKey(inst.Inst_cd, 'G')] ?? 0) > 0
+                      "
+                      [class.font-semibold]="
+                        (row.cells[cellKey(inst.Inst_cd, 'G')] ?? 0) > 0
+                      "
+                      [class.text-slate-300]="
+                        !(row.cells[cellKey(inst.Inst_cd, 'G')] ?? 0)
+                      "
+                    >
+                      {{ row.cells[cellKey(inst.Inst_cd, "G")] ?? 0 }}
                     </span>
                   </td>
                   <td class="text-center py-2 border-r border-slate-100">
-                    <span class="inline-block min-w-[28px]"
-                      [class.text-amber-700]="(row.cells[cellKey(inst.Inst_cd,'E')] ?? 0) > 0"
-                      [class.font-semibold]="(row.cells[cellKey(inst.Inst_cd,'E')] ?? 0) > 0"
-                      [class.text-slate-300]="!(row.cells[cellKey(inst.Inst_cd,'E')] ?? 0)">
-                      {{ row.cells[cellKey(inst.Inst_cd, 'E')] ?? 0 }}
+                    <span
+                      class="inline-block min-w-[28px]"
+                      [class.text-amber-700]="
+                        (row.cells[cellKey(inst.Inst_cd, 'E')] ?? 0) > 0
+                      "
+                      [class.font-semibold]="
+                        (row.cells[cellKey(inst.Inst_cd, 'E')] ?? 0) > 0
+                      "
+                      [class.text-slate-300]="
+                        !(row.cells[cellKey(inst.Inst_cd, 'E')] ?? 0)
+                      "
+                    >
+                      {{ row.cells[cellKey(inst.Inst_cd, "E")] ?? 0 }}
                     </span>
                   </td>
                 </ng-container>
-                <td class="text-center py-2 font-bold text-slate-800 bg-slate-50 border-l border-slate-200">
+                <td
+                  class="text-center py-2 font-bold text-slate-800 bg-slate-50 border-l border-slate-200"
+                >
                   {{ row.total }}
                 </td>
               </tr>
@@ -181,19 +266,25 @@
             <!-- Grand total row -->
             <tfoot>
               <tr class="bg-[#1e3a5f] text-white font-semibold text-xs">
-                <td class="px-4 py-2.5 sticky left-0 bg-[#1e3a5f] z-10 tracking-wide">TOTAL</td>
+                <td
+                  class="px-4 py-2.5 sticky left-0 bg-[#1e3a5f] z-10 tracking-wide"
+                >
+                  TOTAL
+                </td>
                 <ng-container *ngFor="let inst of pivot.institutes">
                   <td class="text-center py-2.5 border-l border-white/10">
-                    {{ pivot.totalRow.cells[cellKey(inst.Inst_cd, 'B')] ?? 0 }}
+                    {{ pivot.totalRow.cells[cellKey(inst.Inst_cd, "B")] ?? 0 }}
                   </td>
                   <td class="text-center py-2.5">
-                    {{ pivot.totalRow.cells[cellKey(inst.Inst_cd, 'G')] ?? 0 }}
+                    {{ pivot.totalRow.cells[cellKey(inst.Inst_cd, "G")] ?? 0 }}
                   </td>
                   <td class="text-center py-2.5 border-r border-white/10">
-                    {{ pivot.totalRow.cells[cellKey(inst.Inst_cd, 'E')] ?? 0 }}
+                    {{ pivot.totalRow.cells[cellKey(inst.Inst_cd, "E")] ?? 0 }}
                   </td>
                 </ng-container>
-                <td class="text-center py-2.5 font-bold text-lg border-l border-white/20">
+                <td
+                  class="text-center py-2.5 font-bold text-lg border-l border-white/20"
+                >
                   {{ pivot.totalRow.total }}
                 </td>
               </tr>
@@ -201,18 +292,35 @@
           </table>
         </div>
         <!-- Legend -->
-        <div class="px-5 py-2.5 border-t border-slate-100 flex gap-5 text-[10px] text-slate-400">
-          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-blue-600 inline-block"></span> B = Boys</span>
-          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-pink-600 inline-block"></span> G = Girls</span>
-          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-600 inline-block"></span> Stf = Staff</span>
+        <div
+          class="px-5 py-2.5 border-t border-slate-100 flex gap-5 text-[10px] text-slate-400"
+        >
+          <span class="flex items-center gap-1"
+            ><span class="w-2 h-2 rounded-full bg-blue-600 inline-block"></span>
+            B = Boys</span
+          >
+          <span class="flex items-center gap-1"
+            ><span class="w-2 h-2 rounded-full bg-pink-600 inline-block"></span>
+            G = Girls</span
+          >
+          <span class="flex items-center gap-1"
+            ><span
+              class="w-2 h-2 rounded-full bg-amber-600 inline-block"
+            ></span>
+            Stf = Staff</span
+          >
         </div>
       </div>
 
       <!-- Donut (2 / 5) -->
-      <div class="xl:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col">
+      <div
+        class="xl:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 p-5 flex flex-col"
+      >
         <div class="flex items-center gap-2 mb-1">
           <span class="material-icons text-slate-400 text-lg">donut_large</span>
-          <h2 class="text-sm font-semibold text-slate-700">Distribution by Institute</h2>
+          <h2 class="text-sm font-semibold text-slate-700">
+            Distribution by Institute
+          </h2>
         </div>
         <p class="text-xs text-slate-400 mb-3">All residents combined</p>
         <div class="flex-1 flex items-center justify-center">
@@ -226,43 +334,53 @@
             [fill]="donut.fill!"
             [colors]="donut.colors!"
             [tooltip]="donut.tooltip!"
-            [plotOptions]="donut.plotOptions!">
+            [plotOptions]="donut.plotOptions!"
+          >
           </apx-chart>
         </div>
       </div>
 
-    </div>
-
-    <!-- ── Stacked bar ───────────────────────────────────────────────── -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
-      <div class="flex items-center gap-2 mb-0.5">
-        <span class="material-icons text-slate-400 text-lg">stacked_bar_chart</span>
-        <h2 class="text-sm font-semibold text-slate-700">Occupancy by Building &amp; Institute</h2>
+      <!-- ── Stacked bar ───────────────────────────────────────────────── -->
+      <div
+        class="xl:col-span-3 bg-white rounded-2xl shadow-sm border border-slate-100 p-5"
+      >
+        <div class="flex items-center gap-2 mb-0.5">
+          <span class="material-icons text-slate-400 text-lg"
+            >stacked_bar_chart</span
+          >
+          <h2 class="text-sm font-semibold text-slate-700">
+            Occupancy by Building &amp; Institute
+          </h2>
+        </div>
+        <p class="text-xs text-slate-400 mb-4">
+          Each segment shows residents from one institute group
+        </p>
+        <apx-chart
+          [series]="stackedBar.series!"
+          [chart]="stackedBar.chart!"
+          [xaxis]="stackedBar.xaxis!"
+          [yaxis]="stackedBar.yaxis!"
+          [plotOptions]="stackedBar.plotOptions!"
+          [dataLabels]="stackedBar.dataLabels!"
+          [legend]="stackedBar.legend!"
+          [fill]="stackedBar.fill!"
+          [stroke]="stackedBar.stroke!"
+          [colors]="stackedBar.colors!"
+          [tooltip]="stackedBar.tooltip!"
+        >
+        </apx-chart>
       </div>
-      <p class="text-xs text-slate-400 mb-4">Each segment shows residents from one institute group</p>
-      <apx-chart
-        [series]="stackedBar.series!"
-        [chart]="stackedBar.chart!"
-        [xaxis]="stackedBar.xaxis!"
-        [yaxis]="stackedBar.yaxis!"
-        [plotOptions]="stackedBar.plotOptions!"
-        [dataLabels]="stackedBar.dataLabels!"
-        [legend]="stackedBar.legend!"
-        [fill]="stackedBar.fill!"
-        [stroke]="stackedBar.stroke!"
-        [colors]="stackedBar.colors!"
-        [tooltip]="stackedBar.tooltip!">
-      </apx-chart>
     </div>
 
     <!-- ── Gender + Horizontal bar ──────────────────────────────────── -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-
       <!-- Gender grouped bar -->
       <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
         <div class="flex items-center gap-2 mb-0.5">
           <span class="material-icons text-slate-400 text-lg">bar_chart</span>
-          <h2 class="text-sm font-semibold text-slate-700">Gender Distribution by Institute</h2>
+          <h2 class="text-sm font-semibold text-slate-700">
+            Gender Distribution by Institute
+          </h2>
         </div>
         <p class="text-xs text-slate-400 mb-4">Students only — Boys vs Girls</p>
         <apx-chart
@@ -276,7 +394,8 @@
           [fill]="genderBar.fill!"
           [colors]="genderBar.colors!"
           [legend]="genderBar.legend!"
-          [tooltip]="genderBar.tooltip!">
+          [tooltip]="genderBar.tooltip!"
+        >
         </apx-chart>
       </div>
 
@@ -284,7 +403,9 @@
       <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
         <div class="flex items-center gap-2 mb-0.5">
           <span class="material-icons text-slate-400 text-lg">sort</span>
-          <h2 class="text-sm font-semibold text-slate-700">Buildings by Total Occupancy</h2>
+          <h2 class="text-sm font-semibold text-slate-700">
+            Buildings by Total Occupancy
+          </h2>
         </div>
         <p class="text-xs text-slate-400 mb-4">Sorted highest to lowest</p>
         <apx-chart
@@ -297,12 +418,10 @@
           [stroke]="horizBar.stroke!"
           [fill]="horizBar.fill!"
           [colors]="horizBar.colors!"
-          [tooltip]="horizBar.tooltip!">
+          [tooltip]="horizBar.tooltip!"
+        >
         </apx-chart>
       </div>
-
     </div>
-
   </main>
-
 </div>

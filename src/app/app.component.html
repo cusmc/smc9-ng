@@ -24,7 +24,6 @@
 ></div>
 
 <div class="flex h-screen overflow-hidden bg-page">
-
   <!-- Dual-panel nav: only when logged in -->
   <div
     *ngIf="isLoggedIn && !isLoginPage"
@@ -46,7 +45,7 @@
   <!-- Main content column -->
   <div
     class="flex min-w-0 flex-1 flex-col transition-[margin] duration-200"
-    [style.margin-left.px]="(isLoggedIn && !isLoginPage && sidenavOpen) ? 276 : 0"
+    [style.margin-left.px]="isLoggedIn && !isLoginPage && sidenavOpen ? 276 : 0"
   >
     <!-- Top bar: only when logged in -->
     <header
@@ -83,9 +82,11 @@
             (error)="onImageError($event)"
             alt="User"
             class="rounded-full object-cover border-2 border-white/30 shadow-sm shrink-0"
-            style="width:38px;height:38px;object-fit:cover;"
+            style="width: 38px; height: 38px; object-fit: cover"
           />
-          <span class="hidden sm:block truncate max-w-[160px]">{{ ProfileName }}</span>
+          <span class="hidden sm:block truncate max-w-[160px]">{{
+            ProfileName
+          }}</span>
           <span class="material-icons text-base opacity-70">expand_more</span>
         </button>
 
@@ -94,13 +95,19 @@
           *ngIf="profileMenuOpen"
           class="absolute right-0 mt-1 w-52 rounded-md shadow-lg bg-white text-gray-800 ring-1 ring-black/10 z-50 overflow-hidden"
         >
-          <div class="px-4 py-2 text-xs text-gray-400 border-b border-gray-100 truncate">{{ ProfileName }}</div>
+          <div
+            class="px-4 py-2 text-xs text-gray-400 border-b border-gray-100 truncate"
+          >
+            {{ ProfileName }}
+          </div>
           <a
             [routerLink]="['/profile/documents']"
             (click)="profileMenuOpen = false"
             class="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
           >
-            <span class="material-icons text-base text-gray-500">folder_shared</span>
+            <span class="material-icons text-base text-gray-500"
+              >folder_shared</span
+            >
             My Documents
           </a>
           <div class="border-t border-gray-100"></div>
@@ -114,6 +121,14 @@
           </button>
         </div>
       </div>
+      <button
+        (click)="onRefreshClick()"
+        [disabled]="onRefreshClick"
+        class="flex items-center gap-2 bg-white/10 hover:bg-white/20 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+      >
+        <span class="material-icons text-base">refresh</span>
+        Refresh
+      </button>
     </header>
 
     <!-- Server unavailable banner -->
@@ -121,7 +136,9 @@
       *ngIf="serverUnavailable"
       class="flex items-center gap-3 border-b border-amber-300 bg-amber-50 px-4 py-2.5 text-sm text-amber-900"
     >
-      <span class="material-icons text-amber-500 text-[20px] shrink-0">cloud_off</span>
+      <span class="material-icons text-amber-500 text-[20px] shrink-0"
+        >cloud_off</span
+      >
       <span class="flex-1">{{ serverErrorMsg }}</span>
       <button
         type="button"
@@ -141,5 +158,4 @@
       <router-outlet />
     </main>
   </div>
-
 </div>

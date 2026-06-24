@@ -1,6 +1,13 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet, RouterLink, NavigationEnd, NavigationError, NavigationCancel } from '@angular/router';
+import {
+  Router,
+  RouterOutlet,
+  RouterLink,
+  NavigationEnd,
+  NavigationError,
+  NavigationCancel,
+} from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from './auth/auth.service';
@@ -13,7 +20,13 @@ import { environment } from '../environments/environment';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, ModuleRailComponent, SidebarComponent],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    RouterLink,
+    ModuleRailComponent,
+    SidebarComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
@@ -44,16 +57,54 @@ export class AppComponent implements OnInit {
     public nav: NavService,
   ) {}
 
+  // ngOnInit(): void {
+  //   // Track login page so shell never wraps the login form, regardless of isLoggedIn timing
+  //   this.isLoginPage = this.router.url.startsWith('/login');
+  //   this.router.events
+  //     .pipe(filter((e) => e instanceof NavigationEnd))
+  //     .subscribe((e: NavigationEnd) => {
+  //       this.isLoginPage = e.urlAfterRedirects.startsWith('/login');
+  //     });
+
+  //   this.router.events.subscribe((e) => {
+  //     if (e instanceof NavigationEnd) {
+  //       this.dbgNavEvent = 'END → ' + e.urlAfterRedirects;
+  //     } else if (e instanceof NavigationError) {
+  //       this.dbgNavError = e.url + ' | ' + (e.error?.message || e.error);
+  //     } else if (e instanceof NavigationCancel) {
+  //       this.dbgNavEvent = 'CANCEL ' + e.url + ' | ' + e.reason;
+  //     }
+  //   });
+
+  //   this.authService.isLoggedIn$().subscribe((loggedIn) => {
+  //     this.isLoggedIn = loggedIn;
+  //     this.username = this.authService.getUsername() || '';
+
+  //     if (loggedIn) {
+  //       this.sidenavOpen = true;
+  //       this.loadUserProfile();
+  //     } else {
+  //       this.userRoles = [];
+  //       this.visibleModules = [];
+  //     }
+  //   });
+
+  //   this.nav.activeModule$.subscribe((mod) => {
+  //     this.activeModule = mod;
+  //   });
+  // }
+
   ngOnInit(): void {
-    // Track login page so shell never wraps the login form, regardless of isLoggedIn timing
+    // Track login page
     this.isLoginPage = this.router.url.startsWith('/login');
+
     this.router.events
-      .pipe(filter(e => e instanceof NavigationEnd))
+      .pipe(filter((e) => e instanceof NavigationEnd))
       .subscribe((e: NavigationEnd) => {
         this.isLoginPage = e.urlAfterRedirects.startsWith('/login');
       });
 
-    this.router.events.subscribe(e => {
+    this.router.events.subscribe((e) => {
       if (e instanceof NavigationEnd) {
         this.dbgNavEvent = 'END → ' + e.urlAfterRedirects;
       } else if (e instanceof NavigationError) {
@@ -69,7 +120,7 @@ export class AppComponent implements OnInit {
 
       if (loggedIn) {
         this.sidenavOpen = true;
-        this.loadUserProfile();
+        this.refreshAllData();
       } else {
         this.userRoles = [];
         this.visibleModules = [];
@@ -79,6 +130,23 @@ export class AppComponent implements OnInit {
     this.nav.activeModule$.subscribe((mod) => {
       this.activeModule = mod;
     });
+  }
+
+  /**
+   * Reload all application data
+   */
+  refreshAllData(): void {
+    this.loadUserProfile();
+
+    // Add other API calls here
+    // this.loadDashboardData();
+    // this.loadNotifications();
+    // this.loadMenus();
+    this.loadUserProfile();
+  }
+
+  onRefreshClick(): void {
+    this.refreshAllData();
   }
 
   loadUserProfile(): void {
@@ -104,7 +172,8 @@ export class AppComponent implements OnInit {
           if (raw.startsWith('data:image')) {
             src = raw;
           } else {
-            const base64Like = /^[A-Za-z0-9+/=]+$/.test(raw) && raw.length > 100;
+            const base64Like =
+              /^[A-Za-z0-9+/=]+$/.test(raw) && raw.length > 100;
             if (base64Like) {
               src = `data:image/jpeg;base64,${raw}`;
             }
@@ -117,9 +186,12 @@ export class AppComponent implements OnInit {
         this.visibleModules = this.nav.allModules;
         this.userImageUrl = this.defaultAvatar;
         this.serverUnavailable = true;
-        this.serverErrorMsg = err.status === 0
-          ? 'Cannot reach the server. Please check your network or contact IT.'
-          : 'Server error (' + err.status + '). Some features may not work correctly.';
+        this.serverErrorMsg =
+          err.status === 0
+            ? 'Cannot reach the server. Please check your network or contact IT.'
+            : 'Server error (' +
+              err.status +
+              '). Some features may not work correctly.';
       },
     });
   }
@@ -158,7 +230,10 @@ export class AppComponent implements OnInit {
   }
 
   closeSidenavOnMobile(): void {
-    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 1279px)').matches) {
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia('(max-width: 1380px)').matches
+    ) {
       this.sidenavOpen = false;
     }
   }
@@ -187,6 +262,10 @@ export class AppComponent implements OnInit {
     this.loadUserProfile();
   }
 
-  get currentUrl(): string { return this.router.url; }
-  get hasToken(): boolean { return !!this.authService.getToken(); }
+  get currentUrl(): string {
+    return this.router.url;
+  }
+  get hasToken(): boolean {
+    return !!this.authService.getToken();
+  }
 }
