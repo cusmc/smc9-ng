@@ -303,7 +303,7 @@ export const APP_NAV: NavModule[] = [
         icon: 'inventory',
         items: [
           { label: 'Stock Reports', icon: 'bar_chart', externalUrl: '/Pharmacy/StockReport' },
-          { label: 'Rate Contract', icon: 'price_check', externalUrl: '/Pharmacy/RateContract' },
+          { label: 'Rate Contract', icon: 'price_check', route: '/pharmacy/rc-master' },
           { label: 'Form-H Monitor', icon: 'monitor_heart', externalUrl: '/Pharmacy/FormH' },
           { label: 'PO Register', icon: 'list_alt', route: '/pharmacy/po-register' },
           { label: 'Discharge Queue', icon: 'monitor_heart', route: '/pharmacy/discharge-queue' },
@@ -316,6 +316,7 @@ export const APP_NAV: NavModule[] = [
           { label: 'GST', icon: 'account_balance', externalUrl: '/Pharmacy/GST' },
           { label: 'Customer Outstanding', icon: 'account_balance_wallet', externalUrl: '/Pharmacy/Outstanding' },
           { label: 'Category-wise Sales', icon: 'pie_chart', externalUrl: '/Pharmacy/CategorySales' },
+          { label: 'Payment Advice', icon: 'payments', route: '/pharmacy/ph-payment' },
         ],
       },
       {

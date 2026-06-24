@@ -26,6 +26,23 @@ export class FileViewerDialogComponent implements OnInit, OnDestroy {
   safeUrl: SafeResourceUrl | null = null;
   renderMode: RenderMode = 'other';
 
+  zoomLevel = 1;
+  rotation = 0;
+
+  get imageTransform(): string {
+    return `scale(${this.zoomLevel}) rotate(${this.rotation}deg)`;
+  }
+
+  get zoomPercent(): number {
+    return Math.round(this.zoomLevel * 100);
+  }
+
+  zoomIn(): void    { this.zoomLevel = Math.min(this.zoomLevel + 0.25, 4); }
+  zoomOut(): void   { this.zoomLevel = Math.max(this.zoomLevel - 0.25, 0.25); }
+  resetView(): void { this.zoomLevel = 1; this.rotation = 0; }
+  rotateCW(): void  { this.rotation = (this.rotation + 90) % 360; }
+  rotateCCW(): void { this.rotation = (this.rotation - 90 + 360) % 360; }
+
   constructor(
     private api: ApiService,
     private sanitizer: DomSanitizer,
@@ -39,6 +56,17 @@ export class FileViewerDialogComponent implements OnInit, OnDestroy {
     this.api.getBlob('/api/HR/EmpmastsAPI/ViewDocuFile', { id: this.data.documastId }).subscribe({
       next: (blob) => {
         this.objectUrl = URL.createObjectURL(blob);
+        // Override with the server's actual Content-Type — more reliable than filename parsing
+        // for legacy filenames that contain path separators or have unusual formats.
+        const mime = (blob.type || '').toLowerCase();
+        if (mime.startsWith('image/')) {
+          this.renderMode = 'image';
+        } else if (mime === 'application/pdf') {
+          this.renderMode = 'pdf';
+        } else if (mime && mime !== 'application/octet-stream') {
+          this.renderMode = 'other';
+        }
+        // else: mime absent or generic — keep filename-based guess
         if (this.renderMode === 'pdf') {
           this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.objectUrl);
         }
@@ -70,9 +98,11 @@ export class FileViewerDialogComponent implements OnInit, OnDestroy {
   }
 
   private detectRenderMode(filename: string): RenderMode {
-    const ext = filename.split('.').pop()?.toLowerCase() ?? '';
-    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext)) return 'image';
-    if (ext === 'pdf') return 'pdf';
+    // Strip path separators first — legacy DB rows store e.g. "202718\X3.JPG"
+    const basename = (filename || '').split(/[/\\]/).pop() ?? '';
+    const ext = basename.split('.').pop()?.toLowerCase() ?? '';
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext)) { return 'image'; }
+    if (ext === 'pdf') { return 'pdf'; }
     return 'other';
   }
 }

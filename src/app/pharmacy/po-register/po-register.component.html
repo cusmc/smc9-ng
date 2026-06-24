@@ -19,7 +19,7 @@
           <select [(ngModel)]="selectedFirm" [ngModelOptions]="{standalone: true}"
             (ngModelChange)="onFirmChange()"
             class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none">
-            <option *ngFor="let f of firms" [value]="f.id">{{ f.nm }}</option>
+            <option *ngFor="let f of firmList" [value]="f.id">{{ f.nm }}</option>
           </select>
         </div>
 
@@ -28,7 +28,7 @@
           <select [(ngModel)]="selectedYear" [ngModelOptions]="{standalone: true}"
             (ngModelChange)="onYearChange()"
             class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none">
-            <option *ngFor="let y of years" [value]="y.id">{{ y.nm }}</option>
+            <option *ngFor="let y of yearList" [value]="y.id">{{ y.nm }}</option>
           </select>
         </div>
 

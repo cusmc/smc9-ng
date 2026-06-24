@@ -1,0 +1,50 @@
+<div class="line-dialog">
+
+  <div class="dialog-header">
+    <span>{{ data.line ? 'Edit Product Line' : 'Add Product Line' }}</span>
+    <button type="button" class="btn-close" (click)="cancel()" title="Close">&#10005;</button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="dialog-body">
+
+    <div class="section-block">
+      <div class="form-row">
+        <div class="form-group fg-full">
+          <label>Product <span class="req">*</span></label>
+          <app-autocomplete
+            [items]="data.products"
+            formControlName="Prod_id"
+            placeholder="Type to search product…">
+          </app-autocomplete>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block section-divider">
+      <div class="form-row">
+        <div class="form-group fg-sm">
+          <label>Rate</label>
+          <input type="number" formControlName="Prate" class="form-control text-right" step="0.01" placeholder="0.00" />
+        </div>
+        <div class="form-group fg-sm">
+          <label>Max Qty</label>
+          <input type="number" formControlName="Max_qty" class="form-control text-right" placeholder="0" />
+        </div>
+        <div class="form-group fg-sm">
+          <label>FQ Base</label>
+          <input type="number" formControlName="Fq_base" class="form-control text-right" placeholder="0" />
+        </div>
+        <div class="form-group fg-sm">
+          <label>FQ Free</label>
+          <input type="number" formControlName="Fq_free" class="form-control text-right" placeholder="0" />
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Save Item</button>
+    </div>
+
+  </form>
+</div>

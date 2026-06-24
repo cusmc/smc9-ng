@@ -1,4 +1,4 @@
-﻿<div class="flex min-h-0 flex-1 flex-col bg-page">
+<div class="flex min-h-0 flex-1 flex-col bg-page">
 
   <!-- Page header -->
   <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
@@ -15,82 +15,179 @@
 
   <div class="flex flex-1 flex-col gap-5 p-4">
 
-    <!-- Upload card -->
-    <div class="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm">
-      <div class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-5 py-4">
-        <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#4680ff] to-[#6b9bff]"></div>
-        <h3 class="font-serif text-lg text-[#1e293b]">Upload a Document</h3>
-        <p class="mt-0.5 text-xs text-[#888]">Uploaded documents will be reviewed and approved by HR before becoming active.</p>
+    <!-- ══ UPLOAD CARD ══════════════════════════════════════════════════════ -->
+    <div class="overflow-hidden rounded-xl border border-[#f0ebe3] bg-white shadow-sm">
+
+      <!-- Card header -->
+      <div class="relative border-b border-[#f0ebe3] bg-gradient-to-r from-[#f7faf9] via-white to-[#faf8f3] px-5 py-4">
+        <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#2d8a7e] to-[#c8a96a]"></div>
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-serif text-lg text-[#2a2622]">Upload Documents</h3>
+            <p class="mt-0.5 text-xs text-[#888]">Drag &amp; drop files or click to browse. Uploaded documents require HR approval before becoming active.</p>
+          </div>
+          <button type="button" (click)="showGuidelines = !showGuidelines"
+            class="inline-flex items-center gap-1 rounded-lg border border-[#c8a96a] px-3 py-1.5 text-xs font-medium text-[#8c6b2f] hover:bg-[#f3eadb]">
+            <span class="material-icons text-[15px]">info</span>
+            Size Guidelines
+          </button>
+        </div>
+      </div>
+
+      <!-- Guidelines panel -->
+      <div *ngIf="showGuidelines"
+        class="border-b border-[#f0ebe3] bg-[#fffdf7] px-5 py-4 text-xs text-[#555]">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p class="mb-1.5 font-semibold text-[#333]">&#128444; A4 Scanned Documents</p>
+            <p class="leading-relaxed">
+              Format: <b>JPG or PDF</b><br>
+              Recommended: <b>1654 &times; 2339 px</b> (200 DPI)<br>
+              Minimum: 1240 &times; 1754 px (150 DPI)<br>
+              Max file size: <b>5 MB</b><br>
+              <span class="text-[#999]">Use CamScanner / Adobe Scan for mobile scanning.</span>
+            </p>
+          </div>
+          <div>
+            <p class="mb-1.5 font-semibold text-[#333]">&#128247; Passport Photograph</p>
+            <p class="leading-relaxed">
+              Format: <b>JPG only</b><br>
+              Minimum: <b>413 &times; 531 px</b> (35&times;45 mm at 300 DPI)<br>
+              Max file size: <b>500 KB</b><br>
+              White / light background, face clearly visible.<br>
+              <span class="text-[#999]">Same size as a physical passport photo.</span>
+            </p>
+          </div>
+        </div>
+        <p class="mt-3 border-t border-[#f0ebe3] pt-3 text-[#aaa]">
+          Accepted: jpg, jpeg, png, pdf, doc, docx, xls, xlsx, csv, txt, mp4, ppt, pptx
+        </p>
       </div>
 
       <div class="px-5 py-4">
-        <div class="flex flex-wrap items-end gap-4">
-          <div class="flex flex-col gap-1 min-w-[200px] flex-1">
-            <label class="text-xs font-semibold uppercase tracking-wide text-[#666]">
-              Document Type <span class="text-red-500">*</span>
-            </label>
-            <select [(ngModel)]="selectedSubcodeId"
-              class="rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[#2d8a7e] focus:outline-none focus:ring-1 focus:ring-[#2d8a7e]">
-              <option [value]="0">— Select type —</option>
-              <option *ngFor="let t of docTypes" [value]="t.SubCode_id">{{ t.vals }}</option>
-            </select>
-          </div>
 
-          <div class="flex flex-col gap-1 min-w-[220px] flex-1">
-            <label class="text-xs font-semibold uppercase tracking-wide text-[#666]">Description</label>
-            <input type="text" [(ngModel)]="description" placeholder="Optional note"
-              class="rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[#2d8a7e] focus:outline-none focus:ring-1 focus:ring-[#2d8a7e]" />
-          </div>
+        <!-- Hidden file input -->
+        <input #fileInput type="file" multiple class="hidden"
+          accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.mp4,.ppt,.pptx"
+          (change)="onFilePick($event)" />
 
-          <div class="flex flex-col gap-1 min-w-[220px] flex-1">
-            <label class="text-xs font-semibold uppercase tracking-wide text-[#666]">
-              File <span class="text-red-500">*</span>
-            </label>
-            <input type="file" (change)="onFileChange($event)"
-              class="rounded-lg border border-[#e5e5e5] px-3 py-1.5 text-sm file:mr-3 file:rounded file:border-0 file:bg-[#f0ebe3] file:px-3 file:py-1 file:text-xs file:font-medium file:text-[#4680ff] hover:file:bg-[#e8dfd0]" />
+        <!-- Drop zone -->
+        <div
+          class="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-all"
+          [class.border-[#2d8a7e]]="isDragOver"
+          [class.bg-[#f0faf8]]="isDragOver"
+          [class.border-[#d5cfc8]]="!isDragOver"
+          [class.bg-[#faf8f3]]="!isDragOver"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave()"
+          (drop)="onDrop($event)"
+          (click)="openFilePicker()">
+          <span class="material-icons text-5xl transition-colors"
+            [class.text-[#2d8a7e]]="isDragOver"
+            [class.text-[#c8a96a]]="!isDragOver">
+            cloud_upload
+          </span>
+          <div>
+            <p class="text-sm font-medium text-[#444]">
+              Drop files here, or <span class="text-[#2d8a7e] underline">click to browse</span>
+            </p>
+            <p class="mt-1 text-xs text-[#aaa]">JPG &bull; PNG &bull; PDF &bull; DOC &bull; XLSX &mdash; max 10 MB each</p>
           </div>
-
-          <button type="button" (click)="upload()" [disabled]="uploading"
-            class="inline-flex items-center gap-2 rounded-lg bg-[#4680ff] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#256f65] disabled:opacity-50">
-            <span class="material-icons text-[18px]">{{ uploading ? 'hourglass_empty' : 'upload' }}</span>
-            {{ uploading ? 'Uploading…' : 'Upload' }}
-          </button>
         </div>
 
-        <p class="mt-3 text-xs text-[#aaa]">
-          <span class="material-icons text-[13px] align-middle">info</span>
-          Accepted: jpg, jpeg, png, pdf, doc, docx, xls, xlsx, csv, txt, mp4, ppt, pptx &mdash; max 10&nbsp;MB
-        </p>
+        <!-- Pending files list -->
+        <div *ngIf="pendingFiles.length > 0" class="mt-5">
+          <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-[#888]">
+            {{ pendingFiles.length }} file(s) queued
+          </p>
+
+          <div class="flex flex-col gap-2">
+            <div *ngFor="let p of pendingFiles; let i = index"
+              class="flex flex-wrap items-center gap-3 rounded-lg border border-[#e5e5e5] bg-[#fafafa] px-4 py-3">
+
+              <span class="material-icons shrink-0 text-[22px] text-[#c8a96a]">{{ fileIcon(p.file.name) }}</span>
+
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-medium text-[#333]" [title]="p.file.name">{{ p.file.name }}</p>
+                <p class="text-xs text-[#aaa]">{{ (p.file.size / 1024 / 1024).toFixed(2) }} MB</p>
+              </div>
+
+              <div class="flex flex-col gap-0.5">
+                <select [(ngModel)]="p.subcodeId"
+                  class="rounded-lg border px-2 py-1.5 text-sm focus:border-[#2d8a7e] focus:outline-none"
+                  [class.border-red-400]="p.subcodeId === 0 || typeError(p)"
+                  [class.border-[#e5e5e5]]="p.subcodeId !== 0 && !typeError(p)">
+                  <option [value]="0">— Select type *</option>
+                  <option *ngFor="let t of docTypes" [value]="t.SubCode_id">{{ t.vals }}</option>
+                </select>
+                <p *ngIf="typeError(p)" class="text-xs text-red-500">{{ typeError(p) }}</p>
+              </div>
+
+              <input type="number" [(ngModel)]="p.pageNo" min="1" placeholder="Pg #"
+                class="w-16 rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-sm focus:border-[#2d8a7e] focus:outline-none" />
+
+              <input type="text" [(ngModel)]="p.description" placeholder="Description (optional)"
+                class="w-40 rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-sm focus:border-[#2d8a7e] focus:outline-none" />
+
+              <button type="button" (click)="removePending(i)"
+                class="shrink-0 rounded p-1 text-[#ccc] hover:bg-red-50 hover:text-red-400">
+                <span class="material-icons text-[18px]">close</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Upload progress + actions -->
+          <div class="mt-4 flex items-center gap-4">
+            <button type="button" (click)="submitAll()" [disabled]="uploading"
+              class="inline-flex items-center gap-2 rounded-lg bg-[#2d8a7e] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#256f65] disabled:opacity-50">
+              <span class="material-icons text-[18px]">{{ uploading ? 'hourglass_empty' : 'upload' }}</span>
+              {{ uploading ? 'Uploading ' + uploadProgress + '%&hellip;' : 'Submit All' }}
+            </button>
+            <button *ngIf="!uploading" type="button" (click)="pendingFiles = []"
+              class="text-sm text-[#aaa] hover:text-[#555]">
+              Clear all
+            </button>
+          </div>
+
+          <!-- Progress bar -->
+          <div *ngIf="uploading" class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-[#e8dfd0]">
+            <div class="h-full rounded-full bg-[#2d8a7e] transition-all"
+              [style.width.%]="uploadProgress"></div>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- Documents table card -->
-    <div class="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm">
-      <div class="border-b border-[#e2e8f0] bg-[#f8faff] px-5 py-3">
-        <h3 class="font-serif text-base text-[#1e293b]">Uploaded Documents</h3>
+    <!-- ══ DOCUMENTS TABLE ════════════════════════════════════════════════════ -->
+    <div class="overflow-hidden rounded-xl border border-[#f0ebe3] bg-white shadow-sm">
+      <div class="border-b border-[#f0ebe3] bg-[#faf8f3] px-5 py-3">
+        <h3 class="font-serif text-base text-[#2a2622]">My Documents</h3>
       </div>
 
-      <!-- Loading spinner -->
+      <!-- Loading -->
       <div *ngIf="loading" class="flex items-center justify-center gap-3 py-14 text-[#777]">
         <div class="h-8 w-8 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
-        <span class="text-sm">Loading…</span>
+        <span class="text-sm">Loading&hellip;</span>
       </div>
 
-      <!-- Empty state -->
+      <!-- Empty -->
       <div *ngIf="!loading && documents.length === 0"
         class="flex flex-col items-center gap-3 py-16 text-center text-[#bbb]">
         <span class="material-icons text-5xl">folder_open</span>
-        <p class="text-sm">No documents uploaded yet.</p>
+        <p class="text-sm">No documents found.</p>
       </div>
 
       <!-- Table -->
       <div *ngIf="!loading && documents.length > 0" class="overflow-x-auto">
         <table class="w-full border-collapse text-left text-sm">
           <thead>
-            <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
+            <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Document Type</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Description</th>
+              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Page</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Uploaded On</th>
+              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Source</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Status</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Remark</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Action</th>
@@ -98,10 +195,40 @@
           </thead>
           <tbody>
             <tr *ngFor="let doc of documents"
-              class="border-b border-[#f5f0e8] transition hover:bg-[#f8faff]">
-              <td class="px-4 py-3 font-medium text-[#333]">{{ doc.DocType }}</td>
-              <td class="px-4 py-3 text-[#555]">{{ doc.description || '—' }}</td>
-              <td class="px-4 py-3 text-[#777] text-xs">{{ doc.create_dt | date:'dd MMM yyyy, HH:mm' }}</td>
+              class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]"
+              [class.opacity-40]="doc.auth_status === 'I'">
+
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2"
+                  [class.line-through]="doc.auth_status === 'I'"
+                  [class.text-[#333]]="doc.auth_status !== 'I'"
+                  [class.text-[#aaa]]="doc.auth_status === 'I'">
+                  <span class="material-icons text-[16px] text-[#c8a96a]">{{ fileIcon(doc.filename) }}</span>
+                  <span class="font-medium">{{ doc.DocType }}</span>
+                </div>
+              </td>
+
+              <td class="px-4 py-3 text-[#555]">{{ doc.description || '&mdash;' }}</td>
+
+              <td class="px-4 py-3 text-xs text-[#777]">
+                {{ doc.page_no ? 'Pg. ' + doc.page_no : '&mdash;' }}
+              </td>
+
+              <td class="px-4 py-3 text-xs text-[#777]">
+                {{ doc.create_dt | date:'dd MMM yyyy, HH:mm' }}
+              </td>
+
+              <td class="px-4 py-3">
+                <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
+                  [class.bg-blue-50]="doc.selfupload === 'Y'"
+                  [class.text-blue-600]="doc.selfupload === 'Y'"
+                  [class.bg-purple-50]="doc.selfupload !== 'Y'"
+                  [class.text-purple-600]="doc.selfupload !== 'Y'">
+                  <span class="material-icons text-[12px]">{{ doc.selfupload === 'Y' ? 'person' : 'badge' }}</span>
+                  {{ doc.selfupload === 'Y' ? 'Self' : 'HR' }}
+                </span>
+              </td>
+
               <td class="px-4 py-3">
                 <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold"
                   [ngClass]="statusClass(doc.auth_status)">
@@ -109,17 +236,21 @@
                   {{ statusLabel(doc.auth_status) }}
                 </span>
               </td>
-              <td class="px-4 py-3 text-xs text-red-500 max-w-[200px] truncate" [title]="doc.rej_reason || ''">
+
+              <td class="max-w-[180px] truncate px-4 py-3 text-xs text-red-500"
+                [title]="doc.auth_status === 'R' ? (doc.rej_reason || '') : ''">
                 {{ doc.auth_status === 'R' ? doc.rej_reason : '' }}
               </td>
+
               <td class="px-4 py-3">
-                <button *ngIf="doc.auth_status === 'A'" type="button" (click)="viewFile(doc)"
-                  class="inline-flex items-center gap-1 rounded-lg border border-[#2d8a7e] px-3 py-1 text-xs font-medium text-[#2d8a7e] transition hover:bg-[#4680ff] hover:text-white">
+                <button *ngIf="canView(doc.auth_status)" type="button" (click)="viewFile(doc)"
+                  class="inline-flex items-center gap-1 rounded-lg border border-[#2d8a7e] px-3 py-1 text-xs font-medium text-[#2d8a7e] transition hover:bg-[#2d8a7e] hover:text-white">
                   <span class="material-icons text-[14px]">visibility</span>
                   View
                 </button>
-                <span *ngIf="doc.auth_status !== 'A'" class="text-xs text-[#ccc]">—</span>
+                <span *ngIf="!canView(doc.auth_status)" class="text-xs text-[#ccc]">&mdash;</span>
               </td>
+
             </tr>
           </tbody>
         </table>

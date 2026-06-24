@@ -1,0 +1,188 @@
+<div class="rc-page">
+
+  <!-- Action Bar -->
+  <div class="action-bar">
+    <div class="action-left">
+      <span class="page-title">RC Master</span>
+      <span class="mode-badge" *ngIf="view === 'form'">
+        {{ mode === 'new' ? 'New RC' : 'Edit &mdash; RC #' + currentId }}
+      </span>
+    </div>
+    <div class="action-right">
+      <ng-container *ngIf="view === 'list'">
+        <select class="form-control firm-select" [(ngModel)]="selectedFirm" (change)="onFirmChange()">
+          <option *ngFor="let f of firms" [value]="f.id">{{ f.nm }}</option>
+        </select>
+        <button class="btn btn-success btn-sm" (click)="addNew()">+ New RC</button>
+        <button class="btn btn-outline-secondary btn-sm" (click)="loadList()" title="Refresh">&#8635;</button>
+      </ng-container>
+      <ng-container *ngIf="view === 'form'">
+        <button class="btn btn-outline-secondary btn-sm" (click)="backToList()">&larr; Back to List</button>
+        <button class="btn btn-danger btn-sm" *ngIf="mode === 'edit'" (click)="delete()">Delete</button>
+        <button class="btn btn-success btn-sm" (click)="save()" [disabled]="saving">
+          {{ saving ? 'Saving...' : 'Save RC' }}
+        </button>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- LIST VIEW -->
+  <div class="list-panel" *ngIf="view === 'list'">
+    <div class="list-toolbar">
+      <input type="text" class="form-control search-box" placeholder="Search party, RC no, type, status..."
+             [(ngModel)]="searchText" />
+      <span class="count-badge">{{ filteredList.length }} records</span>
+    </div>
+
+    <div class="table-wrap">
+      <div *ngIf="loading" class="loading-msg">Loading&hellip;</div>
+      <table class="data-table" *ngIf="!loading">
+        <thead>
+          <tr>
+            <th style="width:60px">RC ID</th>
+            <th>Party</th>
+            <th>Manufacturer</th>
+            <th style="width:110px">RC No</th>
+            <th style="width:120px">Type</th>
+            <th class="text-center" style="width:100px">From</th>
+            <th class="text-center" style="width:100px">To</th>
+            <th class="text-center" style="width:75px">Status</th>
+            <th style="width:100px">Created By</th>
+            <th style="width:60px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let rc of filteredList" (dblclick)="editRecord(rc)">
+            <td class="text-center">{{ rc.Rc_id }}</td>
+            <td>{{ rc.Account_nm }}</td>
+            <td>{{ rc.Mfg_nm }}</td>
+            <td>{{ rc.Rc_no }}</td>
+            <td>{{ rc.Rc_type_nm }}</td>
+            <td class="text-center">{{ rc.Fdate | date:'dd-MM-yyyy' }}</td>
+            <td class="text-center">{{ rc.Tdate | date:'dd-MM-yyyy' }}</td>
+            <td class="text-center">
+              <span class="status-chip" [class.active]="rc.Status === 'A'" [class.inactive]="rc.Status !== 'A'">
+                {{ statusLabel(rc.Status) }}
+              </span>
+            </td>
+            <td>{{ rc.Create_by }}</td>
+            <td class="text-center">
+              <button type="button" class="btn-icon" title="Edit" (click)="editRecord(rc)">&#9998;</button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredList.length === 0">
+            <td colspan="10" class="no-data">No RC records found</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FORM VIEW -->
+  <div class="form-panel" *ngIf="view === 'form'">
+    <form [formGroup]="form">
+
+      <!-- Header Fields -->
+      <div class="section-block">
+        <div class="section-title">RC Header</div>
+
+        <div class="form-row">
+          <div class="form-group fg-xl">
+            <label>Party</label>
+            <select formControlName="Party_id" class="form-control">
+              <option [ngValue]="null">-- None --</option>
+              <option *ngFor="let p of parties" [ngValue]="p.id">{{ p.nm }}</option>
+            </select>
+          </div>
+          <div class="form-group fg-xl">
+            <label>Manufacturer</label>
+            <select formControlName="Mfg_id" class="form-control">
+              <option [ngValue]="null">-- None --</option>
+              <option *ngFor="let m of mfgList" [ngValue]="m.id">{{ m.nm }}</option>
+            </select>
+          </div>
+          <div class="form-group fg-sm">
+            <label>RC No <span class="req">*</span></label>
+            <input type="text" formControlName="Rc_no" class="form-control" placeholder="RC Number" maxlength="20" />
+          </div>
+          <div class="form-group fg-md">
+            <label>RC Type <span class="req">*</span></label>
+            <select formControlName="Rc_type_id" class="form-control">
+              <option [ngValue]="null">-- Select Type --</option>
+              <option *ngFor="let t of rcTypes" [ngValue]="t.id">{{ t.nm }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group fg-sm">
+            <label>From Date <span class="req">*</span></label>
+            <input type="date" formControlName="Fdate" class="form-control" />
+          </div>
+          <div class="form-group fg-sm">
+            <label>To Date <span class="req">*</span></label>
+            <input type="date" formControlName="Tdate" class="form-control" />
+            <span class="field-error" *ngIf="form.hasError('toBeforeFrom')">
+              To Date must be on or after From Date
+            </span>
+          </div>
+          <div class="form-group fg-sm">
+            <label>Status <span class="req">*</span></label>
+            <select formControlName="Status" class="form-control">
+              <option value="A">Active</option>
+              <option value="I">Inactive</option>
+            </select>
+          </div>
+          <div class="form-group fg-lg validation-msg" *ngIf="form.hasError('partyOrMfgRequired') && form.touched">
+            <span class="field-error">Select at least a Party or Manufacturer</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Line Items -->
+      <div class="section-block">
+        <div class="lines-header">
+          <span class="section-title">Product Lines</span>
+          <button type="button" class="btn btn-sm btn-outline" (click)="openLineDialog()">+ Add Item</button>
+        </div>
+
+        <div class="lines-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:36px">#</th>
+                <th>Product</th>
+                <th class="text-right" style="width:100px">Rate</th>
+                <th class="text-right" style="width:90px">Max Qty</th>
+                <th class="text-right" style="width:80px">FQ Base</th>
+                <th class="text-right" style="width:80px">FQ Free</th>
+                <th style="width:54px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let l of lines; let i = index">
+                <tr *ngIf="l.CanTag !== 'Y'" [class.deleted-row]="l.CanTag === 'Y'">
+                  <td class="text-center">{{ i + 1 }}</td>
+                  <td>{{ l.Prod_nm || getProductName(l.Prod_id) }}</td>
+                  <td class="text-right">{{ l.Prate | number:'1.2-2' }}</td>
+                  <td class="text-right">{{ l.Max_qty }}</td>
+                  <td class="text-right">{{ l.Fq_base }}</td>
+                  <td class="text-right">{{ l.Fq_free }}</td>
+                  <td class="actions-cell">
+                    <button type="button" class="btn-icon" title="Edit" (click)="openLineDialog(l)">&#9998;</button>
+                    <button type="button" class="btn-icon btn-danger" title="Remove" (click)="removeLine(l)">&#10005;</button>
+                  </td>
+                </tr>
+              </ng-container>
+              <tr *ngIf="activeLineCount === 0">
+                <td colspan="7" class="no-data">No items &mdash; click &ldquo;+ Add Item&rdquo; to begin</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+</div>

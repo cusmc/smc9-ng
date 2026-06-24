@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { PoRegisterService } from './po-register.service';
-import { FirmItem, MfgItem, PartyItem, PoListItem, ProductItem, YearItem } from './po-register.models';
+import { MfgItem, PartyItem, PoListItem, PrintRegBody, ProductItem } from './po-register.models';
+import { PhSharedService, FirmOption, FirmYearItem, YearOption } from '../ph-shared.service';
 import { ToastService } from '../../core/toast/toast.service';
 
 @Component({
@@ -13,26 +14,19 @@ import { ToastService } from '../../core/toast/toast.service';
   styleUrls: ['./po-register.component.scss']
 })
 export class PoRegisterComponent implements OnInit {
+  private allFirmYears: FirmYearItem[] = [];
+  firmList: FirmOption[] = [];
+  yearList: YearOption[] = [];
+
+  selectedFirm = '';
+  selectedYear = '';
+
   allData: PoListItem[] = [];
   filteredData: PoListItem[] = [];
   mfgList: MfgItem[] = [];
   partyList: PartyItem[] = [];
   productList: ProductItem[] = [];
 
-  readonly firms: FirmItem[] = [
-    { id: '0001', nm: 'Firm 1' },
-    { id: '0002', nm: 'Firm 2' }
-  ];
-
-  readonly years: YearItem[] = [
-    { id: '2023', nm: '2023-24' },
-    { id: '2024', nm: '2024-25' },
-    { id: '2025', nm: '2025-26' },
-    { id: '2026', nm: '2026-27' }
-  ];
-
-  selectedFirm  = '0001';
-  selectedYear  = '2026';
   selectedParty = 0;
   selectedProd  = 0;
 
@@ -47,6 +41,7 @@ export class PoRegisterComponent implements OnInit {
 
   constructor(
     private service: PoRegisterService,
+    private shared: PhSharedService,
     private fb: FormBuilder,
     private toast: ToastService
   ) {
@@ -57,10 +52,22 @@ export class PoRegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadLookups();
+    this.shared.getFirmYears().subscribe({
+      next: (data) => {
+        this.allFirmYears = data;
+        this.firmList = this.shared.toFirmOptions(data);
+        if (this.firmList.length > 0) {
+          this.selectedFirm = this.firmList[0].id;
+          this.refreshYearList();
+          this.loadLookups();
+        }
+      },
+      error: () => this.toast.show('Failed to load firm/year list.', { variant: 'error', duration: 5000 })
+    });
   }
 
   onFirmChange(): void {
+    this.refreshYearList();
     this.allData = [];
     this.filteredData = [];
     this.selectedParty = 0;
@@ -71,6 +78,11 @@ export class PoRegisterComponent implements OnInit {
   onYearChange(): void {
     this.allData = [];
     this.filteredData = [];
+  }
+
+  private refreshYearList(): void {
+    this.yearList = this.shared.toYearOptions(this.allFirmYears, this.selectedFirm);
+    this.selectedYear = this.yearList.length > 0 ? this.yearList[0].id : '';
   }
 
   private loadLookups(): void {

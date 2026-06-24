@@ -32,15 +32,6 @@ export interface MfgItem {
   nm: string;
 }
 
-export interface FirmItem {
-  id: string;
-  nm: string;
-}
-
-export interface YearItem {
-  id: string;
-  nm: string;
-}
 
 export interface PartyItem {
   id: number;
