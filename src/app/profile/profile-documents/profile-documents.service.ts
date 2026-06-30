@@ -14,6 +14,7 @@ export interface MyDocuRecord {
   rej_reason: string | null;
   selfupload: string | null;
   page_no: number | null;
+  parent_docu_id: number | null;
 }
 
 export interface SubcodeItem {
@@ -37,9 +38,13 @@ export class ProfileDocumentsService {
     return this.api.get<SubcodeItem[]>(`${CODELIST_BASE}/GetCodeListbyCodenm`, { codenm: 'HRDOCUTYPE' });
   }
 
-  uploadDocument(subcodeId: number, description: string, pageNo: number | null, file: File): Observable<any> {
+  uploadDocument(subcodeId: number, description: string, pageNo: number | null,
+                 file: File, parentDocuId: number | null = null): Observable<any> {
     const formData = new FormData();
-    formData.append('Data', JSON.stringify({ Subcode_id: subcodeId, Description: description, PageNo: pageNo }));
+    formData.append('Data', JSON.stringify({
+      Subcode_id: subcodeId, Description: description,
+      PageNo: pageNo, Parent_Docu_Id: parentDocuId,
+    }));
     formData.append('file', file, file.name);
     return this.api.postFormData<any>(`${BASE}/SelfDocuUpload`, formData);
   }

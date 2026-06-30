@@ -496,6 +496,7 @@ export const APP_NAV: NavModule[] = [
         icon: 'bar_chart',
         items: [
           { label: 'Hosp Performance', icon: 'insert_chart', route: '/mis/hosp-perf' },
+          { label: 'Doct Performance', icon: 'people', route: '/mis/doct-perf' },
           { label: 'Circulars', icon: 'article', externalUrl: '/MIS/Circulars' },
           { label: 'On Leave Report', icon: 'event_busy', externalUrl: '/MIS/OnLeave' },
           { label: 'Phone Book', icon: 'contacts', externalUrl: '/MIS/PhoneBook' },

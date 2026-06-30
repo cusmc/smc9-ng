@@ -45,6 +45,8 @@ export class DocuAuthComponent implements OnInit {
 
   viewFile(rec: PendingDocuRecord): void {
     this.dialog.open(FileViewerDialogComponent, {
+      width: '95vw',
+      height: '95vh',
       data: { documastId: rec.documast_id, filename: rec.filename, title: `${rec.empnm} — ${rec.DocType}` },
     });
   }

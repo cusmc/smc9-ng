@@ -27,11 +27,13 @@ export class UnauthorizedComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    debugger;
     const cont     = this.route.snapshot.queryParamMap.get('cont')     ?? '';
     const view     = this.route.snapshot.queryParamMap.get('view')     ?? '';
     const menupara = this.route.snapshot.queryParamMap.get('menupara') ?? '';
     if (cont && view) {
       this.rightsService.getModuleInfo(cont, view, menupara).subscribe(info => {
+        console.log('Module Info:', info);
         this.wmoduleId  = info.Wmodule_id;
         this.moduleName = info.Wmodule_nm || (cont + ' / ' + view);
       });

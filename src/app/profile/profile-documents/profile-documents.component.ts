@@ -5,6 +5,7 @@ import { Dialog } from '@angular/cdk/dialog';
 import { ProfileDocumentsService, MyDocuRecord, SubcodeItem } from './profile-documents.service';
 import { ToastService } from '../../core/toast/toast.service';
 import { FileViewerDialogComponent } from '../../shared/file-viewer-dialog/file-viewer-dialog.component';
+import { ResubmitDocuDialogComponent } from './resubmit-docu-dialog.component';
 
 export interface PendingFile {
   file: File;
@@ -152,8 +153,18 @@ export class ProfileDocumentsComponent implements OnInit {
   // ── Document list ───────────────────────────────────────────
   viewFile(doc: MyDocuRecord): void {
     this.dialog.open(FileViewerDialogComponent, {
+      width: '95vw',
+      height: '95vh',
       data: { documastId: doc.documast_id, filename: doc.filename, title: doc.DocType },
     });
+  }
+
+  resubmit(doc: MyDocuRecord): void {
+    const ref = this.dialog.open(ResubmitDocuDialogComponent, {
+      width: '480px',
+      data: { doc, docTypes: this.docTypes },
+    });
+    ref.closed.subscribe(result => { if (result) { this.loadDocuments(); } });
   }
 
   statusLabel(status: string | null): string {
@@ -187,7 +198,11 @@ export class ProfileDocumentsComponent implements OnInit {
   }
 
   canView(status: string | null): boolean {
-    return status === 'A' || status === null;
+    return status !== 'I';
+  }
+
+  canResubmit(status: string | null): boolean {
+    return status === 'A' || status === 'R';
   }
 
   fileIcon(filename: string): string {

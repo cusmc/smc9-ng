@@ -56,17 +56,15 @@ export class FileViewerDialogComponent implements OnInit, OnDestroy {
     this.api.getBlob('/api/HR/EmpmastsAPI/ViewDocuFile', { id: this.data.documastId }).subscribe({
       next: (blob) => {
         this.objectUrl = URL.createObjectURL(blob);
-        // Override with the server's actual Content-Type — more reliable than filename parsing
-        // for legacy filenames that contain path separators or have unusual formats.
+        // Positively confirm image or PDF from Content-Type; for everything else keep
+        // the filename-based guess so an unexpected server MIME (e.g. text/html from an
+        // IIS error page) doesn't silently override a correct filename-derived mode.
         const mime = (blob.type || '').toLowerCase();
         if (mime.startsWith('image/')) {
           this.renderMode = 'image';
         } else if (mime === 'application/pdf') {
           this.renderMode = 'pdf';
-        } else if (mime && mime !== 'application/octet-stream') {
-          this.renderMode = 'other';
         }
-        // else: mime absent or generic — keep filename-based guess
         if (this.renderMode === 'pdf') {
           this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.objectUrl);
         }

@@ -1,4 +1,4 @@
-﻿<div class="flex flex-col bg-white" style="width:780px; max-width:95vw;">
+﻿<div class="flex h-full w-full flex-col bg-white">
 
   <!-- Header -->
   <div class="flex items-center gap-3 border-b border-[#e2e8f0] bg-[#f8faff] px-5 py-4">
@@ -16,7 +16,7 @@
   </div>
 
   <!-- Body -->
-  <div class="flex min-h-[300px] items-center justify-center bg-[#f5f5f5]">
+  <div class="flex flex-1 items-center justify-center overflow-hidden bg-[#f5f5f5]">
 
     <!-- Loading -->
     <div *ngIf="loading" class="flex flex-col items-center gap-3 py-16 text-[#777]">
@@ -60,8 +60,8 @@
           <span class="material-icons text-[18px] text-[#555]">fit_screen</span>
         </button>
       </div>
-      <div class="flex items-center justify-center overflow-auto bg-[#f5f5f5]"
-        style="max-height:68vh; min-height:280px;">
+      <div class="flex flex-1 items-center justify-center overflow-auto bg-[#f5f5f5]"
+        style="min-height:280px;">
         <img [src]="objectUrl" alt="Document"
           [style.transform]="imageTransform"
           style="transition:transform 0.2s ease; transform-origin:center center; max-width:100%;"
@@ -72,8 +72,8 @@
     <!-- PDF viewer -->
     <iframe *ngIf="!loading && !error && renderMode === 'pdf'"
       [src]="safeUrl"
-      class="w-full border-0"
-      style="height:72vh;"
+      class="w-full flex-1 border-0"
+      style="min-height:400px;"
       title="PDF viewer">
     </iframe>
 

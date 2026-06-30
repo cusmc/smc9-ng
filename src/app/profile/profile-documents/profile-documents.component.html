@@ -243,12 +243,20 @@
               </td>
 
               <td class="px-4 py-3">
-                <button *ngIf="canView(doc.auth_status)" type="button" (click)="viewFile(doc)"
-                  class="inline-flex items-center gap-1 rounded-lg border border-[#2d8a7e] px-3 py-1 text-xs font-medium text-[#2d8a7e] transition hover:bg-[#2d8a7e] hover:text-white">
-                  <span class="material-icons text-[14px]">visibility</span>
-                  View
-                </button>
-                <span *ngIf="!canView(doc.auth_status)" class="text-xs text-[#ccc]">&mdash;</span>
+                <div class="flex flex-wrap gap-1.5">
+                  <button *ngIf="canView(doc.auth_status)" type="button" (click)="viewFile(doc)"
+                    class="inline-flex items-center gap-1 rounded-lg border border-[#2d8a7e] px-3 py-1 text-xs font-medium text-[#2d8a7e] transition hover:bg-[#2d8a7e] hover:text-white">
+                    <span class="material-icons text-[14px]">visibility</span>
+                    View
+                  </button>
+                  <button *ngIf="canResubmit(doc.auth_status)" type="button" (click)="resubmit(doc)"
+                    class="inline-flex items-center gap-1 rounded-lg border border-[#c8a96a] px-3 py-1 text-xs font-medium text-[#8c6b2f] transition hover:bg-[#c8a96a] hover:text-white">
+                    <span class="material-icons text-[14px]">upload_file</span>
+                    Resubmit
+                  </button>
+                  <span *ngIf="!canView(doc.auth_status) && !canResubmit(doc.auth_status)"
+                    class="text-xs text-[#ccc]">&mdash;</span>
+                </div>
               </td>
 
             </tr>
