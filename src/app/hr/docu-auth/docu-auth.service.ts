@@ -2,15 +2,20 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../shared/api.service';
 
-export interface PendingDocuRecord {
+export interface DocuRecord {
   documast_id: number;
   empid: number;
   empnm: string;
+  empUsername: string;
   description: string;
   filename: string;
   DocType: string;
   create_by: string;
   create_dt: string;
+  auth_status: string;
+  authby: string;
+  authdt: string;
+  rejreason: string;
 }
 
 export interface DocuAuthRequest {
@@ -19,17 +24,29 @@ export interface DocuAuthRequest {
   RejReason: string;
 }
 
+export interface NotificationPayload {
+  Vtype: string;
+  Username: string;
+  Msg: string;
+  Inst_id: number | null;
+}
+
 const BASE = '/api/HR/EmpmastsAPI';
+const NOTIF_BASE = '/api/Common/notificationssAPI';
 
 @Injectable({ providedIn: 'root' })
 export class DocuAuthService {
   constructor(private api: ApiService) {}
 
-  getPendingDocuments(): Observable<PendingDocuRecord[]> {
-    return this.api.get<PendingDocuRecord[]>(`${BASE}/GetPendingDocuAuth`);
+  getAllDocuments(): Observable<DocuRecord[]> {
+    return this.api.get<DocuRecord[]>(`${BASE}/GetAllDocuAuth`);
   }
 
   authorizeDocument(req: DocuAuthRequest): Observable<any> {
     return this.api.post<any>(`${BASE}/AuthorizeDocu`, req);
+  }
+
+  sendNotification(payload: NotificationPayload): Observable<any> {
+    return this.api.post<any>(`${NOTIF_BASE}/SaveData`, payload);
   }
 }

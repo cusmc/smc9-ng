@@ -1,4 +1,4 @@
-﻿<div class="flex h-full w-full flex-col bg-white">
+<div class="flex h-full w-full flex-col bg-white">
 
   <!-- Header -->
   <div class="flex items-center gap-3 border-b border-[#e2e8f0] bg-[#f8faff] px-5 py-4">
@@ -15,87 +15,165 @@
     </button>
   </div>
 
-  <!-- Body -->
-  <div class="flex flex-1 items-center justify-center overflow-hidden bg-[#f5f5f5]">
+  <!-- ── VIEWER BODY (hidden when resubmit panel is open) ── -->
+  <ng-container *ngIf="!showResubmit">
+    <div class="flex flex-1 items-center justify-center overflow-hidden bg-[#f5f5f5]">
 
-    <!-- Loading -->
-    <div *ngIf="loading" class="flex flex-col items-center gap-3 py-16 text-[#777]">
-      <div class="h-10 w-10 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
-      <span class="text-sm">Loading file&hellip;</span>
-    </div>
+      <!-- Loading -->
+      <div *ngIf="loading" class="flex flex-col items-center gap-3 py-16 text-[#777]">
+        <div class="h-10 w-10 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+        <span class="text-sm">Loading file&hellip;</span>
+      </div>
 
-    <!-- Error -->
-    <div *ngIf="!loading && error"
-      class="flex flex-col items-center gap-3 py-16 text-center text-[#d00]">
-      <span class="material-icons text-4xl">error_outline</span>
-      <p class="text-sm">{{ error }}</p>
-    </div>
+      <!-- Error -->
+      <div *ngIf="!loading && error"
+        class="flex flex-col items-center gap-3 py-16 text-center text-[#d00]">
+        <span class="material-icons text-4xl">error_outline</span>
+        <p class="text-sm">{{ error }}</p>
+      </div>
 
-    <!-- Image viewer with toolbar -->
-    <div *ngIf="!loading && !error && renderMode === 'image'" class="flex w-full flex-col">
-      <div class="flex items-center gap-1 border-b border-[#e2e8f0] bg-[#f0f4f8] px-3 py-2">
-        <button type="button" (click)="zoomOut()" title="Zoom out"
-          class="rounded p-1.5 hover:bg-white hover:shadow-sm"
-          [disabled]="zoomLevel <= 0.25">
-          <span class="material-icons text-[18px] text-[#555]">zoom_out</span>
-        </button>
-        <span class="w-12 text-center font-mono text-xs text-[#555]">{{ zoomPercent }}%</span>
-        <button type="button" (click)="zoomIn()" title="Zoom in"
-          class="rounded p-1.5 hover:bg-white hover:shadow-sm"
-          [disabled]="zoomLevel >= 4">
-          <span class="material-icons text-[18px] text-[#555]">zoom_in</span>
-        </button>
-        <div class="mx-2 h-4 w-px bg-[#d0d5dd]"></div>
-        <button type="button" (click)="rotateCCW()" title="Rotate left"
-          class="rounded p-1.5 hover:bg-white hover:shadow-sm">
-          <span class="material-icons text-[18px] text-[#555]">rotate_left</span>
-        </button>
-        <button type="button" (click)="rotateCW()" title="Rotate right"
-          class="rounded p-1.5 hover:bg-white hover:shadow-sm">
-          <span class="material-icons text-[18px] text-[#555]">rotate_right</span>
-        </button>
-        <div class="mx-2 h-4 w-px bg-[#d0d5dd]"></div>
-        <button type="button" (click)="resetView()" title="Fit / Reset"
-          class="rounded p-1.5 hover:bg-white hover:shadow-sm">
-          <span class="material-icons text-[18px] text-[#555]">fit_screen</span>
+      <!-- Image viewer with toolbar -->
+      <div *ngIf="!loading && !error && renderMode === 'image'" class="flex w-full flex-col">
+        <div class="flex items-center gap-1 border-b border-[#e2e8f0] bg-[#f0f4f8] px-3 py-2">
+          <button type="button" (click)="zoomOut()" title="Zoom out"
+            class="rounded p-1.5 hover:bg-white hover:shadow-sm"
+            [disabled]="zoomLevel <= 0.25">
+            <span class="material-icons text-[18px] text-[#555]">zoom_out</span>
+          </button>
+          <span class="w-12 text-center font-mono text-xs text-[#555]">{{ zoomPercent }}%</span>
+          <button type="button" (click)="zoomIn()" title="Zoom in"
+            class="rounded p-1.5 hover:bg-white hover:shadow-sm"
+            [disabled]="zoomLevel >= 4">
+            <span class="material-icons text-[18px] text-[#555]">zoom_in</span>
+          </button>
+          <div class="mx-2 h-4 w-px bg-[#d0d5dd]"></div>
+          <button type="button" (click)="rotateCCW()" title="Rotate left"
+            class="rounded p-1.5 hover:bg-white hover:shadow-sm">
+            <span class="material-icons text-[18px] text-[#555]">rotate_left</span>
+          </button>
+          <button type="button" (click)="rotateCW()" title="Rotate right"
+            class="rounded p-1.5 hover:bg-white hover:shadow-sm">
+            <span class="material-icons text-[18px] text-[#555]">rotate_right</span>
+          </button>
+          <div class="mx-2 h-4 w-px bg-[#d0d5dd]"></div>
+          <button type="button" (click)="resetView()" title="Fit / Reset"
+            class="rounded p-1.5 hover:bg-white hover:shadow-sm">
+            <span class="material-icons text-[18px] text-[#555]">fit_screen</span>
+          </button>
+        </div>
+        <div class="flex flex-1 items-center justify-center overflow-auto bg-[#f5f5f5]"
+          style="min-height:280px;">
+          <img [src]="objectUrl" alt="Document"
+            [style.transform]="imageTransform"
+            style="transition:transform 0.2s ease; transform-origin:center center; max-width:100%;"
+            class="shadow-md" />
+        </div>
+      </div>
+
+      <!-- PDF viewer -->
+      <iframe *ngIf="!loading && !error && renderMode === 'pdf'"
+        [src]="safeUrl"
+        class="w-full flex-1 border-0"
+        style="min-height:400px;"
+        title="PDF viewer">
+      </iframe>
+
+      <!-- Other file types — offer download -->
+      <div *ngIf="!loading && !error && renderMode === 'other'"
+        class="flex flex-col items-center gap-4 py-16 text-center text-[#555]">
+        <span class="material-icons text-6xl text-[#c8a96a]">insert_drive_file</span>
+        <p class="text-sm text-[#777]">
+          Preview not available for this file type.<br />
+          Click below to download.
+        </p>
+        <button type="button" (click)="download()"
+          class="inline-flex items-center gap-2 rounded-lg bg-[#4680ff] px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#256f65]">
+          <span class="material-icons text-[18px]">download</span>
+          Download {{ data.filename }}
         </button>
       </div>
-      <div class="flex flex-1 items-center justify-center overflow-auto bg-[#f5f5f5]"
-        style="min-height:280px;">
-        <img [src]="objectUrl" alt="Document"
-          [style.transform]="imageTransform"
-          style="transition:transform 0.2s ease; transform-origin:center center; max-width:100%;"
-          class="shadow-md" />
-      </div>
+
     </div>
+  </ng-container>
 
-    <!-- PDF viewer -->
-    <iframe *ngIf="!loading && !error && renderMode === 'pdf'"
-      [src]="safeUrl"
-      class="w-full flex-1 border-0"
-      style="min-height:400px;"
-      title="PDF viewer">
-    </iframe>
+  <!-- ── RESUBMIT PANEL (shown when Replace is clicked) ── -->
+  <ng-container *ngIf="showResubmit && data.resubmit">
 
-    <!-- Other file types — offer download -->
-    <div *ngIf="!loading && !error && renderMode === 'other'"
-      class="flex flex-col items-center gap-4 py-16 text-center text-[#555]">
-      <span class="material-icons text-6xl text-[#c8a96a]">insert_drive_file</span>
-      <p class="text-sm text-[#777]">
-        Preview not available for this file type.<br />
-        Click below to download.
+    <!-- Hidden file input -->
+    <input #rsFileInput type="file" class="hidden"
+      accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx"
+      (change)="rsOnFilePick($event)" />
+
+    <div class="flex flex-1 flex-col gap-5 overflow-auto bg-white px-6 py-5">
+
+      <!-- Sub-header -->
+      <p class="text-xs font-semibold uppercase tracking-wide text-[#888]">
+        Replacing: {{ data.title || data.filename }}
       </p>
-      <button type="button" (click)="download()"
-        class="inline-flex items-center gap-2 rounded-lg bg-[#4680ff] px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#256f65]">
-        <span class="material-icons text-[18px]">download</span>
-        Download {{ data.filename }}
-      </button>
+
+      <!-- Description -->
+      <div>
+        <label class="mb-1 block text-xs font-semibold text-[#555]">Description</label>
+        <input type="text" [(ngModel)]="rsDescription" placeholder="Optional description"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[#2d8a7e] focus:outline-none" />
+      </div>
+
+      <!-- Page number -->
+      <div>
+        <label class="mb-1 block text-xs font-semibold text-[#555]">
+          Page Number <span class="font-normal text-[#aaa]">(optional)</span>
+        </label>
+        <input type="number" [(ngModel)]="rsPageNo" min="1" placeholder="e.g. 1"
+          class="w-24 rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[#2d8a7e] focus:outline-none" />
+      </div>
+
+      <!-- Drop zone (no file picked) -->
+      <div>
+        <label class="mb-1 block text-xs font-semibold text-[#555]">
+          Replacement File <span class="text-red-500">*</span>
+        </label>
+
+        <div *ngIf="!rsFile"
+          class="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-10 text-center transition-all"
+          [class.border-[#2d8a7e]]="rsIsDragOver"
+          [class.bg-[#f0faf8]]="rsIsDragOver"
+          [class.border-[#d5cfc8]]="!rsIsDragOver"
+          [class.bg-[#faf8f3]]="!rsIsDragOver"
+          (dragover)="rsOnDragOver($event)"
+          (dragleave)="rsOnDragLeave()"
+          (drop)="rsOnDrop($event)"
+          (click)="rsOpenPicker()">
+          <span class="material-icons text-4xl"
+            [class.text-[#2d8a7e]]="rsIsDragOver"
+            [class.text-[#c8a96a]]="!rsIsDragOver">cloud_upload</span>
+          <p class="text-sm font-medium text-[#444]">
+            Drop file here, or <span class="text-[#2d8a7e] underline">click to browse</span>
+          </p>
+          <p class="text-xs text-[#aaa]">Max 10 MB</p>
+        </div>
+
+        <!-- Picked file row -->
+        <div *ngIf="rsFile"
+          class="flex items-center gap-3 rounded-lg border border-[#e5e5e5] bg-[#fafafa] px-4 py-3">
+          <span class="material-icons text-[20px] text-[#c8a96a]">insert_drive_file</span>
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-medium text-[#333]">{{ rsFile.name }}</p>
+            <p class="text-xs text-[#aaa]">{{ (rsFile.size / 1024 / 1024).toFixed(2) }} MB</p>
+            <p *ngIf="rsTypeError()" class="text-xs text-red-500">{{ rsTypeError() }}</p>
+          </div>
+          <button type="button" (click)="rsFile = null"
+            class="rounded p-1 text-[#ccc] hover:bg-red-50 hover:text-red-400">
+            <span class="material-icons text-[18px]">close</span>
+          </button>
+        </div>
+      </div>
+
     </div>
+  </ng-container>
 
-  </div>
-
-  <!-- Footer -->
-  <div class="flex items-center justify-between border-t border-[#e2e8f0] px-5 py-3">
+  <!-- ── FOOTER — viewer mode ── -->
+  <div *ngIf="!showResubmit"
+    class="flex items-center justify-between border-t border-[#e2e8f0] px-5 py-3">
     <button *ngIf="!loading && !error && renderMode !== 'other'" type="button"
       (click)="download()"
       class="inline-flex items-center gap-1.5 rounded-lg border border-[#e5e5e5] px-4 py-1.5 text-xs text-[#666] hover:bg-[#f5f5f5]">
@@ -103,10 +181,33 @@
       Download
     </button>
     <span *ngIf="loading || error || renderMode === 'other'" class="flex-1"></span>
-    <button type="button"
-      class="rounded-lg border border-[#e5e5e5] px-4 py-1.5 text-sm text-[#666] hover:bg-[#f5f5f5]"
-      (click)="onClose()">
-      Close
+    <div class="flex items-center gap-2">
+      <button *ngIf="data.resubmit" type="button" (click)="showResubmit = true"
+        class="inline-flex items-center gap-1.5 rounded-lg border border-[#c8a96a] px-4 py-1.5 text-xs font-semibold text-[#8c6b2f] hover:bg-[#f3eadb]">
+        <span class="material-icons text-[15px]">upload_file</span>
+        Replace this Document
+      </button>
+      <button type="button"
+        class="rounded-lg border border-[#e5e5e5] px-4 py-1.5 text-sm text-[#666] hover:bg-[#f5f5f5]"
+        (click)="onClose()">
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- ── FOOTER — resubmit mode ── -->
+  <div *ngIf="showResubmit && data.resubmit"
+    class="flex items-center justify-between border-t border-[#e2e8f0] px-5 py-3">
+    <button type="button" (click)="showResubmit = false; rsFile = null"
+      class="inline-flex items-center gap-1.5 rounded-lg border border-[#e5e5e5] px-4 py-1.5 text-sm text-[#666] hover:bg-[#f5f5f5]">
+      <span class="material-icons text-[15px]">arrow_back</span>
+      Back to View
+    </button>
+    <button type="button" (click)="submitResubmit()"
+      [disabled]="rsUploading || !rsFile || !!rsTypeError()"
+      class="inline-flex items-center gap-2 rounded-lg bg-[#c8a96a] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#a8893a] disabled:opacity-50">
+      <span class="material-icons text-[18px]">{{ rsUploading ? 'hourglass_empty' : 'upload_file' }}</span>
+      {{ rsUploading ? 'Uploading&hellip;' : 'Resubmit' }}
     </button>
   </div>
 

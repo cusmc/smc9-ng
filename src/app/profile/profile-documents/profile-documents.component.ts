@@ -5,7 +5,6 @@ import { Dialog } from '@angular/cdk/dialog';
 import { ProfileDocumentsService, MyDocuRecord, SubcodeItem } from './profile-documents.service';
 import { ToastService } from '../../core/toast/toast.service';
 import { FileViewerDialogComponent } from '../../shared/file-viewer-dialog/file-viewer-dialog.component';
-import { ResubmitDocuDialogComponent } from './resubmit-docu-dialog.component';
 
 export interface PendingFile {
   file: File;
@@ -152,19 +151,24 @@ export class ProfileDocumentsComponent implements OnInit {
 
   // ── Document list ───────────────────────────────────────────
   viewFile(doc: MyDocuRecord): void {
-    this.dialog.open(FileViewerDialogComponent, {
+    const dt = this.docTypes.find(t => t.SubCode_id === doc.subcode_id);
+    const ref = this.dialog.open(FileViewerDialogComponent, {
       width: '95vw',
       height: '95vh',
-      data: { documastId: doc.documast_id, filename: doc.filename, title: doc.DocType },
+      data: {
+        documastId: doc.documast_id,
+        filename: doc.filename,
+        title: doc.DocType,
+        resubmit: this.canResubmit(doc.auth_status) ? {
+          parentDocuId: doc.documast_id,
+          subcodeId: doc.subcode_id,
+          allowedExtensions: dt ? dt.String2 : null,
+          defaultDescription: doc.description || '',
+          defaultPageNo: (doc.page_no !== null && doc.page_no !== undefined) ? doc.page_no : null,
+        } : undefined,
+      },
     });
-  }
-
-  resubmit(doc: MyDocuRecord): void {
-    const ref = this.dialog.open(ResubmitDocuDialogComponent, {
-      width: '480px',
-      data: { doc, docTypes: this.docTypes },
-    });
-    ref.closed.subscribe(result => { if (result) { this.loadDocuments(); } });
+    ref.closed.subscribe(result => { if (result === 'resubmitted') { this.loadDocuments(); } });
   }
 
   statusLabel(status: string | null): string {
