@@ -237,9 +237,11 @@
                 </span>
               </td>
 
-              <td class="max-w-[180px] truncate px-4 py-3 text-xs text-red-500"
-                [title]="doc.auth_status === 'R' ? (doc.rej_reason || '') : ''">
-                {{ doc.auth_status === 'R' ? doc.rej_reason : '' }}
+              <td class="max-w-[180px] truncate px-4 py-3 text-xs"
+                [class.text-red-500]="doc.auth_status === 'R'"
+                [class.text-teal-600]="doc.auth_status === 'S'"
+                [title]="(doc.auth_status === 'R' || doc.auth_status === 'S') ? (doc.rej_reason || '') : ''">
+                {{ (doc.auth_status === 'R' || doc.auth_status === 'S') ? doc.rej_reason : '' }}
               </td>
 
               <td class="px-4 py-3">

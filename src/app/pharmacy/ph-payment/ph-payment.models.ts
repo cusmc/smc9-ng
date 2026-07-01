@@ -9,6 +9,8 @@ export interface AcTranRow {
   vou_no: string | null;
   Vtype: string | null;
   Vou_nm: string | null;
+  mobile: string | null;
+  email: string | null;
   selected?: boolean;
 }
 

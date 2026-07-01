@@ -15,6 +15,8 @@ export interface ChqSummaryRow {
   rtgs: boolean | null;
   utr_no: string | null;
   utr_dt: string | null;
+  mobile: string | null;
+  email: string | null;
   selected?: boolean;
 }
 

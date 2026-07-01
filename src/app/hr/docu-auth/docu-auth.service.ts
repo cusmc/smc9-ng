@@ -38,8 +38,9 @@ const NOTIF_BASE = '/api/Common/notificationssAPI';
 export class DocuAuthService {
   constructor(private api: ApiService) {}
 
-  getAllDocuments(): Observable<DocuRecord[]> {
-    return this.api.get<DocuRecord[]>(`${BASE}/GetAllDocuAuth`);
+  getAllDocuments(empId?: number): Observable<DocuRecord[]> {
+    const params = empId ? { empId } : {};
+    return this.api.get<DocuRecord[]>(`${BASE}/GetAllDocuAuth`, params);
   }
 
   authorizeDocument(req: DocuAuthRequest): Observable<any> {

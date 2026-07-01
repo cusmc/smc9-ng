@@ -26,13 +26,29 @@
       <!-- Employee filter + Tab bar -->
       <div class="border-b border-[#e2e8f0] bg-[#fafbff]">
 
-        <!-- Employee search -->
-        <div class="px-5 pt-3 pb-2">
-          <div class="relative w-64">
-            <span class="material-icons absolute left-2.5 top-1/2 -translate-y-1/2 text-[18px] text-[#aaa]">search</span>
-            <input type="text" [(ngModel)]="empFilter" placeholder="Filter by employee name or ID…"
-              class="w-full rounded-lg border border-[#e2e8f0] bg-white py-1.5 pl-8 pr-3 text-sm focus:border-[#2d8a7e] focus:outline-none" />
+        <!-- Employee selector + View button -->
+        <div class="flex flex-wrap items-center gap-3 px-5 pt-3 pb-2">
+          <div class="flex items-center gap-2">
+            <span class="material-icons text-[18px] text-[#aaa]">person_search</span>
+            <div style="width:260px;">
+              <app-autocomplete
+                [items]="empItems"
+                placeholder="All Employees (type to filter)…"
+                [(ngModel)]="selectedEmpId">
+              </app-autocomplete>
+            </div>
           </div>
+          <button type="button" (click)="onView()" [disabled]="loading"
+            class="inline-flex items-center gap-1.5 rounded-lg bg-[#2d8a7e] px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#256f65] disabled:opacity-50">
+            <span class="material-icons text-[16px]">{{ loading ? 'hourglass_empty' : 'search' }}</span>
+            View
+          </button>
+          <span *ngIf="selectedEmpId" class="text-xs text-[#888]">
+            Showing documents for selected employee only.
+          </span>
+          <span *ngIf="!selectedEmpId" class="text-xs text-[#aaa]">
+            Showing all employees — select one to filter.
+          </span>
         </div>
 
         <!-- Tabs -->

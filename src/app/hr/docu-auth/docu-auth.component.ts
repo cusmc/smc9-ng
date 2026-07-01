@@ -5,6 +5,7 @@ import { Dialog } from '@angular/cdk/dialog';
 import { DocuAuthService, DocuRecord } from './docu-auth.service';
 import { ToastService } from '../../core/toast/toast.service';
 import { FileViewerDialogComponent } from '../../shared/file-viewer-dialog/file-viewer-dialog.component';
+import { AutocompleteComponent, AcItem } from '../../shared/autocomplete/autocomplete.component';
 
 type TabId = 'P' | 'A' | 'R' | 'S' | 'ALL';
 
@@ -18,7 +19,7 @@ interface Tab {
 @Component({
   selector: 'app-docu-auth',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AutocompleteComponent],
   templateUrl: './docu-auth.component.html',
 })
 export class DocuAuthComponent implements OnInit {
@@ -27,20 +28,23 @@ export class DocuAuthComponent implements OnInit {
   processing: Record<number, boolean> = {};
 
   activeTab: TabId = 'P';
-  empFilter = '';
 
+  // Employee autocomplete
+  empItems: AcItem[] = [];
+  selectedEmpId: number | null = null;
+
+  // Inline forms
   rejectingId: number | null = null;
   rejReason = '';
-
   resubmitId: number | null = null;
   resubmitReason = '';
 
   readonly tabs: Tab[] = [
-    { id: 'P',   label: 'Pending',           badgeClass: 'bg-amber-100 text-amber-700',  activeClass: 'border-amber-500 text-amber-700' },
-    { id: 'A',   label: 'Approved',          badgeClass: 'bg-green-100 text-green-700',  activeClass: 'border-green-600 text-green-700' },
-    { id: 'R',   label: 'Rejected',          badgeClass: 'bg-red-100 text-red-700',      activeClass: 'border-red-500 text-red-700' },
-    { id: 'S',   label: 'Resubmit Requested', badgeClass: 'bg-teal-100 text-teal-700',  activeClass: 'border-teal-500 text-teal-700' },
-    { id: 'ALL', label: 'All',               badgeClass: 'bg-slate-100 text-slate-600', activeClass: 'border-slate-500 text-slate-600' },
+    { id: 'P',   label: 'Pending',            badgeClass: 'bg-amber-100 text-amber-700', activeClass: 'border-amber-500 text-amber-700' },
+    { id: 'A',   label: 'Approved',           badgeClass: 'bg-green-100 text-green-700', activeClass: 'border-green-600 text-green-700' },
+    { id: 'R',   label: 'Rejected',           badgeClass: 'bg-red-100 text-red-700',     activeClass: 'border-red-500 text-red-700' },
+    { id: 'S',   label: 'Resubmit Requested', badgeClass: 'bg-teal-100 text-teal-700',   activeClass: 'border-teal-500 text-teal-700' },
+    { id: 'ALL', label: 'All',                badgeClass: 'bg-slate-100 text-slate-600', activeClass: 'border-slate-500 text-slate-600' },
   ];
 
   constructor(
@@ -57,10 +61,19 @@ export class DocuAuthComponent implements OnInit {
     this.loading = true;
     this.rejectingId = null;
     this.resubmitId = null;
-    this.service.getAllDocuments().subscribe({
+    const empId = this.selectedEmpId ?? undefined;
+    this.service.getAllDocuments(empId).subscribe({
       next: (data) => {
         this.allRecords = data;
         this.loading = false;
+        // Populate employee picker from the unfiltered load so users can switch employees
+        if (!empId) {
+          const seen = new Set<number>();
+          this.empItems = data
+            .filter(r => r.empid && r.empnm && !seen.has(r.empid) && !!seen.add(r.empid))
+            .map(r => ({ id: r.empid, nm: r.empnm }))
+            .sort((a, b) => a.nm.localeCompare(b.nm));
+        }
       },
       error: () => {
         this.toast.show('Failed to load documents', { variant: 'error' });
@@ -69,13 +82,13 @@ export class DocuAuthComponent implements OnInit {
     });
   }
 
+  onView(): void {
+    this.loadAll();
+  }
+
   get filteredRecords(): DocuRecord[] {
-    const q = this.empFilter.trim().toLowerCase();
-    return this.allRecords.filter(r => {
-      const statusMatch = this.activeTab === 'ALL' || r.auth_status === this.activeTab;
-      const empMatch = !q || r.empnm?.toLowerCase().includes(q) || String(r.empid).includes(q);
-      return statusMatch && empMatch;
-    });
+    if (this.activeTab === 'ALL') return this.allRecords;
+    return this.allRecords.filter(r => r.auth_status === this.activeTab);
   }
 
   tabCount(id: TabId): number {

@@ -50,12 +50,28 @@ export class FileViewerDialogComponent implements OnInit, OnDestroy {
   rsPageNo: number | null = null;
   rsUploading = false;
 
-  get imageTransform(): string {
-    return `scale(${this.zoomLevel}) rotate(${this.rotation}deg)`;
-  }
-
   get zoomPercent(): number {
     return Math.round(this.zoomLevel * 100);
+  }
+
+  get fileTypeLabel(): string {
+    const ext = this.fileExt();
+    const labels: Record<string, string> = {
+      doc: 'Word Document', docx: 'Word Document',
+      xls: 'Excel Spreadsheet', xlsx: 'Excel Spreadsheet', csv: 'CSV File',
+      ppt: 'PowerPoint Presentation', pptx: 'PowerPoint Presentation',
+      txt: 'Text File', mp4: 'Video File',
+    };
+    return labels[ext] ?? 'This file';
+  }
+
+  get fileTypeIcon(): string {
+    const ext = this.fileExt();
+    if (['doc', 'docx'].includes(ext)) return 'description';
+    if (['xls', 'xlsx', 'csv'].includes(ext)) return 'table_chart';
+    if (['ppt', 'pptx'].includes(ext)) return 'slideshow';
+    if (ext === 'mp4') return 'videocam';
+    return 'insert_drive_file';
   }
 
   zoomIn(): void    { this.zoomLevel = Math.min(this.zoomLevel + 0.25, 4); }
@@ -83,19 +99,40 @@ export class FileViewerDialogComponent implements OnInit, OnDestroy {
     this.api.getBlob('/api/HR/EmpmastsAPI/ViewDocuFile', { id: this.data.documastId }).subscribe({
       next: (blob) => {
         this.objectUrl = URL.createObjectURL(blob);
-        // Positively confirm image or PDF from Content-Type; for everything else keep
-        // the filename-based guess so an unexpected server MIME (e.g. text/html from an
-        // IIS error page) doesn't silently override a correct filename-derived mode.
         const mime = (blob.type || '').toLowerCase();
         if (mime.startsWith('image/')) {
           this.renderMode = 'image';
+          this.loading = false;
         } else if (mime === 'application/pdf') {
           this.renderMode = 'pdf';
-        }
-        if (this.renderMode === 'pdf') {
           this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.objectUrl);
+          this.loading = false;
+        } else {
+          // MIME unknown (octet-stream, IIS error HTML, etc.) — inspect magic bytes
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const arr = new Uint8Array(e.target!.result as ArrayBuffer);
+            if (arr[0] === 0xFF && arr[1] === 0xD8 && arr[2] === 0xFF) {
+              this.renderMode = 'image'; // JPEG
+            } else if (arr[0] === 0x89 && arr[1] === 0x50 && arr[2] === 0x4E && arr[3] === 0x47) {
+              this.renderMode = 'image'; // PNG
+            } else if (arr[0] === 0x47 && arr[1] === 0x49 && arr[2] === 0x46) {
+              this.renderMode = 'image'; // GIF
+            } else if (arr[0] === 0x42 && arr[1] === 0x4D) {
+              this.renderMode = 'image'; // BMP
+            } else if (arr[0] === 0x52 && arr[1] === 0x49 && arr[2] === 0x46 && arr[3] === 0x46 &&
+                       arr[8] === 0x57 && arr[9] === 0x45 && arr[10] === 0x42 && arr[11] === 0x50) {
+              this.renderMode = 'image'; // WEBP
+            } else if (arr[0] === 0x25 && arr[1] === 0x50 && arr[2] === 0x44 && arr[3] === 0x46) {
+              this.renderMode = 'pdf'; // %PDF
+              this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.objectUrl!);
+            }
+            // else: filename-based renderMode (set at top of ngOnInit) stays
+            this.loading = false;
+          };
+          reader.onerror = () => { this.loading = false; };
+          reader.readAsArrayBuffer(blob.slice(0, 12));
         }
-        this.loading = false;
       },
       error: () => {
         this.error = 'Failed to load file. Please try again.';
@@ -186,11 +223,15 @@ export class FileViewerDialogComponent implements OnInit, OnDestroy {
     });
   }
 
+  private fileExt(): string {
+    const basename = (this.data.filename || '').split(/[/\\]/).pop() || '';
+    return (basename.split('.').pop() || '').toLowerCase();
+  }
+
   private detectRenderMode(filename: string): RenderMode {
-    // Strip path separators first — legacy DB rows store e.g. "202718\X3.JPG"
     const basename = (filename || '').split(/[/\\]/).pop() || '';
     const ext = (basename.split('.').pop() || '').toLowerCase();
-    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].indexOf(ext) !== -1) { return 'image'; }
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext)) { return 'image'; }
     if (ext === 'pdf') { return 'pdf'; }
     return 'other';
   }

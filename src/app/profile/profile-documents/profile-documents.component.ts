@@ -176,6 +176,7 @@ export class ProfileDocumentsComponent implements OnInit {
       case 'A': return 'Approved';
       case 'P': return 'Pending';
       case 'R': return 'Rejected';
+      case 'S': return 'Resubmit Required';
       case 'I': return 'Superseded';
       default:  return 'Active';
     }
@@ -186,6 +187,7 @@ export class ProfileDocumentsComponent implements OnInit {
       case 'A': return 'bg-green-100 text-green-700';
       case 'P': return 'bg-amber-100 text-amber-700';
       case 'R': return 'bg-red-100 text-red-600';
+      case 'S': return 'bg-teal-100 text-teal-700';
       case 'I': return 'bg-gray-100 text-gray-400';
       default:  return 'bg-green-100 text-green-700';
     }
@@ -196,6 +198,7 @@ export class ProfileDocumentsComponent implements OnInit {
       case 'A': return 'check_circle';
       case 'P': return 'schedule';
       case 'R': return 'cancel';
+      case 'S': return 'replay';
       case 'I': return 'history';
       default:  return 'verified';
     }
@@ -206,7 +209,7 @@ export class ProfileDocumentsComponent implements OnInit {
   }
 
   canResubmit(status: string | null): boolean {
-    return status === 'A' || status === 'R';
+    return status === 'A' || status === 'R' || status === 'S';
   }
 
   fileIcon(filename: string): string {
