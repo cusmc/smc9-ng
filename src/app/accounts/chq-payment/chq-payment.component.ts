@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChqPaymentService } from './chq-payment.service';
-import { LotListItem, ChqSummaryRow, ChqDetailRow, NotifyResult } from './chq-payment.models';
+import { LotListItem, ChqSummaryRow, ChqDetailRow, NotifyResult, UpdateUtrRequest } from './chq-payment.models';
 import { ToastService } from '../../core/toast/toast.service';
 
 @Component({
@@ -22,7 +22,12 @@ export class ChqPaymentComponent implements OnInit {
 
   loading = false;
   sending = false;
+  updating = false;
   lotsLoading = false;
+
+  showUtrDialog = false;
+  utrNo = '';
+  utrDt: string | null = null;
 
   currentPage = 1;
   readonly itemsPerPage = 15;
@@ -85,6 +90,10 @@ export class ChqPaymentComponent implements OnInit {
     return this.summaryRows.filter(r => r.selected).map(r => r.party_id);
   }
 
+  get selectedPaymIds(): number[] {
+    return this.summaryRows.filter(r => r.selected && r.paym_id != null).map(r => r.paym_id!);
+  }
+
   get pagedData(): ChqSummaryRow[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.summaryRows.slice(start, start + this.itemsPerPage);
@@ -143,5 +152,39 @@ export class ChqPaymentComponent implements OnInit {
 
   payThrough(row: ChqSummaryRow): string {
     return row.rtgs ? 'RTGS' : 'Cheque';
+  }
+
+  openUtrDialog(): void {
+    this.utrNo = '';
+    this.utrDt = null;
+    this.showUtrDialog = true;
+  }
+
+  closeUtrDialog(): void { this.showUtrDialog = false; }
+
+  saveUtr(): void {
+    if (!this.utrNo.trim() || !this.utrDt) {
+      this.toast.show('Enter both UTR No. and Date.', { variant: 'error', duration: 3000 });
+      return;
+    }
+    const ids   = this.selectedPaymIds;
+    const utrNo = this.utrNo.trim();
+    const utrDt = this.utrDt;
+    this.updating = true;
+    this.service.updateUtr({ paym_ids: ids, utr_no: utrNo, utr_dt: utrDt })
+      .subscribe({
+        next: () => {
+          this.updating = false;
+          this.showUtrDialog = false;
+          this.summaryRows
+            .filter(r => r.paym_id != null && ids.includes(r.paym_id))
+            .forEach(r => { r.utr_no = utrNo; r.utr_dt = utrDt; });
+          this.toast.show('UTR updated successfully.', { variant: 'success', duration: 3000 });
+        },
+        error: () => {
+          this.updating = false;
+          this.toast.show('Failed to update UTR.', { variant: 'error', duration: 5000 });
+        }
+      });
   }
 }

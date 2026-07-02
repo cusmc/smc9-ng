@@ -17,6 +17,7 @@ export interface ChqSummaryRow {
   utr_dt: string | null;
   mobile: string | null;
   email: string | null;
+  paym_id: number | null;
   selected?: boolean;
 }
 
@@ -28,6 +29,12 @@ export interface ChqDetailRow {
   paid_amt: number | null;
   due_amt: number | null;
   remark: string | null;
+}
+
+export interface UpdateUtrRequest {
+  paym_ids: number[];
+  utr_no: string;
+  utr_dt: string | null;
 }
 
 export interface SendNotificationRequest {

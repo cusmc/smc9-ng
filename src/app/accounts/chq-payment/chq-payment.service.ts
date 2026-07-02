@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { ApiService } from '../../shared/api.service';
 import {
   LotListItem, ChqSummaryRow, ChqDetailRow,
-  SendNotificationRequest, NotifyResult
+  SendNotificationRequest, NotifyResult, UpdateUtrRequest
 } from './chq-payment.models';
 
 const BASE = '/api/Acc/ChqPrnAPI';
@@ -26,5 +26,9 @@ export class ChqPaymentService {
 
   sendNotification(req: SendNotificationRequest): Observable<NotifyResult[]> {
     return this.api.post<NotifyResult[]>(`${BASE}/SendNotification`, req);
+  }
+
+  updateUtr(req: UpdateUtrRequest): Observable<void> {
+    return this.api.post<void>(`${BASE}/UpdateUtr`, req);
   }
 }
