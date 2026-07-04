@@ -21,6 +21,11 @@ export interface SubcodeItem {
   SubCode_id: number;
   vals: string;
   String2: string | null;
+  DocuAllowSubcode_id: number | null;
+  MultiPageAllowed: boolean;
+  ConvertPdfToJpg: boolean;
+  HrOnly: boolean;
+  AllowedExt: string | null;
 }
 
 const BASE = '/api/HR/EmpmastsAPI';

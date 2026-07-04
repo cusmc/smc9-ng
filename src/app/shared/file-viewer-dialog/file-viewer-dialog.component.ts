@@ -10,6 +10,7 @@ export interface ResubmitContext {
   parentDocuId: number;
   subcodeId: number;
   allowedExtensions: string | null;
+  multiPageAllowed: boolean;
   defaultDescription: string;
   defaultPageNo: number | null;
 }

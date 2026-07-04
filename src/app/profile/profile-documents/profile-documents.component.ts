@@ -41,7 +41,7 @@ export class ProfileDocumentsComponent implements OnInit {
   ngOnInit(): void {
     this.loadDocuments();
     this.service.getDocumentTypes().subscribe({
-      next: (data) => (this.docTypes = data),
+      next: (data) => (this.docTypes = data.filter(t => !t.HrOnly)),
       error: () => this.toast.show('Failed to load document types', { variant: 'error' }),
     });
   }
@@ -91,14 +91,24 @@ export class ProfileDocumentsComponent implements OnInit {
   typeError(p: PendingFile): string | null {
     if (p.subcodeId === 0) { return null; }
     const dt = this.docTypes.find(t => t.SubCode_id === p.subcodeId);
-    if (!dt || !dt.String2) { return null; }
+    if (!dt || !dt.AllowedExt) { return null; }
     const basename = (p.file.name || '').split(/[/\\]/).pop() ?? '';
     const ext = (basename.split('.').pop() ?? '').toLowerCase();
-    const allowed = dt.String2.split(',').map(x => x.trim().toLowerCase());
+    const allowed = dt.AllowedExt.split(',').map(x => x.trim().toLowerCase());
     if (!allowed.includes(ext)) {
-      return 'Allowed: ' + dt.String2;
+      return 'Allowed: ' + dt.AllowedExt;
     }
     return null;
+  }
+
+  isMultiPageAllowed(p: PendingFile): boolean {
+    const dt = this.docTypes.find(t => t.SubCode_id === p.subcodeId);
+    return dt?.MultiPageAllowed ?? false;
+  }
+
+  showPdfConvertHint(p: PendingFile): boolean {
+    const dt = this.docTypes.find(t => t.SubCode_id === p.subcodeId);
+    return !!dt?.ConvertPdfToJpg && p.file.name.toLowerCase().endsWith('.pdf');
   }
 
   submitAll(): void {
@@ -162,7 +172,8 @@ export class ProfileDocumentsComponent implements OnInit {
         resubmit: this.canResubmit(doc.auth_status) ? {
           parentDocuId: doc.documast_id,
           subcodeId: doc.subcode_id,
-          allowedExtensions: dt ? dt.String2 : null,
+          allowedExtensions: dt ? dt.AllowedExt : null,
+          multiPageAllowed: dt?.MultiPageAllowed ?? false,
           defaultDescription: doc.description || '',
           defaultPageNo: (doc.page_no !== null && doc.page_no !== undefined) ? doc.page_no : null,
         } : undefined,
