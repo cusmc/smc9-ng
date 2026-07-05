@@ -71,39 +71,88 @@
         <span class="text-sm">Loading…</span>
       </div>
 
-      <!-- Empty state -->
-      <div *ngIf="!loading && filteredRecords.length === 0"
+      <!-- Empty state (no records at all) -->
+      <div *ngIf="!loading && allRecords.length === 0"
         class="flex flex-col items-center gap-3 py-16 text-center text-[#bbb]">
         <span class="material-icons text-5xl">task_alt</span>
         <p class="text-sm">No documents found.</p>
       </div>
 
       <!-- Table -->
-      <div *ngIf="!loading && filteredRecords.length > 0" class="overflow-x-auto">
+      <div *ngIf="!loading && allRecords.length > 0" class="overflow-x-auto">
         <table class="w-full border-collapse text-left text-sm">
           <thead>
             <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Emp ID</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Employee</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Document Type</th>
-              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Description</th>
-              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Uploaded By</th>
-              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Uploaded On</th>
+              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Source</th>
               <th *ngIf="activeTab === 'R' || activeTab === 'S' || activeTab === 'ALL'"
                 class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Reason</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">File</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Status / Action</th>
             </tr>
+            <!-- Column search row -->
+            <tr class="border-b border-[#e2e8f0] bg-[#f8faff]">
+              <td class="px-4 py-1.5">
+                <input type="text" [(ngModel)]="search.empid" placeholder="Search"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs focus:border-[#2d8a7e] focus:outline-none" />
+              </td>
+              <td class="px-4 py-1.5">
+                <input type="text" [(ngModel)]="search.empnm" placeholder="Search"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs focus:border-[#2d8a7e] focus:outline-none" />
+              </td>
+              <td class="px-4 py-1.5">
+                <input type="text" [(ngModel)]="search.docType" placeholder="Search"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs focus:border-[#2d8a7e] focus:outline-none" />
+              </td>
+              <td class="px-4 py-1.5">
+                <input type="text" [(ngModel)]="search.source" placeholder="Search"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs focus:border-[#2d8a7e] focus:outline-none" />
+              </td>
+              <td *ngIf="activeTab === 'R' || activeTab === 'S' || activeTab === 'ALL'" class="px-4 py-1.5">
+                <input type="text" [(ngModel)]="search.reason" placeholder="Search"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs focus:border-[#2d8a7e] focus:outline-none" />
+              </td>
+              <td class="px-4 py-1.5">
+                <input disabled placeholder="&mdash;"
+                  class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" />
+              </td>
+              <td class="px-4 py-1.5">
+                <input disabled placeholder="&mdash;"
+                  class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" />
+              </td>
+            </tr>
           </thead>
           <tbody>
+            <!-- Empty (filtered out) -->
+            <tr *ngIf="filteredRecords.length === 0">
+              <td [attr.colspan]="(activeTab === 'R' || activeTab === 'S' || activeTab === 'ALL') ? 7 : 6"
+                class="px-4 py-10 text-center text-sm text-[#bbb]">
+                No documents match your filter.
+              </td>
+            </tr>
+
             <tr *ngFor="let rec of filteredRecords"
               class="border-b border-[#f5f0e8] transition hover:bg-[#f8faff]">
               <td class="px-4 py-3 font-mono text-xs text-[#888]">{{ rec.empid }}</td>
               <td class="px-4 py-3 font-medium text-[#333]">{{ rec.empnm }}</td>
-              <td class="px-4 py-3 text-[#555]">{{ rec.DocType }}</td>
-              <td class="px-4 py-3 text-[#666]">{{ rec.description || '—' }}</td>
-              <td class="px-4 py-3 text-[#777] text-xs">{{ rec.create_by }}</td>
-              <td class="px-4 py-3 text-[#777] text-xs">{{ rec.create_dt | date:'dd MMM yyyy, HH:mm' }}</td>
+              <td class="px-4 py-3 text-[#555]">
+                <div>{{ rec.DocType }}</div>
+                <div class="text-xs font-normal text-[#999]">{{ rec.create_by }} &middot; {{ rec.create_dt | date:'dd MMM yyyy, HH:mm' }}</div>
+              </td>
+
+              <!-- Source -->
+              <td class="px-4 py-3">
+                <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium"
+                  [class.bg-blue-50]="rec.selfupload === 'Y'"
+                  [class.text-blue-600]="rec.selfupload === 'Y'"
+                  [class.bg-purple-50]="rec.selfupload !== 'Y'"
+                  [class.text-purple-600]="rec.selfupload !== 'Y'">
+                  <span class="material-icons text-[12px]">{{ rec.selfupload === 'Y' ? 'person' : 'badge' }}</span>
+                  {{ sourceLabel(rec) }}
+                </span>
+              </td>
 
               <!-- Reason column (Rejected / Resubmit / All) -->
               <td *ngIf="activeTab === 'R' || activeTab === 'S' || activeTab === 'ALL'"
@@ -111,21 +160,29 @@
                 {{ rec.rejreason || '—' }}
               </td>
 
-              <!-- File view -->
+              <!-- File view / delete -->
               <td class="px-4 py-3">
-                <button type="button" (click)="viewFile(rec)"
-                  class="inline-flex items-center gap-1 rounded-lg border border-[#c8a96a] px-3 py-1 text-xs font-medium text-[#4680ff] transition hover:bg-[#e8eeff]">
-                  <span class="material-icons text-[14px]">visibility</span>
-                  View
-                </button>
+                <div class="flex flex-wrap gap-1.5">
+                  <button type="button" (click)="viewFile(rec)" title="View"
+                    class="inline-flex items-center justify-center rounded-lg border border-[#c8a96a] p-1.5 text-[#4680ff] transition hover:bg-[#e8eeff]">
+                    <span class="material-icons text-[16px]">visibility</span>
+                  </button>
+                  <button type="button" (click)="deleteRecord(rec)" [disabled]="processing[rec.documast_id]" title="Delete"
+                    class="inline-flex items-center justify-center rounded-lg border border-red-300 p-1.5 text-red-600 transition hover:bg-red-50 disabled:opacity-50">
+                    <span class="material-icons text-[16px]">delete</span>
+                  </button>
+                </div>
               </td>
 
               <!-- Status / Action column -->
               <td class="px-4 py-3 min-w-[240px]">
 
-                <!-- STATUS BADGE for non-pending tabs (unless ALL tab shows pending row) -->
-                <ng-container *ngIf="rec.auth_status !== 'P'">
-                  <ng-container *ngIf="resubmitId !== rec.documast_id && rejectingId !== rec.documast_id">
+                <!-- Normal row: status badge + whatever actions apply -->
+                <div *ngIf="rejectingId !== rec.documast_id && resubmitId !== rec.documast_id"
+                  class="flex flex-wrap items-center gap-2">
+
+                  <!-- STATUS BADGE (hidden for the pending-approvable case, where Approve/Reject serve as the status) -->
+                  <ng-container *ngIf="!canAuthorize(rec)">
                     <span *ngIf="rec.auth_status === 'A'"
                       class="inline-flex items-center gap-1 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-700">
                       <span class="material-icons text-[12px]">check_circle</span> Approved
@@ -142,69 +199,65 @@
                       class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-500">
                       <span class="material-icons text-[12px]">archive</span> Inactive
                     </span>
+                    <span *ngIf="rec.auth_status !== 'A' && rec.auth_status !== 'R' && rec.auth_status !== 'S' && rec.auth_status !== 'I'"
+                      class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-500">
+                      <span class="material-icons text-[12px]">folder</span> On file
+                    </span>
                   </ng-container>
-                </ng-container>
 
-                <!-- ACTION BUTTONS for Pending rows -->
-                <ng-container *ngIf="rec.auth_status === 'P'">
+                  <!-- Approve / Reject for Pending self-uploaded rows -->
+                  <ng-container *ngIf="canAuthorize(rec)">
+                    <button type="button" (click)="approve(rec)" [disabled]="processing[rec.documast_id]" title="Approve"
+                      class="inline-flex items-center justify-center rounded-lg bg-green-600 p-1.5 text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50">
+                      <span class="material-icons text-[16px]">check_circle</span>
+                    </button>
+                    <button type="button" (click)="startReject(rec.documast_id)" [disabled]="processing[rec.documast_id]" title="Reject"
+                      class="inline-flex items-center justify-center rounded-lg border border-red-300 p-1.5 text-red-600 transition hover:bg-red-50 disabled:opacity-50">
+                      <span class="material-icons text-[16px]">cancel</span>
+                    </button>
+                  </ng-container>
 
-                  <!-- Normal action buttons -->
-                  <div *ngIf="rejectingId !== rec.documast_id && resubmitId !== rec.documast_id"
-                    class="flex flex-wrap items-center gap-2">
-                    <button type="button" (click)="approve(rec)" [disabled]="processing[rec.documast_id]"
-                      class="inline-flex items-center gap-1 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50">
-                      <span class="material-icons text-[14px]">check_circle</span>
-                      Approve
+                  <!-- Resubmit request — available for Pending / Approved / Rejected self-uploaded docs -->
+                  <button *ngIf="canResubmitRequest(rec)" type="button" (click)="startResubmit(rec.documast_id)"
+                    [disabled]="processing[rec.documast_id]" title="Request Resubmit"
+                    class="inline-flex items-center justify-center rounded-lg border border-teal-300 p-1.5 text-teal-700 transition hover:bg-teal-50 disabled:opacity-50">
+                    <span class="material-icons text-[16px]">replay</span>
+                  </button>
+                </div>
+
+                <!-- Inline rejection reason -->
+                <div *ngIf="rejectingId === rec.documast_id"
+                  class="flex flex-col gap-2 rounded-lg border border-red-200 bg-red-50 p-2">
+                  <input type="text" [(ngModel)]="rejReason" placeholder="Enter rejection reason…"
+                    class="rounded border border-red-200 px-2 py-1.5 text-xs focus:border-red-400 focus:outline-none w-full" />
+                  <div class="flex gap-2">
+                    <button type="button" (click)="confirmReject(rec)" [disabled]="processing[rec.documast_id]" title="Confirm"
+                      class="inline-flex items-center justify-center rounded bg-red-600 p-1.5 text-white hover:bg-red-700 disabled:opacity-50">
+                      <span class="material-icons text-[14px]">send</span>
                     </button>
-                    <button type="button" (click)="startReject(rec.documast_id)" [disabled]="processing[rec.documast_id]"
-                      class="inline-flex items-center gap-1 rounded-lg border border-red-300 px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50">
-                      <span class="material-icons text-[14px]">cancel</span>
-                      Reject
-                    </button>
-                    <button type="button" (click)="startResubmit(rec.documast_id)" [disabled]="processing[rec.documast_id]"
-                      class="inline-flex items-center gap-1 rounded-lg border border-teal-300 px-3 py-1.5 text-xs font-semibold text-teal-700 transition hover:bg-teal-50 disabled:opacity-50">
-                      <span class="material-icons text-[14px]">replay</span>
-                      Resubmit
+                    <button type="button" (click)="cancelReject()"
+                      class="rounded border border-[#ccc] px-3 py-1 text-xs text-[#666] hover:bg-[#f0f2f5]">
+                      Cancel
                     </button>
                   </div>
+                </div>
 
-                  <!-- Inline rejection reason -->
-                  <div *ngIf="rejectingId === rec.documast_id"
-                    class="flex flex-col gap-2 rounded-lg border border-red-200 bg-red-50 p-2">
-                    <input type="text" [(ngModel)]="rejReason" placeholder="Enter rejection reason…"
-                      class="rounded border border-red-200 px-2 py-1.5 text-xs focus:border-red-400 focus:outline-none w-full" />
-                    <div class="flex gap-2">
-                      <button type="button" (click)="confirmReject(rec)" [disabled]="processing[rec.documast_id]"
-                        class="inline-flex items-center gap-1 rounded bg-red-600 px-3 py-1 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50">
-                        <span class="material-icons text-[12px]">send</span>
-                        Confirm
-                      </button>
-                      <button type="button" (click)="cancelReject()"
-                        class="rounded border border-[#ccc] px-3 py-1 text-xs text-[#666] hover:bg-[#f0f2f5]">
-                        Cancel
-                      </button>
-                    </div>
+                <!-- Inline resubmit reason -->
+                <div *ngIf="resubmitId === rec.documast_id"
+                  class="flex flex-col gap-2 rounded-lg border border-teal-200 bg-teal-50 p-2">
+                  <input type="text" [(ngModel)]="resubmitReason" placeholder="Reason for resubmission…"
+                    class="rounded border border-teal-200 px-2 py-1.5 text-xs focus:border-teal-400 focus:outline-none w-full" />
+                  <div class="flex gap-2">
+                    <button type="button" (click)="confirmResubmit(rec)" [disabled]="processing[rec.documast_id]" title="Confirm"
+                      class="inline-flex items-center justify-center rounded bg-teal-600 p-1.5 text-white hover:bg-teal-700 disabled:opacity-50">
+                      <span class="material-icons text-[14px]">send</span>
+                    </button>
+                    <button type="button" (click)="cancelResubmit()"
+                      class="rounded border border-[#ccc] px-3 py-1 text-xs text-[#666] hover:bg-[#f0f2f5]">
+                      Cancel
+                    </button>
                   </div>
-
-                  <!-- Inline resubmit reason -->
-                  <div *ngIf="resubmitId === rec.documast_id"
-                    class="flex flex-col gap-2 rounded-lg border border-teal-200 bg-teal-50 p-2">
-                    <input type="text" [(ngModel)]="resubmitReason" placeholder="Reason for resubmission…"
-                      class="rounded border border-teal-200 px-2 py-1.5 text-xs focus:border-teal-400 focus:outline-none w-full" />
-                    <div class="flex gap-2">
-                      <button type="button" (click)="confirmResubmit(rec)" [disabled]="processing[rec.documast_id]"
-                        class="inline-flex items-center gap-1 rounded bg-teal-600 px-3 py-1 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50">
-                        <span class="material-icons text-[12px]">send</span>
-                        Confirm
-                      </button>
-                      <button type="button" (click)="cancelResubmit()"
-                        class="rounded border border-[#ccc] px-3 py-1 text-xs text-[#666] hover:bg-[#f0f2f5]">
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-
-                </ng-container>
+                </div>
 
               </td>
             </tr>

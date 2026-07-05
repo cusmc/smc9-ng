@@ -11,6 +11,8 @@ export interface ResubmitContext {
   subcodeId: number;
   allowedExtensions: string | null;
   multiPageAllowed: boolean;
+  minFileSizeKb: number | null;
+  maxFileSizeKb: number | null;
   defaultDescription: string;
   defaultPageNo: number | null;
 }
@@ -20,6 +22,7 @@ export interface FileViewerData {
   filename: string;
   title?: string;
   resubmit?: ResubmitContext;
+  openResubmit?: boolean;
 }
 
 type RenderMode = 'image' | 'pdf' | 'other';
@@ -95,6 +98,9 @@ export class FileViewerDialogComponent implements OnInit, OnDestroy {
     if (this.data.resubmit) {
       this.rsDescription = this.data.resubmit.defaultDescription;
       this.rsPageNo = this.data.resubmit.defaultPageNo;
+      if (this.data.openResubmit) {
+        this.showResubmit = true;
+      }
     }
 
     this.api.getBlob('/api/HR/EmpmastsAPI/ViewDocuFile', { id: this.data.documastId }).subscribe({
@@ -170,6 +176,40 @@ export class FileViewerDialogComponent implements OnInit, OnDestroy {
     return null;
   }
 
+  rsSizeError(): string | null {
+    if (!this.rsFile || !this.data.resubmit) { return null; }
+    const minKb = this.data.resubmit.minFileSizeKb;
+    const maxKb = this.data.resubmit.maxFileSizeKb;
+    if (!minKb && !maxKb) { return null; }
+    const sizeKb = this.rsFile.size / 1024;
+    if (minKb && sizeKb < minKb) {
+      return `File must be at least ${minKb} KB for this document type`;
+    }
+    if (maxKb && sizeKb > maxKb) {
+      const maxLabel = maxKb >= 1024 ? `${(maxKb / 1024).toFixed(1)} MB` : `${maxKb} KB`;
+      return `File must not exceed ${maxLabel} for this document type`;
+    }
+    return null;
+  }
+
+  get resubmitGuidelines(): string | null {
+    const r = this.data.resubmit;
+    if (!r) { return null; }
+    const parts: string[] = [];
+    if (r.allowedExtensions) {
+      parts.push(`Allowed: ${r.allowedExtensions}`);
+    }
+    if (r.minFileSizeKb || r.maxFileSizeKb) {
+      const minLabel = r.minFileSizeKb ? `${r.minFileSizeKb} KB` : '0 KB';
+      const maxLabel = r.maxFileSizeKb
+        ? (r.maxFileSizeKb >= 1024 ? `${(r.maxFileSizeKb / 1024).toFixed(1)} MB` : `${r.maxFileSizeKb} KB`)
+        : null;
+      parts.push(maxLabel ? `Size: ${minLabel} – ${maxLabel}` : `Size: min ${minLabel}`);
+    }
+    parts.push(r.multiPageAllowed ? 'Multiple pages allowed' : 'Single page only');
+    return parts.join(' • ');
+  }
+
   rsSetFile(file: File): void {
     if (file.size > 10 * 1024 * 1024) {
       this.toast.show('File exceeds 10 MB limit', { variant: 'warning' });
@@ -201,6 +241,11 @@ export class FileViewerDialogComponent implements OnInit, OnDestroy {
     if (!this.rsFile || !this.data.resubmit) { return; }
     if (this.rsTypeError()) {
       this.toast.show('File type not allowed for this document category', { variant: 'warning' });
+      return;
+    }
+    const sizeErr = this.rsSizeError();
+    if (sizeErr) {
+      this.toast.show(sizeErr, { variant: 'warning' });
       return;
     }
     this.rsUploading = true;

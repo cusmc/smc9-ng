@@ -121,6 +121,7 @@
                   <option *ngFor="let t of docTypes" [value]="t.SubCode_id">{{ t.vals }}</option>
                 </select>
                 <p *ngIf="typeError(p)" class="text-xs text-red-500">{{ typeError(p) }}</p>
+                <p *ngIf="!typeError(p) && sizeError(p)" class="text-xs text-red-500">{{ sizeError(p) }}</p>
               </div>
 
               <input *ngIf="isMultiPageAllowed(p)" type="number" [(ngModel)]="p.pageNo" min="1" placeholder="Pg #"
@@ -167,13 +168,28 @@
         <h3 class="font-serif text-base text-[#2a2622]">My Documents</h3>
       </div>
 
+      <!-- Tab bar -->
+      <div *ngIf="!loading && documents.length > 0" class="border-b border-[#f0ebe3] bg-[#fafbff]">
+        <div class="flex gap-0 px-5">
+          <button *ngFor="let tab of tabs" type="button"
+            (click)="setTab(tab.id)"
+            [class]="'flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-medium transition ' +
+              (activeTab === tab.id ? tab.activeClass + ' bg-white' : 'border-transparent text-[#888] hover:text-[#444]')">
+            {{ tab.label }}
+            <span [class]="'rounded-full px-1.5 py-0.5 text-[11px] font-semibold ' + tab.badgeClass">
+              {{ tabCount(tab.id) }}
+            </span>
+          </button>
+        </div>
+      </div>
+
       <!-- Loading -->
       <div *ngIf="loading" class="flex items-center justify-center gap-3 py-14 text-[#777]">
         <div class="h-8 w-8 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
         <span class="text-sm">Loading&hellip;</span>
       </div>
 
-      <!-- Empty -->
+      <!-- Empty (no documents at all) -->
       <div *ngIf="!loading && documents.length === 0"
         class="flex flex-col items-center gap-3 py-16 text-center text-[#bbb]">
         <span class="material-icons text-5xl">folder_open</span>
@@ -186,17 +202,44 @@
           <thead>
             <tr class="border-b border-[#eee] bg-[#faf8f3] text-[#666]">
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Document Type</th>
-              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Description</th>
-              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Page</th>
-              <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Uploaded On</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Source</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Status</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Remark</th>
               <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Action</th>
             </tr>
+            <!-- Column search row -->
+            <tr class="border-b border-[#eee] bg-[#faf8f3]">
+              <td class="px-4 py-1.5">
+                <input type="text" [(ngModel)]="search.docType" placeholder="Search"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs focus:border-[#2d8a7e] focus:outline-none" />
+              </td>
+              <td class="px-4 py-1.5">
+                <input type="text" [(ngModel)]="search.source" placeholder="Search"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs focus:border-[#2d8a7e] focus:outline-none" />
+              </td>
+              <td class="px-4 py-1.5">
+                <input type="text" [(ngModel)]="search.status" placeholder="Search"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs focus:border-[#2d8a7e] focus:outline-none" />
+              </td>
+              <td class="px-4 py-1.5">
+                <input type="text" [(ngModel)]="search.remark" placeholder="Search"
+                  class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs focus:border-[#2d8a7e] focus:outline-none" />
+              </td>
+              <td class="px-4 py-1.5">
+                <input disabled placeholder="&mdash;"
+                  class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" />
+              </td>
+            </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let doc of documents"
+            <!-- Empty (filtered out) -->
+            <tr *ngIf="filteredDocuments.length === 0">
+              <td colspan="5" class="px-4 py-10 text-center text-sm text-[#bbb]">
+                No documents match your filter.
+              </td>
+            </tr>
+
+            <tr *ngFor="let doc of filteredDocuments"
               class="border-b border-[#f5f0e8] transition hover:bg-[#faf8f3]"
               [class.opacity-40]="doc.auth_status === 'I'">
 
@@ -206,18 +249,11 @@
                   [class.text-[#333]]="doc.auth_status !== 'I'"
                   [class.text-[#aaa]]="doc.auth_status === 'I'">
                   <span class="material-icons text-[16px] text-[#c8a96a]">{{ fileIcon(doc.filename) }}</span>
-                  <span class="font-medium">{{ doc.DocType }}</span>
+                  <div>
+                    <div class="font-medium">{{ doc.DocType }}</div>
+                    <div class="text-xs font-normal text-[#999]">{{ doc.create_dt | date:'dd MMM yyyy, HH:mm' }}</div>
+                  </div>
                 </div>
-              </td>
-
-              <td class="px-4 py-3 text-[#555]">{{ doc.description || '&mdash;' }}</td>
-
-              <td class="px-4 py-3 text-xs text-[#777]">
-                {{ doc.page_no ? 'Pg. ' + doc.page_no : '&mdash;' }}
-              </td>
-
-              <td class="px-4 py-3 text-xs text-[#777]">
-                {{ doc.create_dt | date:'dd MMM yyyy, HH:mm' }}
               </td>
 
               <td class="px-4 py-3">
@@ -248,10 +284,13 @@
 
               <td class="px-4 py-3">
                 <div class="flex flex-wrap gap-1.5">
-                  <button *ngIf="canView(doc.auth_status)" type="button" (click)="viewFile(doc)"
-                    class="inline-flex items-center gap-1 rounded-lg border border-[#2d8a7e] px-3 py-1 text-xs font-medium text-[#2d8a7e] transition hover:bg-[#2d8a7e] hover:text-white">
-                    <span class="material-icons text-[14px]">visibility</span>
-                    View
+                  <button *ngIf="canView(doc.auth_status)" type="button" (click)="viewFile(doc)" title="View"
+                    class="inline-flex items-center justify-center rounded-lg border border-[#2d8a7e] p-1.5 text-[#2d8a7e] transition hover:bg-[#2d8a7e] hover:text-white">
+                    <span class="material-icons text-[16px]">visibility</span>
+                  </button>
+                  <button *ngIf="canResubmit(doc.auth_status)" type="button" (click)="resubmitFile(doc)" title="Resubmit"
+                    class="inline-flex items-center justify-center rounded-lg border border-teal-300 p-1.5 text-teal-700 transition hover:bg-teal-50">
+                    <span class="material-icons text-[16px]">replay</span>
                   </button>
                   <span *ngIf="!canView(doc.auth_status)" class="text-xs text-[#ccc]">&mdash;</span>
                 </div>

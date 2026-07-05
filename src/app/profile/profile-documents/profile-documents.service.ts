@@ -26,6 +26,8 @@ export interface SubcodeItem {
   ConvertPdfToJpg: boolean;
   HrOnly: boolean;
   AllowedExt: string | null;
+  MinFileSizeKb: number | null;
+  MaxFileSizeKb: number | null;
 }
 
 const BASE = '/api/HR/EmpmastsAPI';

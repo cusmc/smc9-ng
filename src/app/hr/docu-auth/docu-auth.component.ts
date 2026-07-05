@@ -39,6 +39,14 @@ export class DocuAuthComponent implements OnInit {
   resubmitId: number | null = null;
   resubmitReason = '';
 
+  search = {
+    empid: '',
+    empnm: '',
+    docType: '',
+    source: '',
+    reason: '',
+  };
+
   readonly tabs: Tab[] = [
     { id: 'P',   label: 'Pending',            badgeClass: 'bg-amber-100 text-amber-700', activeClass: 'border-amber-500 text-amber-700' },
     { id: 'A',   label: 'Approved',           badgeClass: 'bg-green-100 text-green-700', activeClass: 'border-green-600 text-green-700' },
@@ -87,8 +95,28 @@ export class DocuAuthComponent implements OnInit {
   }
 
   get filteredRecords(): DocuRecord[] {
-    if (this.activeTab === 'ALL') return this.allRecords;
-    return this.allRecords.filter(r => r.auth_status === this.activeTab);
+    const list = this.activeTab === 'ALL' ? this.allRecords : this.allRecords.filter(r => r.auth_status === this.activeTab);
+    return list.filter(r =>
+      (!this.search.empid || String(r.empid ?? '').includes(this.search.empid.trim())) &&
+      (!this.search.empnm || (r.empnm ?? '').toLowerCase().includes(this.search.empnm.toLowerCase())) &&
+      (!this.search.docType || (r.DocType ?? '').toLowerCase().includes(this.search.docType.toLowerCase())) &&
+      (!this.search.source || this.sourceLabel(r).toLowerCase().includes(this.search.source.toLowerCase())) &&
+      (!this.search.reason || (r.rejreason ?? '').toLowerCase().includes(this.search.reason.toLowerCase())),
+    );
+  }
+
+  sourceLabel(rec: DocuRecord): string {
+    return rec.selfupload === 'Y' ? 'Self' : 'HR';
+  }
+
+  canAuthorize(rec: DocuRecord): boolean {
+    return rec.auth_status === 'P' && rec.selfupload === 'Y';
+  }
+
+  // A resubmit request can be sent for any self-uploaded document that hasn't
+  // already been requested ('S') or superseded ('I') — including Approved/Rejected.
+  canResubmitRequest(rec: DocuRecord): boolean {
+    return rec.selfupload === 'Y' && rec.auth_status !== 'S' && rec.auth_status !== 'I';
   }
 
   tabCount(id: TabId): number {
@@ -200,6 +228,22 @@ export class DocuAuthComponent implements OnInit {
       },
       error: (err) => {
         this.toast.show(err?.error || 'Request failed', { variant: 'error' });
+        delete this.processing[rec.documast_id];
+      },
+    });
+  }
+
+  deleteRecord(rec: DocuRecord): void {
+    if (!confirm(`Delete this ${rec.DocType} document for ${rec.empnm}? This cannot be undone.`)) { return; }
+    this.processing[rec.documast_id] = true;
+    this.service.deleteDocument(rec.documast_id).subscribe({
+      next: () => {
+        this.toast.show('Document deleted', { variant: 'success' });
+        this.allRecords = this.allRecords.filter(r => r.documast_id !== rec.documast_id);
+        delete this.processing[rec.documast_id];
+      },
+      error: (err) => {
+        this.toast.show(err?.error || 'Delete failed', { variant: 'error' });
         delete this.processing[rec.documast_id];
       },
     });

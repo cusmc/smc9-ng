@@ -13,6 +13,15 @@ export interface PendingFile {
   pageNo: number | null;
 }
 
+type TabId = 'P' | 'A' | 'R' | 'S' | 'ALL';
+
+interface Tab {
+  id: TabId;
+  label: string;
+  badgeClass: string;
+  activeClass: string;
+}
+
 @Component({
   selector: 'app-profile-documents',
   standalone: true,
@@ -31,6 +40,23 @@ export class ProfileDocumentsComponent implements OnInit {
   isDragOver = false;
   showGuidelines = false;
   uploadProgress = 0;
+
+  activeTab: TabId = 'ALL';
+
+  search = {
+    docType: '',
+    source: '',
+    status: '',
+    remark: '',
+  };
+
+  readonly tabs: Tab[] = [
+    { id: 'P',   label: 'Pending',            badgeClass: 'bg-amber-100 text-amber-700', activeClass: 'border-amber-500 text-amber-700' },
+    { id: 'A',   label: 'Approved',           badgeClass: 'bg-green-100 text-green-700', activeClass: 'border-green-600 text-green-700' },
+    { id: 'R',   label: 'Rejected',           badgeClass: 'bg-red-100 text-red-700',     activeClass: 'border-red-500 text-red-700' },
+    { id: 'S',   label: 'Resubmit Requested', badgeClass: 'bg-teal-100 text-teal-700',   activeClass: 'border-teal-500 text-teal-700' },
+    { id: 'ALL', label: 'All',                badgeClass: 'bg-slate-100 text-slate-600', activeClass: 'border-slate-500 text-slate-600' },
+  ];
 
   constructor(
     private service: ProfileDocumentsService,
@@ -106,6 +132,24 @@ export class ProfileDocumentsComponent implements OnInit {
     return dt?.MultiPageAllowed ?? false;
   }
 
+  sizeError(p: PendingFile): string | null {
+    if (p.subcodeId === 0) { return null; }
+    const dt = this.docTypes.find(t => t.SubCode_id === p.subcodeId);
+    if (!dt) { return null; }
+    const minKb = dt.MinFileSizeKb;
+    const maxKb = dt.MaxFileSizeKb;
+    if (!minKb && !maxKb) { return null; }
+    const sizeKb = p.file.size / 1024;
+    if (minKb && sizeKb < minKb) {
+      return `File must be at least ${minKb} KB for this document type`;
+    }
+    if (maxKb && sizeKb > maxKb) {
+      const maxLabel = maxKb >= 1024 ? `${(maxKb / 1024).toFixed(1)} MB` : `${maxKb} KB`;
+      return `File must not exceed ${maxLabel} for this document type`;
+    }
+    return null;
+  }
+
   showPdfConvertHint(p: PendingFile): boolean {
     const dt = this.docTypes.find(t => t.SubCode_id === p.subcodeId);
     return !!dt?.ConvertPdfToJpg && p.file.name.toLowerCase().endsWith('.pdf');
@@ -121,6 +165,11 @@ export class ProfileDocumentsComponent implements OnInit {
     const typeInvalid = this.pendingFiles.some(p => this.typeError(p) !== null);
     if (typeInvalid) {
       this.toast.show('One or more files have an invalid type for the selected document category', { variant: 'warning' });
+      return;
+    }
+    const sizeInvalid = this.pendingFiles.some(p => this.sizeError(p) !== null);
+    if (sizeInvalid) {
+      this.toast.show('One or more files do not meet the size requirements for the selected document category', { variant: 'warning' });
       return;
     }
     this.uploading = true;
@@ -160,7 +209,33 @@ export class ProfileDocumentsComponent implements OnInit {
   }
 
   // ── Document list ───────────────────────────────────────────
-  viewFile(doc: MyDocuRecord): void {
+  get filteredDocuments(): MyDocuRecord[] {
+    let list = this.documents;
+    if (this.activeTab !== 'ALL') {
+      list = list.filter(d => d.auth_status === this.activeTab);
+    }
+    return list.filter(d =>
+      (!this.search.docType || (d.DocType ?? '').toLowerCase().includes(this.search.docType.toLowerCase())) &&
+      (!this.search.source || this.sourceLabel(d).toLowerCase().includes(this.search.source.toLowerCase())) &&
+      (!this.search.status || this.statusLabel(d.auth_status).toLowerCase().includes(this.search.status.toLowerCase())) &&
+      (!this.search.remark || (d.rej_reason ?? '').toLowerCase().includes(this.search.remark.toLowerCase())),
+    );
+  }
+
+  sourceLabel(doc: MyDocuRecord): string {
+    return doc.selfupload === 'Y' ? 'Self' : 'HR';
+  }
+
+  tabCount(id: TabId): number {
+    if (id === 'ALL') return this.documents.length;
+    return this.documents.filter(d => d.auth_status === id).length;
+  }
+
+  setTab(id: TabId): void {
+    this.activeTab = id;
+  }
+
+  viewFile(doc: MyDocuRecord, openResubmit = false): void {
     const dt = this.docTypes.find(t => t.SubCode_id === doc.subcode_id);
     const ref = this.dialog.open(FileViewerDialogComponent, {
       width: '95vw',
@@ -169,17 +244,24 @@ export class ProfileDocumentsComponent implements OnInit {
         documastId: doc.documast_id,
         filename: doc.filename,
         title: doc.DocType,
+        openResubmit,
         resubmit: this.canResubmit(doc.auth_status) ? {
           parentDocuId: doc.documast_id,
           subcodeId: doc.subcode_id,
           allowedExtensions: dt ? dt.AllowedExt : null,
           multiPageAllowed: dt?.MultiPageAllowed ?? false,
+          minFileSizeKb: dt?.MinFileSizeKb ?? null,
+          maxFileSizeKb: dt?.MaxFileSizeKb ?? null,
           defaultDescription: doc.description || '',
           defaultPageNo: (doc.page_no !== null && doc.page_no !== undefined) ? doc.page_no : null,
         } : undefined,
       },
     });
     ref.closed.subscribe(result => { if (result === 'resubmitted') { this.loadDocuments(); } });
+  }
+
+  resubmitFile(doc: MyDocuRecord): void {
+    this.viewFile(doc, true);
   }
 
   statusLabel(status: string | null): string {
@@ -220,7 +302,7 @@ export class ProfileDocumentsComponent implements OnInit {
   }
 
   canResubmit(status: string | null): boolean {
-    return status === 'A' || status === 'R' || status === 'S';
+    return status !== 'I';
   }
 
   fileIcon(filename: string): string {

@@ -16,6 +16,7 @@ export interface DocuRecord {
   authby: string;
   authdt: string;
   rejreason: string;
+  selfupload: string;
 }
 
 export interface DocuAuthRequest {
@@ -45,6 +46,10 @@ export class DocuAuthService {
 
   authorizeDocument(req: DocuAuthRequest): Observable<any> {
     return this.api.post<any>(`${BASE}/AuthorizeDocu`, req);
+  }
+
+  deleteDocument(id: number): Observable<any> {
+    return this.api.post<any>(`${BASE}/DeleteDocu?id=${id}`, {});
   }
 
   sendNotification(payload: NotificationPayload): Observable<any> {
