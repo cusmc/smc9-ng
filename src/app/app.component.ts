@@ -48,6 +48,8 @@ export class AppComponent implements OnInit {
   visibleModules: NavModule[] = [];
   activeModule: NavModule | null = null;
   profileMenuOpen = false;
+  settingsMenuOpen = false;
+  showAllMenu = false;
 
   defaultAvatar =
     'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNlMGUwZTAiLz4KPHBhdGggZD0iTTIwIDIwYzIuNzYxNCAwIDUtMi4yMzg2IDUtNXMtMi4yMzg2LTUtNS01LTUgMi4yMzg2LTUgNSA1IDUgNSA1eiIgZmlsbD0iIzk5OTk5OSIvPgo8cGF0aCBkPSJNMTIgMzJ2LTNjMC00LjQxODMgMy41ODE3LTggOC04czggMy41ODE3IDggOHYzaC0xNnoiIGZpbGw9IiM5OTk5OTkiLz4KPC9zdmc+';
@@ -97,6 +99,8 @@ export class AppComponent implements OnInit {
   // }
 
   ngOnInit(): void {
+    this.showAllMenu = localStorage.getItem('showAllMenu') === 'true';
+
     // Track login page
     this.isLoginPage = this.router.url.startsWith('/login');
 
@@ -164,10 +168,11 @@ export class AppComponent implements OnInit {
         const raw: string | undefined = data?.ImgProfile;
         this.ProfileName = data?.ProfileName || this.username || '';
 
-        // Derive visible modules from usertype returned by the API
+        // Hospital keeps its existing static, role-based visibility (out of
+        // scope for the dynamic Wmodule menu); everything else is fetched below.
         const usertype: string = data?.usertype || '';
         this.userRoles = this.resolveRoles(usertype);
-        this.visibleModules = this.nav.getVisibleModules(this.userRoles);
+        this.loadMenuTree();
 
         let src: string | null = null;
         if (raw) {
@@ -185,7 +190,9 @@ export class AppComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         this.ProfileName = this.username;
-        this.visibleModules = this.nav.allModules;
+        // Fail closed: with no confirmed roles, show nothing rather than every module.
+        this.visibleModules = [];
+        this.nav.setVisibleModules(this.visibleModules);
         this.userImageUrl = this.defaultAvatar;
         this.serverUnavailable = true;
         this.serverErrorMsg =
@@ -196,6 +203,33 @@ export class AppComponent implements OnInit {
               '). Some features may not work correctly.';
       },
     });
+  }
+
+  /**
+   * Loads the permission-filtered (or, with showAllMenu on, unfiltered) menu
+   * tree from the backend and merges in the still-static Hospital module.
+   */
+  private loadMenuTree(): void {
+    this.nav.fetchMenuTree(this.showAllMenu).subscribe({
+      next: (dynamicModules) => {
+        this.visibleModules = [
+          ...dynamicModules,
+          ...this.nav.getHospitalModule(this.userRoles),
+        ];
+        this.nav.setVisibleModules(this.visibleModules);
+      },
+      error: () => {
+        // Fail closed: keep only the still-static Hospital module, if allowed.
+        this.visibleModules = this.nav.getHospitalModule(this.userRoles);
+        this.nav.setVisibleModules(this.visibleModules);
+      },
+    });
+  }
+
+  toggleShowAllMenu(): void {
+    this.showAllMenu = !this.showAllMenu;
+    localStorage.setItem('showAllMenu', String(this.showAllMenu));
+    this.loadMenuTree();
   }
 
   /**
@@ -223,7 +257,7 @@ export class AppComponent implements OnInit {
 
   onModuleSelected(moduleId: string): void {
     this.nav.setActiveModule(moduleId);
-    const mod = this.nav.allModules.find((m) => m.id === moduleId);
+    const mod = this.visibleModules.find((m) => m.id === moduleId);
     if (mod?.migrated) {
       // Navigate to first item of first group
       const firstRoute = mod.groups[0]?.items[0]?.route;
@@ -246,12 +280,20 @@ export class AppComponent implements OnInit {
 
   toggleProfileMenu(event: Event): void {
     event.stopPropagation();
+    this.settingsMenuOpen = false;
     this.profileMenuOpen = !this.profileMenuOpen;
+  }
+
+  toggleSettingsMenu(event: Event): void {
+    event.stopPropagation();
+    this.profileMenuOpen = false;
+    this.settingsMenuOpen = !this.settingsMenuOpen;
   }
 
   @HostListener('document:click')
   closeProfileMenu(): void {
     this.profileMenuOpen = false;
+    this.settingsMenuOpen = false;
   }
 
   logout(): void {

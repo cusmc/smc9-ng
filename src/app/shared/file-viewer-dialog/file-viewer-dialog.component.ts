@@ -158,7 +158,7 @@ export class FileViewerDialogComponent implements OnInit, OnDestroy {
     if (!this.objectUrl) { return; }
     const a = document.createElement('a');
     a.href = this.objectUrl;
-    a.download = this.data.filename;
+    a.download = (this.data.filename || '').trim();
     a.click();
   }
 

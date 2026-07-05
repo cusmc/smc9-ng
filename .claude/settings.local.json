@@ -9,7 +9,8 @@
       "Bash(npm install *)"
     ],
     "additionalDirectories": [
-      "d:\\DotNet\\smc9\\Controllers\\Common"
+      "d:\\DotNet\\smc9\\Controllers\\Common",
+      "d:\\dotnet\\smc9\\Controllers\\Common"
     ]
   }
 }
