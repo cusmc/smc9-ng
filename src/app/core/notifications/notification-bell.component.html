@@ -1,0 +1,51 @@
+<div class="relative">
+  <button
+    type="button"
+    class="relative rounded-md p-2 opacity-80 hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+    (click)="toggle($event)"
+    aria-label="Notifications"
+  >
+    <span class="material-icons text-xl">notifications</span>
+    <span
+      *ngIf="items.length > 0"
+      class="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#e11d48] px-1 text-[10px] font-semibold leading-none text-white"
+    >{{ badgeLabel }}</span>
+  </button>
+
+  <div
+    *ngIf="open"
+    class="absolute right-0 z-50 mt-1 w-80 overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white text-left shadow-[0_4px_24px_rgba(70,128,255,0.10)]"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="border-b border-[#e2e8f0] bg-[#f8faff] px-4 py-3 text-sm font-semibold text-[#1e293b]">
+      Notifications
+      <span class="ml-1 font-normal text-[#64748b]" *ngIf="items.length">({{ items.length }} unread)</span>
+    </div>
+    <div class="max-h-96 overflow-y-auto">
+      <p *ngIf="items.length === 0" class="px-4 py-6 text-center text-sm text-[#94a3b8]">
+        No unread notifications
+      </p>
+      <div
+        *ngFor="let item of items"
+        class="flex items-start gap-2 border-b border-[#f0f2f5] px-4 py-3 last:border-b-0"
+        [class.border-l-4]="item.Vtype === 'VIP'"
+        [class.border-l-amber-400]="item.Vtype === 'VIP'"
+        [class.bg-amber-50]="item.Vtype === 'VIP'"
+      >
+        <span *ngIf="item.Vtype === 'VIP'" class="material-icons mt-0.5 text-base text-amber-500">star</span>
+        <div class="min-w-0 flex-1">
+          <p class="break-words text-sm text-[#1e293b]">{{ item.Msg }}</p>
+          <p class="mt-1 text-xs text-[#94a3b8]">{{ item.NotiDt | date: 'dd-MMM-yyyy HH:mm' }}</p>
+        </div>
+        <button
+          type="button"
+          class="shrink-0 rounded-lg p-1 text-[#94a3b8] transition hover:bg-[#f0f2f5] hover:text-[#4680ff] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4680ff]/40"
+          title="Mark as read"
+          (click)="markRead(item, $event)"
+        >
+          <span class="material-icons text-base">check</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

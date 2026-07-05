@@ -15,6 +15,7 @@ import { NavService } from './nav/nav.service';
 import { NavModule } from './nav/nav.types';
 import { ModuleRailComponent } from './nav/module-rail/module-rail.component';
 import { SidebarComponent } from './nav/sidebar/sidebar.component';
+import { NotificationBellComponent } from './core/notifications/notification-bell.component';
 import { environment } from '../environments/environment';
 
 @Component({
@@ -26,6 +27,7 @@ import { environment } from '../environments/environment';
     RouterLink,
     ModuleRailComponent,
     SidebarComponent,
+    NotificationBellComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],

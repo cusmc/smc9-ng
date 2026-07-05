@@ -446,6 +446,13 @@ export const APP_NAV: NavModule[] = [
         ],
       },
       {
+        label: 'Notifications',
+        icon: 'notifications',
+        items: [
+          { label: 'Notification Management', icon: 'campaign', route: '/admin/notifications' },
+        ],
+      },
+      {
         label: 'Website CMS',
         icon: 'language',
         items: [

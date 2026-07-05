@@ -1,0 +1,65 @@
+<div class="flex max-h-[inherit] w-full flex-col overflow-hidden rounded-2xl bg-white">
+  <h2 class="border-b border-[#e2e8f0] px-6 pb-3 pt-6 text-xl font-semibold text-[#1e293b]">
+    {{ data ? 'Edit Notification' : 'Add Notification' }}
+  </h2>
+  <div class="max-h-[min(70vh,calc(90vh-8rem))] flex-1 overflow-y-auto px-6 py-4">
+    <form [formGroup]="form" class="flex flex-col gap-4">
+      <div>
+        <label class="mb-1 block text-sm font-medium text-ink-muted">Type (Vtype)</label>
+        <input
+          class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-primary-soft"
+          formControlName="Vtype"
+          maxlength="6"
+        />
+        <div class="mt-1.5 flex flex-wrap gap-1.5">
+          <button
+            type="button"
+            *ngFor="let v of knownVtypes"
+            (click)="pickVtype(v)"
+            class="rounded-full border border-[#e2e8f0] bg-[#f8faff] px-2.5 py-0.5 text-xs text-[#4680ff] transition hover:bg-[#e8eeff]"
+          >{{ v }}</button>
+        </div>
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium text-ink-muted">Recipient (Employee)</label>
+        <app-autocomplete formControlName="Username" [items]="empItems" placeholder="Type to search employee…" />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium text-ink-muted">Message</label>
+        <textarea
+          class="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-primary-soft"
+          formControlName="Msg"
+          rows="4"
+        ></textarea>
+      </div>
+      <div *ngIf="data">
+        <label class="mb-1 block text-sm font-medium text-ink-muted">Status</label>
+        <span
+          class="inline-block rounded-full px-2.5 py-1 text-xs font-medium"
+          [class]="statusLabel === 'Read' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'"
+        >{{ statusLabel }}</span>
+      </div>
+    </form>
+  </div>
+  <div class="flex justify-between gap-2 border-t border-[#f5f0e8] px-6 py-4">
+    <button
+      *ngIf="data"
+      type="button"
+      class="rounded-lg border border-[#fecaca] bg-[#fef2f2] px-4 py-2 text-sm font-medium text-[#b91c1c] transition hover:bg-[#fee2e2]"
+      (click)="onDelete()"
+    >
+      Delete
+    </button>
+    <div class="ml-auto flex gap-2">
+      <button type="button" class="rounded-lg px-4 py-2 text-sm text-[#64748b] transition hover:bg-[#f0f2f5]" (click)="onCancel()">Cancel</button>
+      <button
+        type="button"
+        class="rounded-lg bg-[#4680ff] px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-[#3670ee] disabled:opacity-50"
+        (click)="onSave()"
+        [disabled]="!form.valid"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</div>

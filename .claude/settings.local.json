@@ -7,6 +7,9 @@
       "Bash(Get-ChildItem -Path \"d:\\\\DotNet\\\\smc9-ng\\\\src\\\\app\\\\auth\\\\\" -Filter \"*.ts\" | Select-Object -ExpandProperty Name)",
       "Bash(npx ng *)",
       "Bash(npm install *)"
+    ],
+    "additionalDirectories": [
+      "d:\\DotNet\\smc9\\Controllers\\Common"
     ]
   }
 }

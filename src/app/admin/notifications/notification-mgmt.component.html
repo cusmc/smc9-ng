@@ -1,0 +1,116 @@
+<div class="flex min-h-0 flex-1 flex-col bg-page">
+  <!-- Header -->
+  <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
+    <h2 class="text-lg font-semibold">Notification Management</h2>
+    <span class="flex-1"></span>
+    <button
+      type="button"
+      class="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white shadow hover:bg-accent-hover"
+      (click)="openAddDialog()"
+    >
+      <span class="material-icons text-lg">campaign</span>
+      Add Notification
+    </button>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-4 p-4">
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex items-center gap-3 py-10 text-[#777]">
+      <div class="h-9 w-9 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+      <span class="text-sm">Loading…</span>
+    </div>
+
+    <!-- Empty state -->
+    <p *ngIf="!loading && notifications.length === 0" class="py-12 text-center text-sm text-[#999]">
+      No notifications found.
+    </p>
+
+    <!-- Table -->
+    <div *ngIf="!loading && notifications.length > 0" class="overflow-x-auto rounded-xl border border-[#e2e8f0]">
+      <table class="w-full min-w-[1000px] border-collapse text-left text-sm">
+        <thead>
+          <tr class="border-b border-[#eee] bg-[#f8faff] text-[#666]">
+            <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Sr No</th>
+            <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Type</th>
+            <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Username</th>
+            <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Message</th>
+            <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Status</th>
+            <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Notified On</th>
+            <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Read On</th>
+            <th class="px-4 py-3 text-xs font-semibold uppercase tracking-wide">Action</th>
+          </tr>
+          <!-- Column search row -->
+          <tr class="border-b border-[#e2e8f0] bg-[#f8faff]">
+            <td class="px-4 py-1">
+              <input disabled class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" placeholder="N/A" />
+            </td>
+            <td class="px-4 py-1">
+              <input [(ngModel)]="search.Vtype" (ngModelChange)="onSearchChange()" class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+            </td>
+            <td class="px-4 py-1">
+              <input [(ngModel)]="search.Username" (ngModelChange)="onSearchChange()" class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+            </td>
+            <td class="px-4 py-1">
+              <input [(ngModel)]="search.Msg" (ngModelChange)="onSearchChange()" class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+            </td>
+            <td class="px-4 py-1">
+              <select [(ngModel)]="search.Status" (ngModelChange)="onSearchChange()" class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs">
+                <option value="">All</option>
+                <option value="Read">Read</option>
+                <option value="Unread">Unread</option>
+              </select>
+            </td>
+            <td class="px-4 py-1">
+              <input [(ngModel)]="search.NotiDt" (ngModelChange)="onSearchChange()" class="w-full rounded border border-[#e5e5e5] px-2 py-1 text-xs" placeholder="Search" />
+            </td>
+            <td class="px-4 py-1">
+              <input disabled class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" placeholder="N/A" />
+            </td>
+            <td class="px-4 py-1">
+              <input disabled class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" placeholder="N/A" />
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let n of pagedData; let i = index" class="border-b border-[#f5f0e8] transition hover:bg-[#f8faff]">
+            <td class="px-4 py-3 tabular-nums text-[#444]">{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+            <td class="px-4 py-3">
+              <span
+                class="rounded-full px-2 py-0.5 text-xs font-medium"
+                [class]="n.Vtype === 'VIP' ? 'bg-amber-100 text-amber-800' : 'bg-[#eef2ff] text-[#4338ca]'"
+              >{{ n.Vtype }}</span>
+            </td>
+            <td class="px-4 py-3 text-[#444]">{{ n.Username }}</td>
+            <td class="max-w-[320px] truncate px-4 py-3 text-[#555]" [title]="n.Msg">{{ n.Msg }}</td>
+            <td class="px-4 py-3">
+              <span
+                class="rounded-full px-2 py-0.5 text-xs font-medium"
+                [class.bg-emerald-100]="statusLabel(n) === 'Read'"
+                [class.text-emerald-700]="statusLabel(n) === 'Read'"
+                [class.bg-amber-100]="statusLabel(n) === 'Unread'"
+                [class.text-amber-700]="statusLabel(n) === 'Unread'"
+              >{{ statusLabel(n) }}</span>
+            </td>
+            <td class="px-4 py-3 text-[#666]">{{ n.NotiDt | date: 'dd-MMM-yyyy HH:mm' }}</td>
+            <td class="px-4 py-3 text-[#666]">{{ n.Readon ? (n.Readon | date: 'dd-MMM-yyyy HH:mm') : '—' }}</td>
+            <td class="flex items-center gap-1 px-4 py-3">
+              <button type="button" (click)="openEditDialog(n)" class="rounded-lg p-1.5 text-[#4680ff] transition hover:bg-[#e8eeff]" title="Edit">
+                <span class="material-icons text-xl">edit</span>
+              </button>
+              <button type="button" (click)="deleteNotification(n)" class="rounded-lg p-1.5 text-[#c0392b] transition hover:bg-[#fdecea]" title="Delete">
+                <span class="material-icons text-xl">delete</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="mt-4 flex items-center justify-center gap-2 text-sm">
+      <button (click)="currentPage = currentPage - 1" [disabled]="currentPage === 1" class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]">Prev</button>
+      <span class="text-[#666]">Page {{ currentPage }} of {{ totalPages }}</span>
+      <button (click)="currentPage = currentPage + 1" [disabled]="currentPage === totalPages" class="rounded border px-3 py-1 disabled:opacity-40 hover:bg-[#f0f2f5]">Next</button>
+    </div>
+  </div>
+</div>
