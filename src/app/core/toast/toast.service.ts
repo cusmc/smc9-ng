@@ -27,7 +27,7 @@ export class ToastService {
     const variant = options?.variant ?? 'info';
     const title = this.defaultTitleForVariant(variant);
     const toast = this.showByVariant(variant, message, title, {
-      timeOut: options?.duration ?? 4000
+      timeOut: options?.duration ?? 3000
     });
     return toast?.toastId.toString() ?? '';
   }
@@ -37,7 +37,7 @@ export class ToastService {
     if (config?.panelClass?.includes('error')) {
       variant = 'error';
     }
-    this.show(message, { variant, duration: config?.duration ?? 4000 });
+    this.show(message, { variant, duration: config?.duration ?? 3000 });
   }
 
   dismiss(id: string): void {

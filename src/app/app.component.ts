@@ -59,7 +59,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     public nav: NavService,
-  ) {}
+  ) { }
 
   // ngOnInit(): void {
   //   // Track login page so shell never wraps the login form, regardless of isLoggedIn timing
@@ -125,7 +125,7 @@ export class AppComponent implements OnInit {
       this.username = this.authService.getUsername() || '';
 
       if (loggedIn) {
-        this.sidenavOpen = true;
+        this.sidenavOpen = false;
         this.refreshAllData();
       } else {
         this.userRoles = [];
@@ -199,8 +199,8 @@ export class AppComponent implements OnInit {
           err.status === 0
             ? 'Cannot reach the server. Please check your network or contact IT.'
             : 'Server error (' +
-              err.status +
-              '). Some features may not work correctly.';
+            err.status +
+            '). Some features may not work correctly.';
       },
     });
   }
@@ -267,8 +267,8 @@ export class AppComponent implements OnInit {
 
   closeSidenavOnMobile(): void {
     if (
-      typeof window !== 'undefined' &&
-      window.matchMedia('(max-width: 1380px)').matches
+      typeof window !== 'undefined'
+      && window.matchMedia('(max-width: 1380px)').matches
     ) {
       this.sidenavOpen = false;
     }
