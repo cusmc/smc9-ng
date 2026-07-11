@@ -240,6 +240,7 @@ export const APP_NAV: NavModule[] = [
           { label: 'Family Members', icon: 'group', externalUrl: '/HR/FamilyMember' },
           { label: 'Reports', icon: 'bar_chart', externalUrl: '/HR/Report' },
           { label: 'Document Authorization', icon: 'approval', route: '/hr/docu-auth' },
+          { label: 'Declaration Form', icon: 'description', route: '/hr/declaration-form' },
         ],
       },
       {

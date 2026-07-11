@@ -15,12 +15,14 @@ export interface PerfRow {
 }
 
 export interface DoctPerfRow {
-  TDate:     string;
-  Doctor_id: number;
-  Doctor_nm: string;
-  Section:   string;
-  Category:  string;
-  Value:     number;
+  TDate:      string;
+  Doctor_id:  number;
+  Doctor_nm:  string;
+  Subdept_id: number | null;
+  Subdept_nm: string;
+  Section:    string;
+  Category:   string;
+  Value:      number;
 }
 
 export interface LookupItem {
@@ -43,6 +45,8 @@ export interface TableRow {
 export interface DoctorSummaryRow {
   doctorId:   number;
   doctorNm:   string;
+  subdeptId:  number | null;
+  subdeptNm:  string;
   opdPmjay:   number;
   opdPrivate: number;
   opdOthers:  number;

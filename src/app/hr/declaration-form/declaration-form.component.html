@@ -1,0 +1,51 @@
+<div class="flex min-h-0 flex-1 flex-col bg-page">
+
+  <!-- Page header -->
+  <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
+    <span class="material-icons text-xl opacity-80">description</span>
+    <h2 class="text-lg font-semibold">Declaration Form</h2>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-5 p-4">
+    <div class="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm">
+
+      <!-- Card header -->
+      <div class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-5 py-4">
+        <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#c8a96a] to-[#2d8a7e]"></div>
+        <h3 class="font-serif text-lg text-[#1e293b]">Generate Declaration Form</h3>
+        <p class="mt-0.5 text-xs text-[#888]">Select an employee to generate their MCI/NMC declaration form as a Word document.</p>
+      </div>
+
+      <div class="flex flex-col gap-4 px-5 py-5">
+        <div class="flex items-center gap-2">
+          <span class="material-icons text-[18px] text-[#aaa]">person_search</span>
+          <div style="width:320px;">
+            <app-autocomplete
+              [items]="empItems"
+              placeholder="Select employee (type to search)…"
+              [(ngModel)]="selectedEmpId">
+            </app-autocomplete>
+          </div>
+        </div>
+
+        <label class="flex items-center gap-2 text-sm text-[#444]">
+          <input type="checkbox" [(ngModel)]="withSign" />
+          Include signatures (employee / HOD / Dean)
+        </label>
+
+        <label class="flex items-center gap-2 text-sm text-[#444]">
+          <input type="checkbox" [(ngModel)]="withAtt" />
+          Include attachments (ID proofs / scanned documents)
+        </label>
+
+        <div>
+          <button type="button" (click)="generateWord()" [disabled]="loading"
+            class="inline-flex items-center gap-1.5 rounded-lg bg-[#2d8a7e] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#256f65] disabled:opacity-50">
+            <span class="material-icons text-[16px]">{{ loading ? 'hourglass_empty' : 'description' }}</span>
+            {{ loading ? 'Generating…' : 'Generate Word Document' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

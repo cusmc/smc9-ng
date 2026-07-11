@@ -144,6 +144,7 @@ export class DoctPerfComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error   = null;
 
+    debugger;
     const req: DoctPerfReq = {
       Fdate:      this.fdate,
       Tdate:      this.tdate,
@@ -308,6 +309,7 @@ export class DoctPerfComponent implements OnInit, OnDestroy {
       if (!map.has(r.Doctor_id)) {
         map.set(r.Doctor_id, {
           doctorId: r.Doctor_id, doctorNm: r.Doctor_nm,
+          subdeptId: r.Subdept_id, subdeptNm: r.Subdept_nm || 'Unassigned',
           opdPmjay: 0, opdPrivate: 0, opdOthers: 0, opdTotal: 0,
           ipdPmjay: 0, ipdPrivate: 0, ipdOthers: 0, ipdTotal: 0,
           surSupra: 0, surMajor:   0, surMinor:  0, surTotal: 0,
@@ -490,6 +492,33 @@ export class DoctPerfComponent implements OnInit, OnDestroy {
     return { Title: title, Headers: headers, Rows: rows };
   }
 
+  private groupDoctorRowsForExport(): { subdeptNm: string; rows: DoctorSummaryRow[]; totals: DoctorSummaryRow }[] {
+    const groups = new Map<string, DoctorSummaryRow[]>();
+    for (const r of this.sortedDoctorRows) {
+      const key = r.subdeptNm || 'Unassigned';
+      if (!groups.has(key)) { groups.set(key, []); }
+      groups.get(key)!.push(r);
+    }
+    return Array.from(groups.entries())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([subdeptNm, rows]) => {
+        const totals = rows.reduce((acc, r) => {
+          acc.opdPmjay += r.opdPmjay; acc.opdPrivate += r.opdPrivate; acc.opdOthers += r.opdOthers; acc.opdTotal += r.opdTotal;
+          acc.ipdPmjay += r.ipdPmjay; acc.ipdPrivate += r.ipdPrivate; acc.ipdOthers += r.ipdOthers; acc.ipdTotal += r.ipdTotal;
+          acc.surSupra += r.surSupra; acc.surMajor   += r.surMajor;  acc.surMinor  += r.surMinor;  acc.surTotal += r.surTotal;
+          acc.revHosp  += r.revHosp;  acc.revDiag    += r.revDiag;   acc.revPharm  += r.revPharm;  acc.revTotal += r.revTotal;
+          return acc;
+        }, {
+          doctorId: 0, doctorNm: 'Sub Total', subdeptId: null, subdeptNm,
+          opdPmjay: 0, opdPrivate: 0, opdOthers: 0, opdTotal: 0,
+          ipdPmjay: 0, ipdPrivate: 0, ipdOthers: 0, ipdTotal: 0,
+          surSupra: 0, surMajor: 0, surMinor: 0, surTotal: 0,
+          revHosp: 0, revDiag: 0, revPharm: 0, revTotal: 0,
+        } as DoctorSummaryRow);
+        return { subdeptNm, rows, totals };
+      });
+  }
+
   private buildDoctorExportHtml(): string {
     const title  = this.filterTitle();
     const period = `Period: ${this.fdate} to ${this.tdate}`;
@@ -506,28 +535,42 @@ export class DoctPerfComponent implements OnInit, OnDestroy {
     html += `<h2 style="font-size:15px;margin:0 0 4px;">${title}</h2>`;
     html += `<p style="font-size:10px;color:#475569;margin:0 0 12px;">${period}</p>`;
     html += `<table style="border-collapse:collapse;width:100%;">`;
-    html += `<tr>`;
+    html += `<thead><tr>`;
     html += `<th rowspan="2" style="${thLS}">Doctor</th>`;
-    html += `<th colspan="4" style="${thG}">OPD</th>`;
-    html += `<th colspan="4" style="${thG}">IPD</th>`;
+    html += `<th colspan="3" style="${thG}">OPD</th>`;
+    html += `<th colspan="3" style="${thG}">IPD</th>`;
     html += `<th colspan="4" style="${thG}">Surgery</th>`;
     html += `<th colspan="4" style="${thG}">Revenue</th>`;
     html += `</tr><tr>`;
-    for (const hdr of ['PMJAY+','Private','Others','Total','PMJAY+','Private','Others','Total','Supra','Major','Minor','Total','Hospital','Diagnostic','Pharmacy','Total']) {
+    for (const hdr of ['PMJAY+','Others','Total','PMJAY+','Others','Total','Supra','Major','Minor','Total','Hospital','Diagnostic','Pharmacy','Total']) {
       html += `<th style="${thS}">${hdr}</th>`;
     }
-    html += `</tr>`;
+    html += `</tr></thead><tbody>`;
 
-    for (const r of this.sortedDoctorRows) {
-      html += `<tr>`;
-      html += `<td style="${tdLS}">${r.doctorNm}</td>`;
-      html += `<td style="${tdS}">${r.opdPmjay}</td><td style="${tdS}">${r.opdPrivate}</td><td style="${tdS}">${r.opdOthers}</td><td style="${tdS}${tdTB}">${r.opdTotal}</td>`;
-      html += `<td style="${tdS}">${r.ipdPmjay}</td><td style="${tdS}">${r.ipdPrivate}</td><td style="${tdS}">${r.ipdOthers}</td><td style="${tdS}${tdTB}">${r.ipdTotal}</td>`;
-      html += `<td style="${tdS}">${r.surSupra}</td><td style="${tdS}">${r.surMajor}</td><td style="${tdS}">${r.surMinor}</td><td style="${tdS}${tdTB}">${r.surTotal}</td>`;
-      html += `<td style="${tdS}">${r.revHosp.toLocaleString('en-IN')}</td><td style="${tdS}">${r.revDiag.toLocaleString('en-IN')}</td><td style="${tdS}">${r.revPharm.toLocaleString('en-IN')}</td><td style="${tdS}${tdTB}">${r.revTotal.toLocaleString('en-IN')}</td>`;
+    const groupHdrStyle = 'border:1px solid #94a3b8;background:#334155;color:#fff;font-weight:bold;font-size:11px;padding:6px 8px;';
+    const subtotalStyle = 'background:#eff6ff;border-top:2px solid #93c5fd;';
+
+    for (const g of this.groupDoctorRowsForExport()) {
+      html += `<tr><td colspan="15" style="${groupHdrStyle}">${g.subdeptNm}</td></tr>`;
+      for (const r of g.rows) {
+        html += `<tr>`;
+        html += `<td style="${tdLS}">${r.doctorNm}</td>`;
+        html += `<td style="${tdS}">${r.opdPmjay}</td><td style="${tdS}">${r.opdOthers}</td><td style="${tdS}${tdTB}">${r.opdTotal}</td>`;
+        html += `<td style="${tdS}">${r.ipdPmjay}</td><td style="${tdS}">${r.ipdOthers}</td><td style="${tdS}${tdTB}">${r.ipdTotal}</td>`;
+        html += `<td style="${tdS}">${r.surSupra}</td><td style="${tdS}">${r.surMajor}</td><td style="${tdS}">${r.surMinor}</td><td style="${tdS}${tdTB}">${r.surTotal}</td>`;
+        html += `<td style="${tdS}">${r.revHosp.toLocaleString('en-IN')}</td><td style="${tdS}">${r.revDiag.toLocaleString('en-IN')}</td><td style="${tdS}">${r.revPharm.toLocaleString('en-IN')}</td><td style="${tdS}${tdTB}">${r.revTotal.toLocaleString('en-IN')}</td>`;
+        html += `</tr>`;
+      }
+      const t = g.totals;
+      html += `<tr style="${subtotalStyle}">`;
+      html += `<td style="${tdLS}${tdTB}">Sub Total</td>`;
+      html += `<td style="${tdS}${tdTB}">${t.opdPmjay}</td><td style="${tdS}${tdTB}">${t.opdOthers}</td><td style="${tdS}${tdTB}">${t.opdTotal}</td>`;
+      html += `<td style="${tdS}${tdTB}">${t.ipdPmjay}</td><td style="${tdS}${tdTB}">${t.ipdOthers}</td><td style="${tdS}${tdTB}">${t.ipdTotal}</td>`;
+      html += `<td style="${tdS}${tdTB}">${t.surSupra}</td><td style="${tdS}${tdTB}">${t.surMajor}</td><td style="${tdS}${tdTB}">${t.surMinor}</td><td style="${tdS}${tdTB}">${t.surTotal}</td>`;
+      html += `<td style="${tdS}${tdTB}">${t.revHosp.toLocaleString('en-IN')}</td><td style="${tdS}${tdTB}">${t.revDiag.toLocaleString('en-IN')}</td><td style="${tdS}${tdTB}">${t.revPharm.toLocaleString('en-IN')}</td><td style="${tdS}${tdTB}">${t.revTotal.toLocaleString('en-IN')}</td>`;
       html += `</tr>`;
     }
-    html += `</table></div>`;
+    html += `</tbody></table></div>`;
     return html;
   }
 
@@ -535,23 +578,30 @@ export class DoctPerfComponent implements OnInit, OnDestroy {
     const title = this.filterTitle();
     const headers = [
       'Doctor',
-      'OPD PMJAY+', 'OPD Private', 'OPD Others', 'OPD Total',
-      'IPD PMJAY+', 'IPD Private', 'IPD Others', 'IPD Total',
+      'OPD PMJAY+', 'OPD Others', 'OPD Total',
+      'IPD PMJAY+',  'IPD Others', 'IPD Total',
       'Sur Supra',  'Sur Major',   'Sur Minor',  'Sur Total',
       'Rev Hospital','Rev Diagnostic','Rev Pharmacy','Rev Total',
     ];
-    const rows: ExcelExportRow[] = this.sortedDoctorRows.map(r => ({
+    const toRow = (r: DoctorSummaryRow, isTotal: boolean): ExcelExportRow => ({
       Label:      r.doctorNm,
       Values:     [
-        r.opdPmjay, r.opdPrivate, r.opdOthers, r.opdTotal,
-        r.ipdPmjay, r.ipdPrivate, r.ipdOthers, r.ipdTotal,
+        r.opdPmjay, r.opdOthers, r.opdTotal,
+        r.ipdPmjay,  r.ipdOthers, r.ipdTotal,
         r.surSupra, r.surMajor,   r.surMinor,  r.surTotal,
         r.revHosp,  r.revDiag,    r.revPharm,  r.revTotal,
       ],
-      IsTotal:    false,
+      IsTotal:    isTotal,
       IsCurrency: false,
       IsSection:  false,
-    }));
+    });
+
+    const rows: ExcelExportRow[] = [];
+    for (const g of this.groupDoctorRowsForExport()) {
+      rows.push({ Label: g.subdeptNm, Values: [], IsTotal: false, IsCurrency: false, IsSection: true });
+      for (const r of g.rows) { rows.push(toRow(r, false)); }
+      rows.push(toRow(g.totals, true));
+    }
     return { Title: title, Headers: headers, Rows: rows };
   }
 }
