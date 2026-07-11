@@ -130,8 +130,6 @@
               <input type="text" [(ngModel)]="p.description" placeholder="Description (optional)"
                 class="w-40 rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-sm focus:border-[#2d8a7e] focus:outline-none" />
 
-              <span *ngIf="showPdfConvertHint(p)" class="text-xs text-[#2d8a7e]">Will be converted to JPG</span>
-
               <button type="button" (click)="removePending(i)"
                 class="shrink-0 rounded p-1 text-[#ccc] hover:bg-red-50 hover:text-red-400">
                 <span class="material-icons text-[18px]">close</span>

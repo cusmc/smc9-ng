@@ -15,6 +15,9 @@ export interface ResubmitContext {
   maxFileSizeKb: number | null;
   defaultDescription: string;
   defaultPageNo: number | null;
+  /** Present when HR is replacing a document on an employee's behalf — routes the
+   *  upload to HrDocuUpload (auto-approved) instead of SelfDocuUpload (pending review). */
+  targetEmpid?: number;
 }
 
 export interface FileViewerData {
@@ -248,18 +251,21 @@ export class FileViewerDialogComponent implements OnInit, OnDestroy {
       this.toast.show(sizeErr, { variant: 'warning' });
       return;
     }
+    const isHr = this.data.resubmit.targetEmpid != null;
     this.rsUploading = true;
     const formData = new FormData();
     formData.append('Data', JSON.stringify({
+      Empid: this.data.resubmit.targetEmpid,
       Subcode_id: this.data.resubmit.subcodeId,
       Description: this.rsDescription,
       PageNo: this.rsPageNo,
       Parent_Docu_Id: this.data.resubmit.parentDocuId,
     }));
     formData.append('file', this.rsFile, this.rsFile.name);
-    this.api.postFormData<any>('/api/HR/EmpmastsAPI/SelfDocuUpload', formData).subscribe({
+    const endpoint = isHr ? '/api/HR/EmpmastsAPI/HrDocuUpload' : '/api/HR/EmpmastsAPI/SelfDocuUpload';
+    this.api.postFormData<any>(endpoint, formData).subscribe({
       next: () => {
-        this.toast.show('Document resubmitted. Awaiting HR approval.', { variant: 'success' });
+        this.toast.show(isHr ? 'Document replaced.' : 'Document resubmitted. Awaiting HR approval.', { variant: 'success' });
         this.dialogRef.close('resubmitted');
       },
       error: (err: any) => {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Dialog } from '@angular/cdk/dialog';
-import { DocuAuthService, DocuRecord } from './docu-auth.service';
+import { DocuAuthService, DocuRecord, SubcodeItem } from './docu-auth.service';
 import { ToastService } from '../../core/toast/toast.service';
 import { FileViewerDialogComponent } from '../../shared/file-viewer-dialog/file-viewer-dialog.component';
 import { AutocompleteComponent, AcItem } from '../../shared/autocomplete/autocomplete.component';
@@ -26,6 +26,7 @@ interface Tab {
 })
 export class DocuAuthComponent implements OnInit {
   allRecords: DocuRecord[] = [];
+  docTypes: SubcodeItem[] = [];
   loading = false;
   processing: Record<number, boolean> = {};
   rights: RightModal = { View: false, Add: false, Edit: false, Delete: false, Auth1: false, Auth2: false, Sp1: false, Sp2: false };
@@ -41,6 +42,15 @@ export class DocuAuthComponent implements OnInit {
   rejReason = '';
   resubmitId: number | null = null;
   resubmitReason = '';
+
+  // Upload New Document panel
+  showUpload = false;
+  uploading = false;
+  uploadEmpId: number | null = null;
+  uploadSubcodeId = 0;
+  uploadDescription = '';
+  uploadPageNo: number | null = null;
+  uploadFile: File | null = null;
 
   search = {
     empid: '',
@@ -69,6 +79,10 @@ export class DocuAuthComponent implements OnInit {
     // Cache is warm: rightsGuard has already fetched 'HR|DocuAuth' before activation
     this.rights = this.rightsService.getRightsModal('HR', 'DocuAuth');
     this.loadAll();
+    this.service.getDocumentTypes().subscribe({
+      next: (data) => (this.docTypes = data),
+      error: () => this.toast.show('Failed to load document types', { variant: 'error' }),
+    });
   }
 
   loadAll(): void {
@@ -144,6 +158,84 @@ export class DocuAuthComponent implements OnInit {
       height: '95vh',
       data: { documastId: rec.documast_id, filename: rec.filename, title: `${rec.empnm} — ${rec.DocType}` },
     });
+  }
+
+  // A replaced document is auto-approved (no employee/HR review needed), so it's available
+  // for any active record — including Approved ones — but not for an already-Superseded one.
+  canReplace(rec: DocuRecord): boolean {
+    return rec.auth_status !== 'I';
+  }
+
+  startReplace(rec: DocuRecord): void {
+    const dt = this.docTypes.find(t => t.SubCode_id === rec.subcode_id);
+    const ref = this.dialog.open(FileViewerDialogComponent, {
+      width: '95vw',
+      height: '95vh',
+      data: {
+        documastId: rec.documast_id,
+        filename: rec.filename,
+        title: `${rec.empnm} — ${rec.DocType}`,
+        openResubmit: true,
+        resubmit: {
+          parentDocuId: rec.documast_id,
+          subcodeId: rec.subcode_id,
+          targetEmpid: rec.empid,
+          allowedExtensions: dt ? dt.AllowedExt : null,
+          multiPageAllowed: dt?.MultiPageAllowed ?? false,
+          minFileSizeKb: dt?.MinFileSizeKb ?? null,
+          maxFileSizeKb: dt?.MaxFileSizeKb ?? null,
+          defaultDescription: rec.description || '',
+          defaultPageNo: null,
+        },
+      },
+    });
+    ref.closed.subscribe(result => { if (result === 'resubmitted') { this.loadAll(); } });
+  }
+
+  // --- Upload New Document ---
+  toggleUpload(): void {
+    this.showUpload = !this.showUpload;
+    if (!this.showUpload) { this.resetUploadForm(); }
+  }
+
+  onUploadFilePick(e: Event): void {
+    const input = e.target as HTMLInputElement;
+    const file = input.files && input.files[0];
+    if (file) { this.uploadFile = file; }
+    input.value = '';
+  }
+
+  isUploadMultiPageAllowed(): boolean {
+    return this.docTypes.find(t => t.SubCode_id === this.uploadSubcodeId)?.MultiPageAllowed ?? false;
+  }
+
+  submitUpload(): void {
+    if (!this.uploadEmpId) { this.toast.show('Select an employee', { variant: 'warning' }); return; }
+    if (!this.uploadSubcodeId) { this.toast.show('Select a document type', { variant: 'warning' }); return; }
+    if (!this.uploadFile) { this.toast.show('Choose a file to upload', { variant: 'warning' }); return; }
+
+    this.uploading = true;
+    this.service.uploadDocument(this.uploadEmpId, this.uploadSubcodeId, this.uploadDescription, this.uploadPageNo, this.uploadFile).subscribe({
+      next: () => {
+        this.toast.show('Document uploaded and approved', { variant: 'success' });
+        this.uploading = false;
+        this.showUpload = false;
+        this.resetUploadForm();
+        this.loadAll();
+      },
+      error: (err) => {
+        this.toast.show(err?.error || 'Upload failed', { variant: 'error' });
+        this.uploading = false;
+      },
+    });
+  }
+
+  private resetUploadForm(): void {
+    this.uploadEmpId = null;
+    this.uploadSubcodeId = 0;
+    this.uploadDescription = '';
+    this.uploadPageNo = null;
+    this.uploadFile = null;
   }
 
   // --- Approve ---

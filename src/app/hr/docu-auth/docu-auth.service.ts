@@ -7,6 +7,7 @@ export interface DocuRecord {
   empid: number;
   empnm: string;
   empUsername: string;
+  subcode_id: number;
   description: string;
   filename: string;
   DocType: string;
@@ -32,8 +33,22 @@ export interface NotificationPayload {
   Inst_id: number | null;
 }
 
+export interface SubcodeItem {
+  SubCode_id: number;
+  vals: string;
+  String2: string | null;
+  DocuAllowSubcode_id: number | null;
+  MultiPageAllowed: boolean;
+  ConvertPdfToJpg: boolean;
+  HrOnly: boolean;
+  AllowedExt: string | null;
+  MinFileSizeKb: number | null;
+  MaxFileSizeKb: number | null;
+}
+
 const BASE = '/api/HR/EmpmastsAPI';
 const NOTIF_BASE = '/api/Common/notificationssAPI';
+const CODELIST_BASE = '/api/Common/CodemastsAPI';
 
 @Injectable({ providedIn: 'root' })
 export class DocuAuthService {
@@ -54,5 +69,20 @@ export class DocuAuthService {
 
   sendNotification(payload: NotificationPayload): Observable<any> {
     return this.api.post<any>(`${NOTIF_BASE}/SaveData`, payload);
+  }
+
+  getDocumentTypes(): Observable<SubcodeItem[]> {
+    return this.api.get<SubcodeItem[]>(`${CODELIST_BASE}/GetCodeListbyCodenm`, { codenm: 'HRDOCUTYPE' });
+  }
+
+  uploadDocument(empid: number, subcodeId: number, description: string, pageNo: number | null,
+                 file: File, parentDocuId: number | null = null): Observable<any> {
+    const formData = new FormData();
+    formData.append('Data', JSON.stringify({
+      Empid: empid, Subcode_id: subcodeId, Description: description,
+      PageNo: pageNo, Parent_Docu_Id: parentDocuId,
+    }));
+    formData.append('file', file, file.name);
+    return this.api.postFormData<any>(`${BASE}/HrDocuUpload`, formData);
   }
 }

@@ -19,8 +19,64 @@
       <!-- Card header -->
       <div class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-5 py-4">
         <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#c8a96a] to-[#2d8a7e]"></div>
-        <h3 class="font-serif text-lg text-[#1e293b]">Self-Uploaded Documents</h3>
-        <p class="mt-0.5 text-xs text-[#888]">Review and manage documents submitted by employees.</p>
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-serif text-lg text-[#1e293b]">Self-Uploaded Documents</h3>
+            <p class="mt-0.5 text-xs text-[#888]">Review and manage documents submitted by employees.</p>
+          </div>
+          <button *ngIf="rights.Add" type="button" (click)="toggleUpload()"
+            class="inline-flex items-center gap-1.5 rounded-lg border border-[#c8a96a] px-3 py-1.5 text-xs font-medium text-[#8c6b2f] hover:bg-[#f3eadb]">
+            <span class="material-icons text-[15px]">{{ showUpload ? 'close' : 'upload_file' }}</span>
+            {{ showUpload ? 'Cancel Upload' : 'Upload Document' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Upload New Document panel -->
+      <div *ngIf="showUpload" class="border-b border-[#e2e8f0] bg-[#fffdf7] px-5 py-4">
+        <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-[#888]">Upload Document for Employee</p>
+        <div class="flex flex-wrap items-end gap-3">
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-[#555]">Employee *</label>
+            <div style="width:220px;">
+              <app-autocomplete
+                [items]="empItems"
+                placeholder="Select employee…"
+                [(ngModel)]="uploadEmpId">
+              </app-autocomplete>
+            </div>
+          </div>
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-[#555]">Document Type *</label>
+            <select [(ngModel)]="uploadSubcodeId"
+              class="w-52 rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-sm focus:border-[#2d8a7e] focus:outline-none">
+              <option [value]="0">— Select type —</option>
+              <option *ngFor="let t of docTypes" [value]="t.SubCode_id">{{ t.vals }}</option>
+            </select>
+          </div>
+          <div *ngIf="isUploadMultiPageAllowed()">
+            <label class="mb-1 block text-xs font-semibold text-[#555]">Page #</label>
+            <input type="number" [(ngModel)]="uploadPageNo" min="1" placeholder="Pg #"
+              class="w-20 rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-sm focus:border-[#2d8a7e] focus:outline-none" />
+          </div>
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-[#555]">Description</label>
+            <input type="text" [(ngModel)]="uploadDescription" placeholder="Optional description"
+              class="w-48 rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-sm focus:border-[#2d8a7e] focus:outline-none" />
+          </div>
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-[#555]">File *</label>
+            <input type="file" (change)="onUploadFilePick($event)"
+              accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx"
+              class="w-56 text-xs" />
+          </div>
+          <button type="button" (click)="submitUpload()" [disabled]="uploading"
+            class="inline-flex items-center gap-2 rounded-lg bg-[#2d8a7e] px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#256f65] disabled:opacity-50">
+            <span class="material-icons text-[18px]">{{ uploading ? 'hourglass_empty' : 'upload' }}</span>
+            {{ uploading ? 'Uploading…' : 'Upload &amp; Approve' }}
+          </button>
+        </div>
+        <p class="mt-2 text-xs text-[#aaa]">Documents uploaded here are auto-approved — no separate review step is needed.</p>
       </div>
 
       <!-- Employee filter + Tab bar -->
@@ -222,6 +278,13 @@
                     [disabled]="processing[rec.documast_id]" title="Request Resubmit"
                     class="inline-flex items-center justify-center rounded-lg border border-teal-300 p-1.5 text-teal-700 transition hover:bg-teal-50 disabled:opacity-50">
                     <span class="material-icons text-[16px]">replay</span>
+                  </button>
+
+                  <!-- Replace — HR uploads a new file directly; auto-approved, no employee action needed -->
+                  <button *ngIf="rights.Add && canReplace(rec)" type="button" (click)="startReplace(rec)"
+                    [disabled]="processing[rec.documast_id]" title="Replace Document"
+                    class="inline-flex items-center justify-center rounded-lg border border-[#c8a96a] p-1.5 text-[#8c6b2f] transition hover:bg-[#f3eadb] disabled:opacity-50">
+                    <span class="material-icons text-[16px]">upload_file</span>
                   </button>
                 </div>
 

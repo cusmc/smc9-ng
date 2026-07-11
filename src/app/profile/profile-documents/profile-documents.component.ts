@@ -150,11 +150,6 @@ export class ProfileDocumentsComponent implements OnInit {
     return null;
   }
 
-  showPdfConvertHint(p: PendingFile): boolean {
-    const dt = this.docTypes.find(t => t.SubCode_id === p.subcodeId);
-    return !!dt?.ConvertPdfToJpg && p.file.name.toLowerCase().endsWith('.pdf');
-  }
-
   submitAll(): void {
     if (this.pendingFiles.length === 0) { return; }
     const invalid = this.pendingFiles.some(p => p.subcodeId === 0);
