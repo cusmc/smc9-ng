@@ -3,54 +3,125 @@
 >
   <div class="grid min-h-screen lg:grid-cols-2">
     <!-- Left Side -->
-    <div class="hidden lg:flex flex-col justify-center px-16">
+    <div class="hidden lg:flex flex-col justify-center px-5 py-5">
       <div class="max-w-xl">
-        <div class="mb-8">
+        <div class="flex items-center gap-4">
           <img src="assets/SRSH_logo.svg" alt="CUSMC" class="h-20 w-20 mb-6" />
+          <div class="text-slate-700 font-semibold text-lg mb-5">
+            Shrimad Rajchandra Sarvamangal Hospital & <br />
+            C U Shah Medical College
+            <!-- <p class="text-[#795548] text-lg font-bold font-3xl">Love & Care</p> -->
+          </div>
         </div>
 
         <h1 class="text-5xl font-bold leading-tight text-slate-800">
-          Welcome to
-          <span class="text-blue-600">CUSMC Integrated Management System</span>
+          Welcome to SRSH
+          <span class="text-blue-600">
+            Integrated Healthcare & Academic Management System
+          </span>
         </h1>
+        <!-- <h2
+          class="relative mb-4 pb-4 text-3xl font-bold text-gray-900 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-20 after:h-1 after:bg-blue-600 after:rounded-full"
+        ></h2> -->
+        <h2 class="text-xl font-bold text-blue-600"></h2>
 
         <p class="mt-6 text-lg text-slate-600 leading-relaxed">
           Track student activities, manage patient records, monitor progress,
           generate reports and streamline medical education workflows.
         </p>
 
-        <div class="mt-10 grid grid-cols-3 gap-5">
-          <div class="rounded-2xl bg-white p-5 shadow-lg">
-            <span class="material-icons text-3xl text-blue-600"> school </span>
-            <h3 class="mt-3 font-semibold text-slate-800">Learning</h3>
-            <p class="mt-1 text-xs text-slate-500">
-              Academic progress tracking
-            </p>
-          </div>
+        <div class="mt-10">
+          <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 xl:grid-cols-4">
+            <!-- Academics -->
+            <div
+              class="rounded-2xl border border-slate-200 bg-white p-2 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg w-35 h-50"
+            >
+              <div
+                class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-100"
+              >
+                <span class="material-icons text-3xl text-blue-600"
+                  >school</span
+                >
+              </div>
 
-          <div class="rounded-2xl bg-white p-5 shadow-lg">
-            <span class="material-icons text-3xl text-green-600">
-              analytics
-            </span>
-            <h3 class="mt-3 font-semibold text-slate-800">Reports</h3>
-            <p class="mt-1 text-xs text-slate-500">
-              Real-time performance analytics
-            </p>
-          </div>
+              <h3 class="mt-5 text-lg font-semibold text-slate-800">
+                Academics
+              </h3>
 
-          <div class="rounded-2xl bg-white p-5 shadow-lg">
-            <span class="material-icons text-3xl text-orange-500">
-              security
-            </span>
-            <h3 class="mt-3 font-semibold text-slate-800">Secure</h3>
-            <p class="mt-1 text-xs text-slate-500">Protected medical records</p>
+              <p class="mt-2 text-sm leading-6 text-slate-500">
+                Empowering medical education & learning.
+              </p>
+            </div>
+
+            <!-- Management -->
+            <div
+              class="rounded-2xl border border-slate-200 bg-white p-2 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg w-35 h-50"
+            >
+              <div
+                class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100"
+              >
+                <span class="material-icons text-3xl text-green-600">
+                  assignment
+                </span>
+              </div>
+
+              <h3 class="mt-5 text-lg font-semibold text-slate-800">
+                Management
+              </h3>
+
+              <p class="mt-2 text-sm leading-6 text-slate-500">
+                Streamline operations & administration.
+              </p>
+            </div>
+
+            <!-- Analytics -->
+            <div
+              class="rounded-2xl border border-slate-200 bg-white p-2 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg w-35 h-50"
+            >
+              <div
+                class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-purple-100"
+              >
+                <span class="material-icons text-3xl text-purple-600">
+                  bar_chart
+                </span>
+              </div>
+
+              <h3 class="mt-5 text-lg font-semibold text-slate-800">
+                Analytics
+              </h3>
+
+              <p class="mt-2 text-sm leading-6 text-slate-500">
+                Real-time insights & data-driven decisions.
+              </p>
+            </div>
+
+            <!-- Healthcare -->
+            <div
+              class="rounded-2xl border border-slate-200 bg-white p-2 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg w-35 h-50"
+            >
+              <div
+                class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100"
+              >
+                <span class="material-icons text-3xl text-red-500">
+                  favorite
+                </span>
+              </div>
+
+              <h3 class="mt-5 text-lg font-semibold text-slate-800">
+                Healthcare
+              </h3>
+
+              <p class="mt-2 text-sm leading-6 text-slate-500">
+                Enhancing patient care & clinical excellence.
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Right Side -->
-    <div class="flex items-center justify-center px-6 py-12">
+    <div class="flex items-center justify-center px-2 py-2">
       <div
         class="w-full max-w-md rounded-3xl border border-white/30 bg-white/80 backdrop-blur-xl shadow-[0_20px_60px_rgba(15,23,42,0.15)]"
       >
@@ -213,14 +284,14 @@
   </div>
 
   <!-- Footer -->
-  <div class="pb-6 text-center text-xs text-slate-500">
+  <div class="pb-6 pt-6 text-center text-xs text-slate-500">
     © {{ currentYear }}
     <span class="font-medium text-slate-700">
       SRSH Hospital & C U Shah Medical College
     </span>
     <span class="mx-2">•</span>
-    Integrated Management System
+    CUSMC ERP System
     <span class="mx-2">•</span>
-    Powered by IT Department
+    Powered by IT Department SRSH & CUSMC
   </div>
 </div>

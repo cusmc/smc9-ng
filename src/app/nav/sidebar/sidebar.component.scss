@@ -23,7 +23,7 @@
   }
 
   .module-label {
-    font-size: 13px;
+    font-size: 0.9rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -79,7 +79,7 @@
   }
 
   .group-icon {
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   .group-label {
@@ -87,7 +87,7 @@
   }
 
   .expand-icon {
-    font-size: 16px;
+    font-size: 1rem;
     transition: transform 0.2s;
   }
 }
@@ -106,7 +106,7 @@ details[open] .expand-icon {
   align-items: center;
   gap: 8px;
   padding: 7px 12px 7px 22px;
-  font-size: 12.5px;
+  font-size: 12px;
   color: var(--app-sidenav-text);
   text-decoration: none;
   border-left: 3px solid transparent;
@@ -240,12 +240,9 @@ details[open] .expand-icon {
 }
 
 .nav-group-summary {
-  border-radius: 12px;
-
+  border-radius: 10px;
   padding: 12px 14px;
-
   background: #f8fafc;
-
   font-size: 11px;
   font-weight: 700;
 
@@ -256,18 +253,13 @@ details[open] .expand-icon {
 .nav-item {
   display: flex;
   align-items: center;
-
   gap: 12px;
-
   margin: 3px 0;
   padding: 11px 14px 11px 18px;
-
   border-radius: 14px;
-
   color: #475569;
-  font-size: 13px;
+  font-size: 0.7rem;
   font-weight: 500;
-
   transition: all 0.25s ease;
 
   &:hover {
@@ -334,5 +326,23 @@ details[open] .expand-icon {
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+  }
+}
+
+@media (max-width: 320px) {
+ .sidebar-panel{
+  width: 220px;
+ }
+}
+
+@media (max-width: 425px){
+  .sidebar-panel{
+    width: 220px;
+  }
+}
+
+@media (max-width: 768px){
+  .sidebar-panel{
+    width: 220px;
   }
 }
