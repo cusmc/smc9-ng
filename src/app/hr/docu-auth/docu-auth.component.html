@@ -167,7 +167,7 @@
                     class="inline-flex items-center justify-center rounded-lg border border-[#c8a96a] p-1.5 text-[#4680ff] transition hover:bg-[#e8eeff]">
                     <span class="material-icons text-[16px]">visibility</span>
                   </button>
-                  <button type="button" (click)="deleteRecord(rec)" [disabled]="processing[rec.documast_id]" title="Delete"
+                  <button *ngIf="rights.Delete" type="button" (click)="deleteRecord(rec)" [disabled]="processing[rec.documast_id]" title="Delete"
                     class="inline-flex items-center justify-center rounded-lg border border-red-300 p-1.5 text-red-600 transition hover:bg-red-50 disabled:opacity-50">
                     <span class="material-icons text-[16px]">delete</span>
                   </button>

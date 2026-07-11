@@ -6,6 +6,8 @@ import { DocuAuthService, DocuRecord } from './docu-auth.service';
 import { ToastService } from '../../core/toast/toast.service';
 import { FileViewerDialogComponent } from '../../shared/file-viewer-dialog/file-viewer-dialog.component';
 import { AutocompleteComponent, AcItem } from '../../shared/autocomplete/autocomplete.component';
+import { RightsService } from '../../auth/rights.service';
+import { RightModal } from '../../auth/rights.models';
 
 type TabId = 'P' | 'A' | 'R' | 'S' | 'ALL';
 
@@ -26,6 +28,7 @@ export class DocuAuthComponent implements OnInit {
   allRecords: DocuRecord[] = [];
   loading = false;
   processing: Record<number, boolean> = {};
+  rights: RightModal = { View: false, Add: false, Edit: false, Delete: false, Auth1: false, Auth2: false, Sp1: false, Sp2: false };
 
   activeTab: TabId = 'P';
 
@@ -59,9 +62,12 @@ export class DocuAuthComponent implements OnInit {
     private service: DocuAuthService,
     private toast: ToastService,
     private dialog: Dialog,
+    private rightsService: RightsService,
   ) {}
 
   ngOnInit(): void {
+    // Cache is warm: rightsGuard has already fetched 'HR|DocuAuth' before activation
+    this.rights = this.rightsService.getRightsModal('HR', 'DocuAuth');
     this.loadAll();
   }
 
