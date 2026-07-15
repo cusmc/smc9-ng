@@ -9,6 +9,7 @@ export interface MyDocuRecord {
   description: string;
   filename: string;
   DocType: string;
+  priority: number | null;
   create_dt: string;
   auth_status: string | null;
   rej_reason: string | null;

@@ -1,0 +1,244 @@
+<div class="flex w-full flex-col bg-white" style="max-height: 90vh; width: 900px">
+  <!-- Header -->
+  <div class="flex items-center gap-3 border-b border-[#e2e8f0] bg-[#f8faff] px-5 py-4">
+    <span class="material-icons text-[var(--app-primary)]">{{ isEdit ? 'edit' : 'add_circle' }}</span>
+    <h3 class="text-base font-semibold text-[#333]">{{ isEdit ? 'Edit Institute' : 'Add Institute' }}</h3>
+    <span class="flex-1"></span>
+    <button type="button" class="rounded p-1 hover:bg-[#eee]" (click)="onCancel()" aria-label="Close">
+      <span class="material-icons text-[#999]">close</span>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <form [formGroup]="form" class="flex-1 overflow-y-auto p-5">
+
+    <!-- Basic Info -->
+    <fieldset class="mb-5 rounded-lg border border-[#e2e8f0] p-4">
+      <legend class="px-1 text-xs font-semibold uppercase tracking-wide text-[var(--app-primary)]">Basic Info</legend>
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Institute Name</label>
+          <input formControlName="Inst_nm" type="text" maxlength="50" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Alias</label>
+          <input formControlName="Alias_nm" type="text" maxlength="10" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Institute Code</label>
+          <input formControlName="Inst_cd" type="text" maxlength="10" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">College Name</label>
+          <input formControlName="Coll_nm" type="text" maxlength="50" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Hospital Name</label>
+          <input formControlName="Hosp_nm" type="text" maxlength="50" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">SMC Name</label>
+          <input formControlName="Smc_nm" type="text" maxlength="100" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">PG Institute</label>
+          <input formControlName="Pg_inst" type="number" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Entity Code</label>
+          <input formControlName="En" type="text" maxlength="4" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div class="flex items-end">
+          <label class="inline-flex items-center gap-2 text-sm text-[#333]">
+            <input formControlName="Active" type="checkbox" class="h-4 w-4" />
+            Active
+          </label>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Contact -->
+    <fieldset class="mb-5 rounded-lg border border-[#e2e8f0] p-4">
+      <legend class="px-1 text-xs font-semibold uppercase tracking-wide text-[var(--app-primary)]">Contact</legend>
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Address 1</label>
+          <input formControlName="Add1" type="text" maxlength="100" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Address 2</label>
+          <input formControlName="Add2" type="text" maxlength="100" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Address 3</label>
+          <input formControlName="Add3" type="text" maxlength="100" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">City</label>
+          <input formControlName="City" type="text" maxlength="50" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Mobile</label>
+          <input formControlName="Mobile" type="text" maxlength="25" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Phone</label>
+          <input formControlName="Phone" type="text" maxlength="100" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Email</label>
+          <input formControlName="Email" type="text" maxlength="100" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Compliance -->
+    <fieldset class="mb-5 rounded-lg border border-[#e2e8f0] p-4">
+      <legend class="px-1 text-xs font-semibold uppercase tracking-wide text-[var(--app-primary)]">Compliance</legend>
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">PAN</label>
+          <input formControlName="Pan" type="text" maxlength="10" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">GST No</label>
+          <input formControlName="Gst_no" type="text" maxlength="30" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">TDS PAN No</label>
+          <input formControlName="Amp_pan_no" type="text" maxlength="10" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">TDS No</label>
+          <input formControlName="Amp_tds_no" type="text" maxlength="10" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">TDS Circle</label>
+          <input formControlName="Amp_tds_c" type="text" maxlength="10" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Form 16 Person</label>
+          <input formControlName="F16_person" type="text" maxlength="30" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Form 16 Parent</label>
+          <input formControlName="F16_parent" type="text" maxlength="30" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Form 16 Designation</label>
+          <input formControlName="F16_desg" type="text" maxlength="30" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Signatory PF No</label>
+          <input formControlName="Pfno" type="text" maxlength="20" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Signatory Designation</label>
+          <input formControlName="Desg" type="text" maxlength="50" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Tally Company</label>
+          <input formControlName="Tally_cmp" type="text" maxlength="100" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Bank Details -->
+    <fieldset class="mb-5 rounded-lg border border-[#e2e8f0] p-4">
+      <legend class="px-1 text-xs font-semibold uppercase tracking-wide text-[var(--app-primary)]">Bank Details</legend>
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Bank Name</label>
+          <input formControlName="Bank_name" type="text" maxlength="100" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Account No</label>
+          <input formControlName="Bank_acno" type="text" maxlength="100" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">IFSC</label>
+          <input formControlName="Bank_ifsc" type="text" maxlength="100" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Signatures -->
+    <fieldset class="mb-5 rounded-lg border border-[#e2e8f0] p-4">
+      <legend class="px-1 text-xs font-semibold uppercase tracking-wide text-[var(--app-primary)]">Signatures</legend>
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3">
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Signature 1</label>
+          <input formControlName="Sign1" type="text" maxlength="25" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Signature 2</label>
+          <input formControlName="Sign2" type="text" maxlength="25" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Signature 3</label>
+          <input formControlName="Sign3" type="text" maxlength="25" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Signature 4</label>
+          <input formControlName="Sign4" type="text" maxlength="25" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Signature 5</label>
+          <input formControlName="Sign5" type="text" maxlength="25" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold text-[#666]">Signature 6</label>
+          <input formControlName="Sign6" type="text" maxlength="25" class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm" />
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Module Flags -->
+    <fieldset class="rounded-lg border border-[#e2e8f0] p-4">
+      <legend class="px-1 text-xs font-semibold uppercase tracking-wide text-[var(--app-primary)]">Module Flags</legend>
+      <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <label class="inline-flex items-center gap-2 text-sm text-[#333]">
+          <input formControlName="Stud" type="checkbox" class="h-4 w-4" /> Student
+        </label>
+        <label class="inline-flex items-center gap-2 text-sm text-[#333]">
+          <input formControlName="Host" type="checkbox" class="h-4 w-4" /> Hostel
+        </label>
+        <label class="inline-flex items-center gap-2 text-sm text-[#333]">
+          <input formControlName="Stor" type="checkbox" class="h-4 w-4" /> Store
+        </label>
+        <label class="inline-flex items-center gap-2 text-sm text-[#333]">
+          <input formControlName="Payr" type="checkbox" class="h-4 w-4" /> Payroll
+        </label>
+        <label class="inline-flex items-center gap-2 text-sm text-[#333]">
+          <input formControlName="Acnt" type="checkbox" class="h-4 w-4" /> Accounts
+        </label>
+        <label class="inline-flex items-center gap-2 text-sm text-[#333]">
+          <input formControlName="Hospital" type="checkbox" class="h-4 w-4" /> Hospital
+        </label>
+        <label class="inline-flex items-center gap-2 text-sm text-[#333]">
+          <input formControlName="College" type="checkbox" class="h-4 w-4" /> College
+        </label>
+        <label class="inline-flex items-center gap-2 text-sm text-[#333]">
+          <input formControlName="Latefee" type="checkbox" class="h-4 w-4" /> Late Fee
+        </label>
+      </div>
+    </fieldset>
+
+  </form>
+
+  <!-- Footer -->
+  <div class="flex items-center gap-2 border-t border-[#e2e8f0] px-5 py-4">
+    <span class="flex-1"></span>
+    <button type="button"
+      class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm text-[#666] hover:bg-[#f5f5f5]"
+      (click)="onCancel()">
+      Cancel
+    </button>
+    <button type="button"
+      class="inline-flex items-center gap-1 rounded-lg bg-[var(--app-primary)] px-5 py-2 text-sm font-medium text-white shadow hover:bg-[var(--app-primary-dark)] disabled:opacity-50"
+      (click)="onSave()" [disabled]="saving">
+      <span class="material-icons text-[16px]">save</span>
+      {{ saving ? 'Saving…' : 'Save' }}
+    </button>
+  </div>
+</div>

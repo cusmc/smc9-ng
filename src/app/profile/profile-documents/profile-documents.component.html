@@ -248,7 +248,9 @@
                   [class.text-[#aaa]]="doc.auth_status === 'I'">
                   <span class="material-icons text-[16px] text-[#c8a96a]">{{ fileIcon(doc.filename) }}</span>
                   <div>
-                    <div class="font-medium">{{ doc.DocType }}</div>
+                    <div class="font-medium">
+                      <span *ngIf="doc.priority !== null" class="text-[#c8a96a]">{{ doc.priority }}.</span> {{ doc.DocType }}
+                    </div>
                     <div class="text-xs font-normal text-[#999]">{{ doc.create_dt | date:'dd MMM yyyy, HH:mm' }}</div>
                   </div>
                 </div>

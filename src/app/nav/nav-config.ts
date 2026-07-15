@@ -391,7 +391,6 @@ export const APP_NAV: NavModule[] = [
         icon: 'admin_panel_settings',
         items: [
           { label: 'Code Master', icon: 'code', externalUrl: '/Code/Master' },
-          { label: 'Institute Master', icon: 'business', externalUrl: '/Institute/Master' },
           { label: 'Task Manager', icon: 'task_alt', externalUrl: '/Task/Index' },
           { label: 'ABHA Creation', icon: 'health_and_safety', externalUrl: '/ABHA/Create' },
         ],
@@ -458,6 +457,13 @@ export const APP_NAV: NavModule[] = [
         icon: 'language',
         items: [
           { label: 'Webpages', icon: 'web', route: '/admin/website/webpages' },
+        ],
+      },
+      {
+        label: 'Masters',
+        icon: 'business',
+        items: [
+          { label: 'Institute Master', icon: 'business', route: '/admin/institute' },
         ],
       },
       {
