@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { AppComponent } from './app.component';
 import { AuthService } from './auth/auth.service';
 import { NavService } from './nav/nav.service';
-import { NavModule } from './nav/nav.types';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -29,10 +28,11 @@ describe('AppComponent', () => {
     mockHttp.get.and.returnValue(of({ ProfileName: 'Test User', UGPG: '', Course_id: '' }));
 
     mockNav = {
-      getVisibleModules: jasmine.createSpy('getVisibleModules').and.returnValue([]),
+      fetchMenuTree: jasmine.createSpy('fetchMenuTree').and.returnValue(of([])),
+      getHospitalModule: jasmine.createSpy('getHospitalModule').and.returnValue([]),
+      setVisibleModules: jasmine.createSpy('setVisibleModules'),
       setActiveModule: jasmine.createSpy('setActiveModule'),
       activeModule$: of(null),
-      allModules: [] as NavModule[],
     } as any;
 
     component = new AppComponent(mockAuthService, mockRouter, mockHttp, mockNav);
@@ -89,16 +89,16 @@ describe('AppComponent', () => {
   });
 
   describe('loadUserProfile()', () => {
-    it('calls nav.getVisibleModules with resolved roles', () => {
+    it('loads the dynamic menu tree with resolved roles', () => {
       mockHttp.get.and.returnValue(of({ ProfileName: 'Alice', usertype: 'Employee' }));
       component.loadUserProfile();
-      expect(mockNav.getVisibleModules).toHaveBeenCalled();
+      expect(mockNav.fetchMenuTree).toHaveBeenCalled();
+      expect(mockNav.getHospitalModule).toHaveBeenCalledWith(component.userRoles);
     });
 
-    it('falls back to nav.allModules on HTTP error', () => {
+    it('does not throw when response data is missing', () => {
       mockHttp.get.and.returnValue(of(null));
       component.loadUserProfile();
-      // no error thrown — allModules used when response data is missing
       expect(component.visibleModules).toBeDefined();
     });
   });

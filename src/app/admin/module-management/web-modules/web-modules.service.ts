@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../../shared/api.service';
-import { Wmodule, UserWright, GroupWright, RightsRecord } from './web-modules.models';
+import { Wmodule, UserWright, GroupWright, RightsRecord, MenuGroupOption, GroupLabelOption } from './web-modules.models';
 
 const BASE = '/api/Admin/WmodulesAPI';
+const CODELIST_BASE = '/api/Common/CodemastsAPI';
 
 @Injectable({ providedIn: 'root' })
 export class WebModulesService {
@@ -47,5 +48,15 @@ export class WebModulesService {
 
   saveLabels(id: number, labels: string[]): Observable<any> {
     return this.api.post<any>(`${BASE}/SaveLabels?id=${id}`, { Labels: JSON.stringify(labels) });
+  }
+
+  /** Top-level nav modules (eLogBook, Admin, MIS, ...) for the menu-placement dropdown. */
+  getMenuGroups(): Observable<MenuGroupOption[]> {
+    return this.api.get<MenuGroupOption[]>(`${CODELIST_BASE}/GetCodeListbyCodenm`, { codenm: 'MenuGrp' });
+  }
+
+  /** Distinct sidebar-section labels already used within a given nav module. */
+  getGroupLabels(navModuleSubcodeId: number): Observable<GroupLabelOption[]> {
+    return this.api.get<GroupLabelOption[]>(`${BASE}/GetGroupLabels`, { navModuleSubcodeId });
   }
 }

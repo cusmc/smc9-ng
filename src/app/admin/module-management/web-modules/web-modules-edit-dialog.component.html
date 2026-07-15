@@ -48,6 +48,70 @@
         class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
         placeholder="Optional query parameters" />
     </div>
+
+    <!-- Portal -->
+    <div>
+      <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Portal ID</label>
+      <input formControlName="Portal_id" type="number"
+        class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+        placeholder="Optional" />
+    </div>
+
+    <div class="border-t border-[#eee] pt-4">
+      <p class="mb-3 text-xs font-semibold uppercase tracking-wide text-[#2d7a6e]">Dynamic Menu Placement</p>
+
+      <!-- Show In Menu -->
+      <label class="mb-3 flex items-center gap-2 text-sm text-[#444]">
+        <input formControlName="ShowInMenu" type="checkbox"
+          class="h-3.5 w-3.5 accent-[var(--app-primary)]" />
+        Show this item in the app menu
+      </label>
+
+      <!-- Nav Module -->
+      <div class="mb-3">
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Menu Module</label>
+        <select formControlName="NavModule_Subcode_id"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]">
+          <option [ngValue]="null">— None —</option>
+          <option *ngFor="let g of menuGroups" [ngValue]="g.SubCode_id">{{ g.vals }}</option>
+        </select>
+      </div>
+
+      <!-- Nav Group Label -->
+      <div class="mb-3">
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Sidebar Section</label>
+        <input formControlName="NavGroupLabel" type="text" list="navGroupLabelList"
+          (change)="onGroupLabelPicked($any($event.target).value)"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+          placeholder="e.g. Masters, Reports — pick existing or type a new one" />
+        <datalist id="navGroupLabelList">
+          <option *ngFor="let g of groupLabels" [value]="g.Label"></option>
+        </datalist>
+      </div>
+
+      <div class="mb-3 grid grid-cols-2 gap-3">
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Section Icon</label>
+          <input formControlName="NavGroupIcon" type="text"
+            class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+            placeholder="material icon name" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Item Icon</label>
+          <input formControlName="NavIcon" type="text"
+            class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+            placeholder="material icon name" />
+        </div>
+      </div>
+
+      <!-- Angular Route -->
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-wide text-[#666]">Angular Route</label>
+        <input formControlName="NgRoute" type="text"
+          class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[var(--app-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--app-primary-soft)]"
+          placeholder="/elogbook/activities — leave blank for legacy /Controller/View" />
+      </div>
+    </div>
   </form>
 
   <!-- Footer buttons -->

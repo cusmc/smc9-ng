@@ -11,12 +11,9 @@ export class NavService {
   private activeModuleSubject = new BehaviorSubject<NavModule | null>(null);
   readonly activeModule$ = this.activeModuleSubject.asObservable();
 
-  /** All modules in the config. Role filtering applied via getVisibleModules(). */
-  readonly allModules: NavModule[] = APP_NAV;
-
   /** Currently loaded/visible modules (dynamic tree + static Hospital), used to
    *  resolve the active module so the sidebar reflects real, permission-filtered
-   *  data instead of the static APP_NAV fallback. */
+   *  data. */
   private currentModules: NavModule[] = APP_NAV;
 
   constructor(private router: Router, private api: ApiService) {
@@ -27,24 +24,6 @@ export class NavService {
 
     // Sync on service init (page reload / direct URL entry)
     this.syncFromUrl(this.router.url);
-  }
-
-  /**
-   * Returns modules visible to the given user roles.
-   * Modules with no roles restriction are always shown.
-   * Pass an empty array to show all non-role-restricted modules.
-   */
-  /**
-   * Returns modules visible for the given roles.
-   * When userRoles is empty (roles unknown), all modules are shown —
-   * access control is enforced by the legacy app or route guards.
-   */
-  getVisibleModules(userRoles: string[]): NavModule[] {
-    if (userRoles.length === 0) return APP_NAV;
-    return APP_NAV.filter((m) => {
-      if (!m.roles || m.roles.length === 0) return true;
-      return m.roles.some((r) => userRoles.includes(r));
-    });
   }
 
   /**
