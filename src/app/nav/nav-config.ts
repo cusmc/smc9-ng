@@ -305,6 +305,7 @@ export const APP_NAV: NavModule[] = [
         items: [
           { label: 'Stock Reports', icon: 'bar_chart', externalUrl: '/Pharmacy/StockReport' },
           { label: 'Rate Contract', icon: 'price_check', route: '/pharmacy/rc-master' },
+          { label: 'Company', icon: 'swap-horizontal', route: '/pharmacy/cwap-master' },
           { label: 'Form-H Monitor', icon: 'monitor_heart', externalUrl: '/Pharmacy/FormH' },
           { label: 'PO Register', icon: 'list_alt', route: '/pharmacy/po-register' },
           { label: 'Discharge Queue', icon: 'monitor_heart', route: '/pharmacy/discharge-queue' },
