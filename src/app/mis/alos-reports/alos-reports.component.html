@@ -1,0 +1,282 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200">
+  <!-- ═══════════════════════════ PAGE HEADER ═══════════════════════════════ -->
+  <header class="bg-gradient-to-r from-slate-900 via-[#1e3a5f] to-blue-900 shadow-lg rounded-xl overflow-hidden">
+    <div class="px-5 py-3 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center">
+        <span class="material-icons text-white text-[20px]">monitor_heart</span>
+      </div>
+      <h1 class="text-lg font-bold text-white tracking-wide">ALOS / NABH QUALITY INDICATORS</h1>
+    </div>
+  </header>
+
+  <div class="p-6 space-y-6 max-w-[1800px] mx-auto">
+    <!-- ── Filter bar ─────────────────────────────────────────────────── -->
+    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/70 p-6">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
+        <div class="flex flex-col gap-1">
+          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">From</label>
+          <input type="date" [(ngModel)]="fdate" [max]="tdate"
+                 class="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">To</label>
+          <input type="date" [(ngModel)]="tdate" [min]="fdate" [max]="todayIso"
+                 class="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Trend Year</label>
+          <select [(ngModel)]="year" (ngModelChange)="onYearChange()"
+                  class="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none">
+            <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Target ALOS (days)</label>
+          <input type="number" step="0.5" min="0" [(ngModel)]="targetAlos" (ngModelChange)="onTargetChange()"
+                 class="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none" />
+        </div>
+        <div class="flex flex-col gap-1 lg:col-span-2">
+          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">&nbsp;</label>
+          <button (click)="load()" [disabled]="loading"
+                  class="h-11 inline-flex items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 px-5 text-sm font-semibold text-green-700 hover:bg-green-100 transition-all duration-300">
+            <span class="material-icons text-[16px]">{{ loading ? 'hourglass_top' : 'play_arrow' }}</span>
+            {{ loading ? 'Loading…' : 'Load Report' }}
+          </button>
+        </div>
+      </div>
+      <div *ngIf="error" class="mt-3 text-sm text-red-600">{{ error }}</div>
+    </div>
+
+    <ng-container *ngIf="loaded">
+      <!-- ── Summary stat tiles ─────────────────────────────────────────── -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 flex flex-col gap-1">
+          <span class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">True ALOS</span>
+          <span class="text-2xl font-bold text-teal-700">{{ overallAlos | number:'1.0-2' }}</span>
+          <span class="text-[10px] text-slate-400">days (NABH-clean)</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 flex flex-col gap-1">
+          <span class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Patients</span>
+          <span class="text-2xl font-bold text-slate-700">{{ overallPatients }}</span>
+          <span class="text-[10px] text-slate-400">included in ALOS</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 flex flex-col gap-1">
+          <span class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">ICU ALOS</span>
+          <span class="text-2xl font-bold text-indigo-700">{{ icuAlos | number:'1.0-2' }}</span>
+          <span class="text-[10px] text-slate-400">days, all ICUs</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 flex flex-col gap-1">
+          <span class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">DAMA Rate</span>
+          <span class="text-2xl font-bold text-amber-600">{{ damaRate | number:'1.0-2' }}%</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 flex flex-col gap-1">
+          <span class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">D.O.R Rate</span>
+          <span class="text-2xl font-bold text-amber-600">{{ dorRate | number:'1.0-2' }}%</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 flex flex-col gap-1">
+          <span class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Mortality Rate</span>
+          <span class="text-2xl font-bold text-red-600">{{ deathRate | number:'1.0-2' }}%</span>
+        </div>
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 flex flex-col gap-1">
+          <span class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Absconded Rate</span>
+          <span class="text-2xl font-bold text-red-600">{{ absconRate | number:'1.0-2' }}%</span>
+        </div>
+      </div>
+
+      <!-- ── Trend chart ────────────────────────────────────────────────── -->
+      <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-3">
+            <span class="material-icons text-[16px] text-teal-600">show_chart</span>
+            Monthly ALOS Trend — {{ year }}
+          </h2>
+        </div>
+        <div class="p-4">
+          <apx-chart *ngIf="trendChart"
+            [series]="trendChart.series!" [chart]="trendChart.chart!"
+            [xaxis]="trendChart.xaxis!" [yaxis]="trendChart.yaxis!"
+            [dataLabels]="trendChart.dataLabels!" [colors]="trendChart.colors!"
+            [legend]="trendChart.legend!" [tooltip]="trendChart.tooltip!"
+            [stroke]="trendChart.stroke!" [annotations]="trendChart.annotations!">
+          </apx-chart>
+        </div>
+      </div>
+
+      <!-- ── Unit-wise / Bed-category-wise (side by side) ───────────────── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+          <div class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+            <h2 class="text-base font-bold text-slate-800 flex items-center gap-3">
+              <span class="material-icons text-[16px] text-teal-600">hotel</span>
+              Unit/Ward-wise ALOS
+            </h2>
+          </div>
+          <div class="overflow-x-auto overflow-y-auto max-h-[480px]">
+            <table class="w-full text-sm border-separate border-spacing-0">
+              <thead>
+                <tr class="bg-gradient-to-r from-slate-100 to-slate-50 sticky top-0 z-10">
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left">Unit</th>
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">ALOS (days)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of unitRows" class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200">
+                  <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ r.Nustname }}</td>
+                  <td class="px-4 py-3 text-right text-slate-800 tabular-nums">{{ r.Alos | number:'1.0-2' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+          <div class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+            <h2 class="text-base font-bold text-slate-800 flex items-center gap-3">
+              <span class="material-icons text-[16px] text-orange-500">bed</span>
+              Bed-category-wise ALOS
+            </h2>
+          </div>
+          <div class="overflow-x-auto overflow-y-auto max-h-[480px]">
+            <table class="w-full text-sm border-separate border-spacing-0">
+              <thead>
+                <tr class="bg-gradient-to-r from-slate-100 to-slate-50 sticky top-0 z-10">
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left">Category</th>
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">Patients</th>
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">ALOS (days)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of bedCategoryRows" class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200">
+                  <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ r.BedCategory }}</td>
+                  <td class="px-4 py-3 text-right text-slate-800 tabular-nums">{{ r.No_of_patient }}</td>
+                  <td class="px-4 py-3 text-right text-slate-800 tabular-nums">{{ r.Alos | number:'1.0-2' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Discharge-status breakdown / ICU units (side by side) ──────── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+          <div class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+            <h2 class="text-base font-bold text-slate-800 flex items-center gap-3">
+              <span class="material-icons text-[16px] text-red-500">assignment_late</span>
+              Discharge Status Breakdown
+            </h2>
+          </div>
+          <div class="overflow-x-auto overflow-y-auto max-h-[480px]">
+            <table class="w-full text-sm border-separate border-spacing-0">
+              <thead>
+                <tr class="bg-gradient-to-r from-slate-100 to-slate-50 sticky top-0 z-10">
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left">Discharge Type</th>
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">Count</th>
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">%</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of dischargeRows" class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200">
+                  <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ r.DisType }}</td>
+                  <td class="px-4 py-3 text-right text-slate-800 tabular-nums">{{ r.Nos }}</td>
+                  <td class="px-4 py-3 text-right text-slate-800 tabular-nums">{{ r.Pct | number:'1.0-2' }}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+          <div class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+            <h2 class="text-base font-bold text-slate-800 flex items-center gap-3">
+              <span class="material-icons text-[16px] text-indigo-600">emergency</span>
+              ICU-wise ALOS
+            </h2>
+          </div>
+          <div class="overflow-x-auto overflow-y-auto max-h-[480px]">
+            <table class="w-full text-sm border-separate border-spacing-0">
+              <thead>
+                <tr class="bg-gradient-to-r from-slate-100 to-slate-50 sticky top-0 z-10">
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left">ICU Unit</th>
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">Patients</th>
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">ALOS (days)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of icuUnitRows" class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200">
+                  <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ r.Nustname }}</td>
+                  <td class="px-4 py-3 text-right text-slate-800 tabular-nums">{{ r.No_of_patient }}</td>
+                  <td class="px-4 py-3 text-right text-slate-800 tabular-nums">{{ r.Alos | number:'1.0-2' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Department-wise ALOS ───────────────────────────────────────── -->
+      <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-3">
+            <span class="material-icons text-[16px] text-blue-600">apartment</span>
+            Department-wise ALOS
+          </h2>
+        </div>
+        <div class="overflow-x-auto overflow-y-auto max-h-[480px]">
+          <table class="w-full text-sm border-separate border-spacing-0">
+            <thead>
+              <tr class="bg-gradient-to-r from-slate-100 to-slate-50 sticky top-0 z-10">
+                <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left">Department</th>
+                <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">Patients</th>
+                <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">ALOS (days)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of deptRows" class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200">
+                <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ r.Deptname }}</td>
+                <td class="px-4 py-3 text-right text-slate-800 tabular-nums">{{ r.No_of_patient }}</td>
+                <td class="px-4 py-3 text-right text-slate-800 tabular-nums">{{ r.Alos | number:'1.0-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Doctor-wise ALOS ────────────────────────────────────────────── -->
+      <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-3">
+            <span class="material-icons text-[16px] text-purple-600">badge</span>
+            Consultant-wise ALOS
+          </h2>
+        </div>
+        <div class="overflow-x-auto overflow-y-auto max-h-[480px]">
+          <table class="w-full text-sm border-separate border-spacing-0">
+            <thead>
+              <tr class="bg-gradient-to-r from-slate-100 to-slate-50 sticky top-0 z-10">
+                <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left">Department</th>
+                <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left">Doctor</th>
+                <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">Patients</th>
+                <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">ALOS (days)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of doctorRows" class="border-b border-slate-100 hover:bg-blue-50/40 transition-all duration-200">
+                <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ r.Deptname }}</td>
+                <td class="px-4 py-3 text-slate-700 whitespace-nowrap">{{ r.Doctname }}</td>
+                <td class="px-4 py-3 text-right text-slate-800 tabular-nums">{{ r.No_of_patient }}</td>
+                <td class="px-4 py-3 text-right text-slate-800 tabular-nums">{{ r.Alos | number:'1.0-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Empty / loading state -->
+    <div *ngIf="!loaded && !loading" class="flex flex-col items-center justify-center py-24 text-slate-500 gap-4 bg-white rounded-2xl shadow-lg border border-slate-200">
+      <span class="material-icons text-7xl text-blue-500">monitor_heart</span>
+      <p class="text-sm">Set a date range and click <strong>Load Report</strong> to view ALOS indicators</p>
+    </div>
+  </div>
+</div>
