@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { WebModulesService } from './web-modules.service';
-import { Wmodule } from './web-modules.models';
+import { Wmodule, MenuGroupOption, GroupLabelOption } from './web-modules.models';
 import { ToastService } from '../../../core/toast/toast.service';
 
 @Component({
@@ -17,6 +17,9 @@ export class WebModulesEditDialogComponent implements OnInit {
   form!: FormGroup;
   saving = false;
   deleting = false;
+
+  menuGroups: MenuGroupOption[] = [];
+  groupLabels: GroupLabelOption[] = [];
 
   get isEdit(): boolean { return !!this.data; }
 
@@ -37,6 +40,41 @@ export class WebModulesEditDialogComponent implements OnInit {
       Params:     [this.data?.Params ?? ''],
       Parent_id:  [this.data?.Parent_id ?? null],
       Priority:   [this.data?.Priority ?? null],
+      Portal_id:  [this.data?.Portal_id ?? null],
+      NavModule_Subcode_id: [this.data?.NavModule_Subcode_id ?? null],
+      NavGroupLabel: [this.data?.NavGroupLabel ?? ''],
+      NavGroupIcon:  [this.data?.NavGroupIcon ?? ''],
+      NavIcon:    [this.data?.NavIcon ?? ''],
+      NgRoute:    [this.data?.NgRoute ?? ''],
+      ShowInMenu: [this.data?.ShowInMenu ?? false],
+    });
+
+    this.service.getMenuGroups().subscribe({
+      next: (groups) => {
+        this.menuGroups = groups;
+        if (this.form.value.NavModule_Subcode_id) {
+          this.loadGroupLabels(this.form.value.NavModule_Subcode_id);
+        }
+      },
+    });
+
+    this.form.get('NavModule_Subcode_id')!.valueChanges.subscribe((id: number | null) => {
+      this.groupLabels = [];
+      if (id) { this.loadGroupLabels(id); }
+    });
+  }
+
+  private loadGroupLabels(navModuleSubcodeId: number): void {
+    this.service.getGroupLabels(navModuleSubcodeId).subscribe({
+      next: (labels) => { this.groupLabels = labels; },
+    });
+  }
+
+  onGroupLabelPicked(label: string): void {
+    const match = this.groupLabels.find((g) => g.Label === label);
+    this.form.patchValue({
+      NavGroupLabel: label,
+      NavGroupIcon: match?.Icon ?? this.form.value.NavGroupIcon,
     });
   }
 

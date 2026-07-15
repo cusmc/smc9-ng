@@ -25,7 +25,7 @@ export class LoginComponent {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/elogbook/activities';
+    this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/home';
 
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required]],

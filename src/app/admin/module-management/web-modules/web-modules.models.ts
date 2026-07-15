@@ -28,8 +28,26 @@ export interface Wmodule {
   Parent_id?: number;
   LoginRequire?: string;
   Priority?: number;
+  Portal_id?: number | null;
   Rights_Labels?: string;
+  NavModule_Subcode_id?: number | null;
+  NavGroupLabel?: string | null;
+  NavGroupIcon?: string | null;
+  NavIcon?: string | null;
+  NgRoute?: string | null;
+  ShowInMenu?: boolean;
   labelArr?: string[];
+}
+
+export interface MenuGroupOption {
+  SubCode_id: number;
+  vals: string;
+  String1: string | null; // icon
+}
+
+export interface GroupLabelOption {
+  Label: string;
+  Icon: string | null;
 }
 
 export interface UserWright {

@@ -1,61 +1,15 @@
 import { NavModule } from './nav.types';
 
 /**
- * Full application navigation tree.
+ * Static navigation entry for the Hospital module only.
  *
- * Structure: Module → Group → Item
- *   - migrated: true  → item.route  → Angular router navigation
- *   - migrated: false → item.externalUrl → opens legacy MVC app
- *
- * To add a new migrated module:
- *   1. Set migrated: true
- *   2. Replace externalUrl with route on each item
- *   3. Add the lazy-loaded route to app.routes.ts
+ * All other modules are loaded dynamically at runtime from the backend
+ * WModule/WRights-driven menu API (see NavService.fetchMenuTree()).
+ * Hospital stays static here because its permissions are backed by the
+ * separate jMedilan/hModule system, which the dynamic menu API doesn't
+ * cover — see NavService.getHospitalModule().
  */
 export const APP_NAV: NavModule[] = [
-  // ─── eLogBook ────────────────────────────────────────────────────────────
-  {
-    id: 'elogbook',
-    label: 'eLogBook',
-    icon: 'menu_book',
-    baseRoute: '/elogbook',
-    migrated: true,
-    groups: [
-      {
-        label: 'Assessment',
-        icon: 'assignment',
-        items: [
-          { label: 'Activities', icon: 'task', route: '/elogbook/activities' },
-          { label: 'Competency', icon: 'verified', route: '/elogbook/competency-assessment' },
-          { label: 'Examination', icon: 'quiz', route: '/elogbook/examination-assessment' },
-          { label: 'Rotational Posting', icon: 'swap_horiz', route: '/elogbook/posting' },
-          { label: 'Student Appraisal', icon: 'rate_review', route: '/elogbook/appraisal' },
-        ],
-      },
-      {
-        label: 'Masters',
-        icon: 'settings',
-        items: [
-          { label: 'Competency', icon: 'library_books', route: '/elogbook/master/competency' },
-          { label: 'Sub-group (Section)', icon: 'category', route: '/elogbook/master/subgroup/Section' },
-          { label: 'Sub-group (Speciality)', icon: 'category', route: '/elogbook/master/subgroup/Speciality' },
-          { label: 'Exam Master', icon: 'school', route: '/elogbook/master/exam' },
-          { label: 'Approving Authority', icon: 'manage_accounts', route: '/elogbook/master/approving-authority' },
-          { label: 'Appraisal Parameters', icon: 'tune', route: '/elogbook/master/appraisal-params' },
-        ],
-      },
-      {
-        label: 'Reports',
-        icon: 'bar_chart',
-        items: [
-          { label: 'ElogBook Report', icon: 'picture_as_pdf', route: '/elogbook/reports/elogbook' },
-          { label: 'Old Data Report', icon: 'history', route: '/elogbook/reports/old-data' },
-        ],
-      },
-    ],
-  },
-
-  // ─── Hospital ─────────────────────────────────────────────────────────────
   {
     id: 'hospital',
     label: 'Hospital',
@@ -305,7 +259,6 @@ export const APP_NAV: NavModule[] = [
         items: [
           { label: 'Stock Reports', icon: 'bar_chart', externalUrl: '/Pharmacy/StockReport' },
           { label: 'Rate Contract', icon: 'price_check', route: '/pharmacy/rc-master' },
-          { label: 'Company', icon: 'swap-horizontal', route: '/pharmacy/cwap-master' },
           { label: 'Form-H Monitor', icon: 'monitor_heart', externalUrl: '/Pharmacy/FormH' },
           { label: 'PO Register', icon: 'list_alt', route: '/pharmacy/po-register' },
           { label: 'Discharge Queue', icon: 'monitor_heart', route: '/pharmacy/discharge-queue' },

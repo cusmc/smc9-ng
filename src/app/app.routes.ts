@@ -2,10 +2,12 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './auth/login/login.component';
 import { UnauthorizedComponent } from './auth/unauthorized/unauthorized.component';
 import { authGuard } from './auth/auth.guard';
+import { HomeComponent } from './home/home.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'unauthorized', component: UnauthorizedComponent },
+  { path: 'home', canActivate: [authGuard], component: HomeComponent },
   {
     path: 'elogbook',
     canActivate: [authGuard],
@@ -56,6 +58,6 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () => import('./hr/hr.routes').then(m => m.HR_ROUTES)
   },
-  { path: '', redirectTo: '/elogbook/activities', pathMatch: 'full' },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

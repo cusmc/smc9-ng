@@ -36,6 +36,7 @@
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Controller</th>
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">View</th>
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Params</th>
+              <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">In Menu</th>
               <th class="px-3 py-3 text-xs font-semibold uppercase tracking-wide">Actions</th>
             </tr>
             <!-- Column search row -->
@@ -62,6 +63,9 @@
               <td class="px-3 py-1">
                 <input disabled class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" placeholder="—" />
               </td>
+              <td class="px-3 py-1">
+                <input disabled class="w-full rounded border border-[#eee] bg-gray-100 px-2 py-1 text-xs" placeholder="—" />
+              </td>
             </tr>
           </thead>
           <tbody>
@@ -73,6 +77,10 @@
               <td class="px-3 py-2.5 text-[#555]">{{ m.Cont_name }}</td>
               <td class="px-3 py-2.5 text-[#555]">{{ m.View_name }}</td>
               <td class="px-3 py-2.5 text-[#777] text-xs font-mono">{{ m.Params }}</td>
+              <td class="px-3 py-2.5">
+                <span *ngIf="m.ShowInMenu" class="material-icons text-[18px] text-[#2d7a6e]" title="Shown in app menu">check_circle</span>
+                <span *ngIf="!m.ShowInMenu" class="material-icons text-[18px] text-[#ccc]" title="Not shown in app menu">radio_button_unchecked</span>
+              </td>
               <td class="px-3 py-2.5">
                 <div class="flex items-center gap-1">
                   <!-- Edit -->
@@ -110,7 +118,7 @@
             </tr>
             <!-- Inline labels editor -->
             <tr *ngIf="expandedLabelsId === m.Wmodule_id && m.labelArr">
-              <td colspan="6" class="bg-[#f0faf8] px-4 py-3">
+              <td colspan="7" class="bg-[#f0faf8] px-4 py-3">
                 <div class="flex items-center gap-2 mb-2">
                   <span class="material-icons text-[16px] text-[#2d7a6e]">label</span>
                   <span class="text-xs font-semibold text-[#2d7a6e]">Permission Labels — {{ m.Wmodule_nm }}</span>
