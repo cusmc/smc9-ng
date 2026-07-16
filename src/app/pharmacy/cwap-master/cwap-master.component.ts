@@ -1,16 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
-// import { PoRegisterService } from './po-register.service';
+import { FormsModule } from '@angular/forms';
 import { CwapMasterService } from './cwap-master.service';
-import { MfgItem, PartyItem, PoListItem, PrintRegBody, ProductItem } from './cwap-master.models';
+import { CompanyItem, OrigProductGroup, ProdListByCompItem } from './cwap-master.models';
 import { PhSharedService, FirmOption, FirmYearItem, YearOption } from '../ph-shared.service';
 import { ToastService } from '../../core/toast/toast.service';
 
+interface ColumnFilters {
+  code: string;
+  product: string;
+  company: string;
+  mrp: string;
+  rate: string;
+  packing: string;
+  ratio: string;
+}
+
 @Component({
-  selector: 'app-po-register',
+  selector: 'app-cwap-master',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './cwap-master.component.html',
   styleUrls: ['./cwap-master.component.scss']
 })
@@ -22,35 +31,24 @@ export class CwapMasterComponent implements OnInit {
   selectedFirm = '';
   selectedYear = '';
 
-  allData: PoListItem[] = [];
-  filteredData: PoListItem[] = [];
-  mfgList: MfgItem[] = [];
-  partyList: PartyItem[] = [];
-  productList: ProductItem[] = [];
+  companyList: CompanyItem[] = [];
+  selectedCompany = 0;
 
-  selectedParty = 0;
-  selectedProd = 0;
+  private rawData: ProdListByCompItem[] = [];
+  groupedData: OrigProductGroup[] = [];
 
-  filterForm: FormGroup;
-  partySearch = '';
-  prodSearch = '';
+  filters: ColumnFilters = { code: '', product: '', company: '', mrp: '', rate: '', packing: '', ratio: '' };
 
   loading = false;
-  printing = false;
+  exporting = false;
   currentPage = 1;
   readonly itemsPerPage = 15;
 
   constructor(
     private service: CwapMasterService,
     private shared: PhSharedService,
-    private fb: FormBuilder,
     private toast: ToastService
-  ) {
-    this.filterForm = this.fb.group({
-      status: ['A'],
-      mfgId: [0]
-    });
-  }
+  ) { }
 
   ngOnInit(): void {
     this.shared.getFirmYears().subscribe({
@@ -60,7 +58,7 @@ export class CwapMasterComponent implements OnInit {
         if (this.firmList.length > 0) {
           this.selectedFirm = this.firmList[0].id;
           this.refreshYearList();
-          this.loadLookups();
+          this.loadCompanyList();
         }
       },
       error: () => this.toast.show('Failed to load firm/year list.', { variant: 'error', duration: 5000 })
@@ -69,16 +67,15 @@ export class CwapMasterComponent implements OnInit {
 
   onFirmChange(): void {
     this.refreshYearList();
-    this.allData = [];
-    this.filteredData = [];
-    this.selectedParty = 0;
-    this.selectedProd = 0;
-    this.loadLookups();
+    this.rawData = [];
+    this.groupedData = [];
+    this.selectedCompany = 0;
+    this.loadCompanyList();
   }
 
   onYearChange(): void {
-    this.allData = [];
-    this.filteredData = [];
+    this.rawData = [];
+    this.groupedData = [];
   }
 
   private refreshYearList(): void {
@@ -86,95 +83,139 @@ export class CwapMasterComponent implements OnInit {
     this.selectedYear = this.yearList.length > 0 ? this.yearList[0].id : '';
   }
 
-  private loadLookups(): void {
-    this.service.getMfgList(this.selectedFirm).subscribe({
-      next: (data) => { this.mfgList = data; },
-      error: () => this.toast.show('Failed to load manufacturer list', { variant: 'error', duration: 5000 })
-    });
-    this.service.getPartyList(this.selectedFirm).subscribe({
-      next: (data) => { this.partyList = data; },
-      error: () => this.toast.show('Failed to load party list', { variant: 'error', duration: 5000 })
-    });
-    this.service.getProductList(this.selectedFirm).subscribe({
-      next: (data) => { this.productList = data; },
-      error: () => this.toast.show('Failed to load product list', { variant: 'error', duration: 5000 })
+  private loadCompanyList(): void {
+    this.service.getCompanyList(this.selectedFirm).subscribe({
+      next: (data) => {
+        this.companyList = data;
+        this.selectedCompany = data.length > 0 ? data[0].id : 0;
+      },
+      error: () => this.toast.show('Failed to load company list', { variant: 'error', duration: 5000 })
     });
   }
 
   loadData(): void {
-    const { status, mfgId } = this.filterForm.value;
     this.loading = true;
-    this.currentPage = 1;
 
-    this.service.getDatas(
-      this.selectedFirm, this.selectedYear,
-      status || 'A',
-      this.selectedProd, this.selectedParty, mfgId || 0
-    ).subscribe({
+    this.service.getDatas({
+      Firmx: this.selectedFirm,
+      Yrx: this.selectedYear,
+      Comp_id: this.selectedCompany,
+      Output: 'SCREEN'
+    }).subscribe({
       next: (data) => {
-        this.allData = data;
-        this.applyFilter();
+        this.rawData = data;
+        this.applyFilters();
         this.loading = false;
       },
       error: () => {
-        this.toast.show('Failed to load PO data', { variant: 'error', duration: 5000 });
+        this.toast.show('Failed to load product data', { variant: 'error', duration: 5000 });
         this.loading = false;
       }
     });
   }
 
-  applyFilter(): void {
-    const party = this.partySearch.toLowerCase();
-    const prod = this.prodSearch.toLowerCase();
-    this.filteredData = this.allData.filter(r =>
-      (!party || (r.Account_nm ?? '').toLowerCase().includes(party)) &&
-      (!prod || (r.Prodname ?? '').toLowerCase().includes(prod))
+  private groupByOrigProduct(rows: ProdListByCompItem[]): OrigProductGroup[] {
+    const groups = new Map<number, OrigProductGroup>();
+    for (const row of rows) {
+      const key = row.Orig_prodno ?? 0;
+      let group = groups.get(key);
+      if (!group) {
+        group = {
+          Orig_prodno: row.Orig_prodno,
+          Orig_prodname: row.Orig_prodname,
+          Orig_comp: row.Orig_comp,
+          Orig_mrp: row.Orig_mrp,
+          Orig_taxableRate: row.Orig_taxableRate,
+          alternatives: [],
+          expanded: false
+        };
+        groups.set(key, group);
+      }
+      group.alternatives.push(row);
+    }
+    return Array.from(groups.values());
+  }
+
+  applyFilters(): void {
+    const f = this.filters;
+    const has = (value: unknown, text: string) =>
+      !text || String(value ?? '').toLowerCase().includes(text.toLowerCase());
+
+    const filtered = this.rawData.filter(row =>
+      (has(row.Orig_prodno, f.code) || has(row.Alt_Prodno, f.code)) &&
+      (has(row.Orig_prodname, f.product) || has(row.Alt_prodname, f.product)) &&
+      (has(row.Orig_comp, f.company) || has(row.Alt_compname, f.company)) &&
+      (has(row.Orig_mrp, f.mrp) || has(row.Alt_mrp, f.mrp)) &&
+      (has(row.Orig_taxableRate, f.rate) || has(row.Alt_taxableRate, f.rate)) &&
+      has(row.PACKING, f.packing) &&
+      has(row.RATIO, f.ratio)
     );
+
+    const groups = this.groupByOrigProduct(filtered);
+    const hasActiveFilter = Object.values(f).some(v => !!v);
+    if (hasActiveFilter) {
+      groups.forEach(g => { g.expanded = true; });
+    }
+
+    this.groupedData = groups;
     this.currentPage = 1;
   }
 
-  get pagedData(): PoListItem[] {
+  clearFilters(): void {
+    this.filters = { code: '', product: '', company: '', mrp: '', rate: '', packing: '', ratio: '' };
+    this.applyFilters();
+  }
+
+  toggleGroup(group: OrigProductGroup): void {
+    group.expanded = !group.expanded;
+  }
+
+  get pagedGroups(): OrigProductGroup[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredData.slice(start, start + this.itemsPerPage);
+    return this.groupedData.slice(start, start + this.itemsPerPage);
   }
 
   get totalPages(): number {
-    return Math.ceil(this.filteredData.length / this.itemsPerPage);
+    return Math.ceil(this.groupedData.length / this.itemsPerPage);
   }
 
-  printReg(): void {
-    const { status, mfgId } = this.filterForm.value;
-    this.printing = true;
+  private openBlob(blob: Blob, downloadName?: string): void {
+    const url = URL.createObjectURL(blob);
+    if (downloadName) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = downloadName;
+      a.click();
+    } else {
+      window.open(url, '_blank');
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  }
 
-    this.service.printReg({
-      Firm: this.selectedFirm,
-      Year: this.selectedYear,
-      Status: status || 'A',
-      Product_id: this.selectedProd,
-      Party_id: this.selectedParty,
-      Int1: mfgId || 0,
-      Output: 'SCREEN'
+  private exportReport(output: 'PDF' | 'XLS'): void {
+    this.exporting = true;
+    this.service.exportReport({
+      Firmx: this.selectedFirm,
+      Yrx: this.selectedYear,
+      Comp_id: this.selectedCompany,
+      Output: output
     }).subscribe({
-      next: (b64) => {
-        this.printing = false;
-        try {
-          const binary = atob(b64);
-          const bytes = new Uint8Array(binary.length);
-          for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-          const blob = new Blob([bytes], { type: 'application/pdf' });
-          window.open(URL.createObjectURL(blob), '_blank');
-        } catch {
-          this.toast.show('Failed to open PDF', { variant: 'error', duration: 5000 });
-        }
+      next: (blob) => {
+        this.exporting = false;
+        this.openBlob(blob, output === 'XLS' ? 'ProdListByComp.xlsx' : undefined);
       },
       error: () => {
-        this.printing = false;
-        this.toast.show('Print failed', { variant: 'error', duration: 5000 });
+        this.exporting = false;
+        this.toast.show('Export failed', { variant: 'error', duration: 5000 });
       }
     });
   }
 
-  statusLabel(row: PoListItem): string {
-    return (row.BalQnt ?? 0) === 0 ? 'Received' : 'Pending';
+  viewPdf(): void {
+    this.exportReport('PDF');
+  }
+
+  viewExcel(): void {
+    this.exportReport('XLS');
   }
 }

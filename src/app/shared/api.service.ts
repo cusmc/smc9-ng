@@ -69,7 +69,12 @@ export class ApiService {
       const parsed = JSON.parse(body);
       // Handle doubly-serialized JSON: backend returns JSON string whose value is JSON
       if (typeof parsed === 'string') {
-        return JSON.parse(parsed) as T;
+        try {
+          return JSON.parse(parsed) as T;
+        } catch {
+          // parsed is a plain string (e.g. a base64 payload), not nested JSON
+          return parsed as unknown as T;
+        }
       }
       return parsed as T;
     } catch {

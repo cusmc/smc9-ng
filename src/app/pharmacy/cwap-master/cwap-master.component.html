@@ -12,14 +12,13 @@
       <h2
         class="font-serif text-2xl font-normal tracking-tight text-[#1e293b] md:text-[1.65rem]"
       >
-        Compang wise Atternative Products
+        Company-wise Alternative Products
       </h2>
     </div>
 
     <div class="p-6">
       <!-- Filters -->
       <form
-        [formGroup]="filterForm"
         class="flex flex-wrap gap-4 items-end pb-5 border-b border-[#eee]"
       >
         <div class="min-w-[140px]">
@@ -50,54 +49,16 @@
           </select>
         </div>
 
-        <!-- <div class="min-w-[140px]">
-          <label class="text-sm text-[#6b6b6b] block mb-1">Status</label>
-          <select
-            formControlName="status"
-            class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none"
-          >
-            <option value="A">All</option>
-            <option value="P">Pending</option>
-            <option value="R">Received</option>
-          </select>
-        </div> -->
-
-        <!-- <div class="min-w-[200px] flex-1">
-          <label class="text-sm text-[#6b6b6b] block mb-1">Party</label>
-          <select
-            [(ngModel)]="selectedParty"
-            [ngModelOptions]="{ standalone: true }"
-            class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none"
-          >
-            <option [value]="0">All Parties</option>
-            <option *ngFor="let p of partyList" [value]="p.id">
-              {{ p.nm }}
-            </option>
-          </select>
-        </div> -->
-
-        <!-- <div class="min-w-[200px] flex-1">
-          <label class="text-sm text-[#6b6b6b] block mb-1">Product</label>
-          <select
-            [(ngModel)]="selectedProd"
-            [ngModelOptions]="{ standalone: true }"
-            class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none"
-          >
-            <option [value]="0">All Products</option>
-            <option *ngFor="let p of productList" [value]="p.id">
-              {{ p.nm }}
-            </option>
-          </select>
-        </div> -->
-
         <div class="min-w-[200px] flex-1">
-          <label class="text-sm text-[#6b6b6b] block mb-1">Manufacturer</label>
+          <label class="text-sm text-[#6b6b6b] block mb-1">Company</label>
           <select
-            formControlName="mfgId"
+            [(ngModel)]="selectedCompany"
+            [ngModelOptions]="{ standalone: true }"
             class="w-full border border-[#e5e5e5] rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#c8a96a] focus:outline-none"
           >
-            <option [value]="0">All Manufacturers</option>
-            <option *ngFor="let m of mfgList" [value]="m.id">{{ m.nm }}</option>
+            <option *ngFor="let c of companyList" [value]="c.id">
+              {{ c.nm }}
+            </option>
           </select>
         </div>
 
@@ -113,14 +74,21 @@
           </button>
           <button
             type="button"
-            (click)="printReg()"
-            [disabled]="printing || allData.length === 0"
+            (click)="viewPdf()"
+            [disabled]="exporting || groupedData.length === 0"
             class="inline-flex items-center gap-2 rounded-lg bg-[#5c7a9e] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#4a6889] disabled:opacity-50"
           >
-            <span class="material-icons text-base">{{
-              printing ? "hourglass_top" : "print"
-            }}</span>
-            {{ printing ? "Printing…" : "Print" }}
+            <span class="material-icons text-base">picture_as_pdf</span>
+            PDF
+          </button>
+          <button
+            type="button"
+            (click)="viewExcel()"
+            [disabled]="exporting || groupedData.length === 0"
+            class="inline-flex items-center gap-2 rounded-lg bg-[#3f8f5f] px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-[#357a51] disabled:opacity-50"
+          >
+            <span class="material-icons text-base">grid_on</span>
+            Excel
           </button>
         </div>
       </form>
@@ -130,85 +98,180 @@
         <div
           class="w-5 h-5 border-2 border-[#c8a96a] border-t-transparent rounded-full animate-spin"
         ></div>
-        <span class="text-sm">Loading PO data…</span>
+        <span class="text-sm">Loading product data…</span>
       </div>
 
       <!-- No Data -->
       <p
-        *ngIf="!loading && allData.length > 0 && filteredData.length === 0"
+        *ngIf="!loading && groupedData.length === 0"
         class="text-center text-[#999] py-10 text-sm"
       >
-        No records match the current search.
-      </p>
-      <p
-        *ngIf="!loading && allData.length === 0"
-        class="text-center text-[#999] py-10 text-sm"
-      >
-        Select filters and click View to load cwap pdf.
+        Select firm, year and company, then click View.
       </p>
 
       <!-- Table -->
       <div
-        *ngIf="!loading && filteredData.length > 0"
+        *ngIf="!loading && groupedData.length > 0"
         class="overflow-x-auto rounded-xl border border-[#e2e8f0] bg-white shadow-sm ring-1 ring-black/[0.02] mt-4"
       >
         <table
-          class="w-full min-w-[1100px] border-collapse text-left text-sm text-[#444]"
+          class="w-full min-w-[1080px] table-fixed border-collapse text-left text-sm text-[#444]"
         >
+          <colgroup>
+            <col style="width: 44px" />
+            <col style="width: 90px" />
+            <col style="width: 320px" />
+            <col style="width: 210px" />
+            <col style="width: 100px" />
+            <col style="width: 100px" />
+            <col style="width: 130px" />
+            <col style="width: 86px" />
+          </colgroup>
           <thead>
             <tr class="text-left text-[#666] border-b bg-[#fafafa]">
-              <th class="py-2 px-3 font-medium w-8">#</th>
-              <th class="py-2 px-3 font-medium">PO No</th>
-              <th class="py-2 px-3 font-medium">PO Date</th>
-              <th class="py-2 px-3 font-medium">Party</th>
-              <th class="py-2 px-3 font-medium">Product</th>
-              <th class="py-2 px-3 font-medium">Manufacturer</th>
-              <th class="py-2 px-3 font-medium text-right">Qty</th>
-              <th class="py-2 px-3 font-medium text-right">Rate</th>
-              <th class="py-2 px-3 font-medium text-right">Total</th>
-              <th class="py-2 px-3 font-medium text-right">Rcvd&nbsp;Qty</th>
-              <th class="py-2 px-3 font-medium text-right">Bal&nbsp;Qty</th>
-              <th class="py-2 px-3 font-medium">Status</th>
+              <th class="py-2 px-3 font-medium whitespace-nowrap">#</th>
+              <th class="py-2 px-3 font-medium whitespace-nowrap">Code</th>
+              <th class="py-2 px-3 font-medium whitespace-nowrap">Product</th>
+              <th class="py-2 px-3 font-medium whitespace-nowrap">Company</th>
+              <th class="py-2 px-3 font-medium text-right whitespace-nowrap">MRP</th>
+              <th class="py-2 px-3 font-medium text-right whitespace-nowrap">Rate</th>
+              <th class="py-2 px-3 font-medium whitespace-nowrap">Packing</th>
+              <th class="py-2 px-3 font-medium text-right whitespace-nowrap">Ratio</th>
+            </tr>
+            <tr class="border-b bg-white">
+              <th class="px-3 py-1.5"></th>
+              <th class="px-2 py-1.5">
+                <input
+                  [(ngModel)]="filters.code"
+                  [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="applyFilters()"
+                  placeholder="Filter…"
+                  class="w-full border border-[#e5e5e5] rounded px-2 py-1 text-xs font-normal focus:ring-1 focus:ring-[#c8a96a] focus:outline-none"
+                />
+              </th>
+              <th class="px-2 py-1.5">
+                <input
+                  [(ngModel)]="filters.product"
+                  [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="applyFilters()"
+                  placeholder="Filter…"
+                  class="w-full border border-[#e5e5e5] rounded px-2 py-1 text-xs font-normal focus:ring-1 focus:ring-[#c8a96a] focus:outline-none"
+                />
+              </th>
+              <th class="px-2 py-1.5">
+                <input
+                  [(ngModel)]="filters.company"
+                  [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="applyFilters()"
+                  placeholder="Filter…"
+                  class="w-full border border-[#e5e5e5] rounded px-2 py-1 text-xs font-normal focus:ring-1 focus:ring-[#c8a96a] focus:outline-none"
+                />
+              </th>
+              <th class="px-2 py-1.5">
+                <input
+                  [(ngModel)]="filters.mrp"
+                  [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="applyFilters()"
+                  placeholder="Filter…"
+                  class="w-full border border-[#e5e5e5] rounded px-2 py-1 text-xs font-normal text-right focus:ring-1 focus:ring-[#c8a96a] focus:outline-none"
+                />
+              </th>
+              <th class="px-2 py-1.5">
+                <input
+                  [(ngModel)]="filters.rate"
+                  [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="applyFilters()"
+                  placeholder="Filter…"
+                  class="w-full border border-[#e5e5e5] rounded px-2 py-1 text-xs font-normal text-right focus:ring-1 focus:ring-[#c8a96a] focus:outline-none"
+                />
+              </th>
+              <th class="px-2 py-1.5">
+                <input
+                  [(ngModel)]="filters.packing"
+                  [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="applyFilters()"
+                  placeholder="Filter…"
+                  class="w-full border border-[#e5e5e5] rounded px-2 py-1 text-xs font-normal focus:ring-1 focus:ring-[#c8a96a] focus:outline-none"
+                />
+              </th>
+              <th class="px-2 py-1.5">
+                <div class="flex items-center gap-1">
+                  <input
+                    [(ngModel)]="filters.ratio"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="applyFilters()"
+                    placeholder="Filter…"
+                    class="w-full border border-[#e5e5e5] rounded px-2 py-1 text-xs font-normal text-right focus:ring-1 focus:ring-[#c8a96a] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    (click)="clearFilters()"
+                    title="Clear filters"
+                    class="material-icons text-sm text-[#999] hover:text-[#666]"
+                  >
+                    close
+                  </button>
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr
-              *ngFor="let r of pagedData; let i = index"
-              class="border-b hover:bg-[#f8faff] transition"
-              [ngClass]="{
-                'bg-[#fff8e1]': (r.BalQnt ?? 0) > 0,
-                'bg-[#f1f8e9]': (r.BalQnt ?? 0) === 0 && (r.Qnt ?? 0) > 0,
-              }"
-            >
-              <td class="px-3 py-2 text-[#aaa]">
-                {{ (currentPage - 1) * itemsPerPage + i + 1 }}
-              </td>
-              <td class="px-3 py-2 font-medium">{{ r.Po_no }}</td>
-              <td class="px-3 py-2">{{ r.Po_dt | date: "dd/MM/yyyy" }}</td>
-              <td class="px-3 py-2">{{ r.Account_nm }}</td>
-              <td class="px-3 py-2">{{ r.Prodname }}</td>
-              <td class="px-3 py-2">{{ r.Comp_nm }}</td>
-              <td class="px-3 py-2 text-right">{{ r.Qnt }}</td>
-              <td class="px-3 py-2 text-right">
-                {{ r.Rate | number: "1.2-2" }}
-              </td>
-              <td class="px-3 py-2 text-right">
-                {{ r.Total | number: "1.2-2" }}
-              </td>
-              <td class="px-3 py-2 text-right">{{ r.RcvdQnt }}</td>
-              <td class="px-3 py-2 text-right">{{ r.BalQnt }}</td>
-              <td class="px-3 py-2">
-                <span
-                  class="px-2 py-0.5 rounded-full text-xs"
-                  [ngClass]="{
-                    'bg-[#e8f5e9] text-[#388e3c]': (r.BalQnt ?? 0) === 0,
-                    'bg-[#fff3e0] text-[#e65100]': (r.BalQnt ?? 0) > 0,
-                  }"
-                >
-                  {{ statusLabel(r) }}
-                </span>
-              </td>
-            </tr>
+            <ng-container *ngFor="let g of pagedGroups; let i = index">
+              <!-- Original product — click to expand/collapse its alternatives -->
+              <tr
+                (click)="toggleGroup(g)"
+                class="border-b bg-[#f8faff] hover:bg-[#eef3ff] transition cursor-pointer font-medium"
+              >
+                <td class="px-3 py-2 text-[#aaa]">
+                  {{ (currentPage - 1) * itemsPerPage + i + 1 }}
+                </td>
+                <td class="px-3 py-2 truncate" [title]="g.Orig_prodno">{{ g.Orig_prodno }}</td>
+                <td class="px-3 py-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <span class="material-icons text-base flex-shrink-0 text-[#4680ff]">{{
+                      g.expanded ? "expand_more" : "chevron_right"
+                    }}</span>
+                    <span class="truncate" [title]="g.Orig_prodname">{{ g.Orig_prodname }}</span>
+                    <span
+                      class="flex-shrink-0 min-w-[1.5rem] text-center px-1.5 py-0.5 rounded-full text-xs font-normal bg-[#e0e7ff] text-[#3730a3]"
+                      [title]="g.alternatives.length + (g.alternatives.length === 1 ? ' alternative' : ' alternatives')"
+                    >
+                      {{ g.alternatives.length }}
+                    </span>
+                  </div>
+                </td>
+                <td class="px-3 py-2 truncate" [title]="g.Orig_comp">{{ g.Orig_comp }}</td>
+                <td class="px-3 py-2 text-right">
+                  {{ g.Orig_mrp | number: "1.2-2" }}
+                </td>
+                <td class="px-3 py-2 text-right">
+                  {{ g.Orig_taxableRate | number: "1.2-2" }}
+                </td>
+                <td class="px-3 py-2 text-[#bbb]">—</td>
+                <td class="px-3 py-2 text-right text-[#bbb]">—</td>
+              </tr>
+
+              <!-- Alternative products — shown as indented child rows when expanded -->
+              <tr
+                *ngFor="let alt of g.expanded ? g.alternatives : []"
+                class="border-b bg-white hover:bg-[#f8faff] transition text-[#555]"
+              >
+                <td class="px-3 py-2"></td>
+                <td class="px-3 py-2 truncate" [title]="alt.Alt_Prodno">{{ alt.Alt_Prodno }}</td>
+                <td class="px-3 py-2 pl-8 truncate" [title]="alt.Alt_prodname">
+                  ↳ {{ alt.Alt_prodname }}
+                </td>
+                <td class="px-3 py-2 truncate" [title]="alt.Alt_compname">{{ alt.Alt_compname }}</td>
+                <td class="px-3 py-2 text-right">
+                  {{ alt.Alt_mrp | number: "1.2-2" }}
+                </td>
+                <td class="px-3 py-2 text-right">
+                  {{ alt.Alt_taxableRate | number: "1.2-2" }}
+                </td>
+                <td class="px-3 py-2 truncate" [title]="alt.PACKING">{{ alt.PACKING }}</td>
+                <td class="px-3 py-2 text-right">{{ alt.RATIO }}</td>
+              </tr>
+            </ng-container>
           </tbody>
         </table>
       </div>
