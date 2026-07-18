@@ -21,6 +21,7 @@
     "@angular/router": "^18.2.14",
     "@tailwindcss/postcss": "^4.2.4",
     "apexcharts": "^5.14.0",
+    "html5-qrcode": "^2.3.8",
     "ng-apexcharts": "^1.11.0",
     "ngx-editor": "^18.0.0",
     "ngx-toastr": "^19.1.0",

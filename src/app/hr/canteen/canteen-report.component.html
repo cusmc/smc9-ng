@@ -1,0 +1,71 @@
+<div class="flex min-h-0 flex-1 flex-col bg-page">
+
+  <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
+    <span class="material-icons text-xl opacity-80">bar_chart</span>
+    <h2 class="text-lg font-semibold">Canteen</h2>
+    <nav class="ml-4 flex gap-1 text-sm">
+      <a routerLink="/hr/canteen" class="rounded-md px-2.5 py-1 hover:bg-white/10">Scan</a>
+      <a routerLink="/hr/canteen-rates" class="rounded-md px-2.5 py-1 hover:bg-white/10">Rates</a>
+      <a routerLink="/hr/canteen-report" class="rounded-md bg-white/15 px-2.5 py-1">Report</a>
+    </nav>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-5 p-4">
+    <div class="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm">
+
+      <div class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-5 py-4">
+        <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#c8a96a] to-[#2d8a7e]"></div>
+        <h3 class="font-serif text-lg text-[#1e293b]">Per-Employee Canteen Charges</h3>
+        <p class="mt-0.5 text-xs text-[#888]">
+          Same totals returned by Canteen_GetFoodDeduction, the legacy payroll app's integration point for Salary.Foodded.
+        </p>
+      </div>
+
+      <div class="px-5 py-4">
+        <div class="mb-4 flex flex-wrap items-end gap-3">
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-[#555]">From Date *</label>
+            <input type="date" [(ngModel)]="fromDate"
+              class="rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-sm focus:border-[#2d8a7e] focus:outline-none" />
+          </div>
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-[#555]">To Date *</label>
+            <input type="date" [(ngModel)]="toDate"
+              class="rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-sm focus:border-[#2d8a7e] focus:outline-none" />
+          </div>
+          <button type="button" (click)="runReport()" [disabled]="loading"
+            class="rounded-lg bg-[#2d8a7e] px-4 py-2 text-sm font-medium text-white hover:bg-[#256f65] disabled:opacity-50">
+            {{ loading ? 'Loading…' : 'Run Report' }}
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-[#e2e8f0] text-left text-xs uppercase tracking-wide text-[#888]">
+                <th class="px-5 py-2">Empid</th>
+                <th class="px-5 py-2">Food Deduction (Rs.)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of rows" class="border-b border-[#f0f0f0]">
+                <td class="px-5 py-2">{{ r.empid }}</td>
+                <td class="px-5 py-2">{{ r.foodDed | number:'1.2-2' }}</td>
+              </tr>
+              <tr *ngIf="searched && rows.length === 0">
+                <td colspan="2" class="px-5 py-6 text-center text-sm text-[#888]">No canteen charges in this date range.</td>
+              </tr>
+            </tbody>
+            <tfoot *ngIf="rows.length > 0">
+              <tr class="border-t border-[#e2e8f0] font-semibold">
+                <td class="px-5 py-2">Total</td>
+                <td class="px-5 py-2">{{ total | number:'1.2-2' }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

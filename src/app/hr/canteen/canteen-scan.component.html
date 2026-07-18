@@ -1,0 +1,78 @@
+<div class="flex min-h-0 flex-1 flex-col bg-page">
+
+  <!-- Page header -->
+  <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
+    <span class="material-icons text-xl opacity-80">restaurant</span>
+    <h2 class="text-lg font-semibold">Canteen</h2>
+    <nav class="ml-4 flex gap-1 text-sm">
+      <a routerLink="/hr/canteen" class="rounded-md bg-white/15 px-2.5 py-1">Scan</a>
+      <a routerLink="/hr/canteen-rates" class="rounded-md px-2.5 py-1 hover:bg-white/10">Rates</a>
+      <a routerLink="/hr/canteen-report" class="rounded-md px-2.5 py-1 hover:bg-white/10">Report</a>
+    </nav>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-5 p-4">
+    <div class="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm">
+
+      <!-- Card header -->
+      <div class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-5 py-4">
+        <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#c8a96a] to-[#2d8a7e]"></div>
+        <h3 class="font-serif text-lg text-[#1e293b]">Scan Employee QR</h3>
+        <p class="mt-0.5 text-xs text-[#888]">Select the meal, scan the employee's QR code, then confirm to charge.</p>
+      </div>
+
+      <div class="p-5">
+
+        <!-- Meal type selector -->
+        <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-[#888]">Meal Type</p>
+        <div class="mb-5 flex flex-wrap gap-2">
+          <button *ngFor="let m of mealTypes" type="button" (click)="selectMealType(m.Subcode_id)"
+            class="rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
+            [class.border-[#2d8a7e]]="selectedSubcodeId === m.Subcode_id"
+            [class.bg-[#2d8a7e]]="selectedSubcodeId === m.Subcode_id"
+            [class.text-white]="selectedSubcodeId === m.Subcode_id"
+            [class.border-[#e5e5e5]]="selectedSubcodeId !== m.Subcode_id"
+            [class.text-[#555]]="selectedSubcodeId !== m.Subcode_id">
+            {{ m.Vals }}
+          </button>
+        </div>
+
+        <!-- Scan control -->
+        <div *ngIf="!scanResult">
+          <button *ngIf="!scanning" type="button" (click)="startScan()" [disabled]="!selectedSubcodeId"
+            class="inline-flex items-center gap-2 rounded-lg bg-[#2d8a7e] px-4 py-2 text-sm font-medium text-white hover:bg-[#256f65] disabled:opacity-50">
+            <span class="material-icons text-[18px]">qr_code_scanner</span>
+            Start Scan
+          </button>
+          <button *ngIf="scanning" type="button" (click)="stopScan()"
+            class="mb-3 inline-flex items-center gap-2 rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm font-medium text-[#555] hover:bg-[#f5f5f5]">
+            <span class="material-icons text-[18px]">close</span>
+            Cancel Scan
+          </button>
+          <div id="canteen-qr-reader" *ngIf="scanning" class="mt-3 max-w-sm"></div>
+        </div>
+
+        <!-- Confirm card -->
+        <div *ngIf="scanResult" class="max-w-md rounded-lg border border-[#e2e8f0] bg-[#fafbfc] p-5">
+          <p class="text-xs font-semibold uppercase tracking-wide text-[#888]">Confirm Meal</p>
+          <p class="mt-2 text-lg font-semibold text-[#1e293b]">{{ scanResult.empnm }}</p>
+          <p class="text-sm text-[#666]">{{ scanResult.deptnm }} &middot; {{ scanResult.desgnm }}</p>
+          <p class="mt-3 text-sm text-[#555]">Meal: <span class="font-medium">{{ selectedMealLabel }}</span></p>
+
+          <div class="mt-4 flex gap-2">
+            <button type="button" (click)="chargeMeal()" [disabled]="processing"
+              class="inline-flex items-center gap-1.5 rounded-lg bg-[#2d8a7e] px-4 py-2 text-sm font-medium text-white hover:bg-[#256f65] disabled:opacity-50">
+              <span class="material-icons text-[18px]">check_circle</span>
+              {{ processing ? 'Charging…' : 'Charge Meal' }}
+            </button>
+            <button type="button" (click)="cancelConfirm()" [disabled]="processing"
+              class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm font-medium text-[#555] hover:bg-[#f5f5f5]">
+              Cancel
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,130 @@
+<div class="flex min-h-0 flex-1 flex-col bg-page">
+
+  <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
+    <span class="material-icons text-xl opacity-80">payments</span>
+    <h2 class="text-lg font-semibold">Canteen</h2>
+    <nav class="ml-4 flex gap-1 text-sm">
+      <a routerLink="/hr/canteen" class="rounded-md px-2.5 py-1 hover:bg-white/10">Scan</a>
+      <a routerLink="/hr/canteen-rates" class="rounded-md bg-white/15 px-2.5 py-1">Rates</a>
+      <a routerLink="/hr/canteen-report" class="rounded-md px-2.5 py-1 hover:bg-white/10">Report</a>
+    </nav>
+    <span class="flex-1"></span>
+    <button type="button"
+      class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-3 py-1.5 text-sm hover:bg-white/20"
+      (click)="loadRates()">
+      <span class="material-icons text-[18px]">refresh</span>
+      Refresh
+    </button>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-5 p-4">
+    <div class="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm">
+
+      <div class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-5 py-4">
+        <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#c8a96a] to-[#2d8a7e]"></div>
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-serif text-lg text-[#1e293b]">Meal Rate History</h3>
+            <p class="mt-0.5 text-xs text-[#888]">Rate changes go through approval before taking effect.</p>
+          </div>
+          <button *ngIf="rights.Add" type="button" (click)="toggleForm()"
+            class="inline-flex items-center gap-1.5 rounded-lg border border-[#c8a96a] px-3 py-1.5 text-xs font-medium text-[#8c6b2f] hover:bg-[#f3eadb]">
+            <span class="material-icons text-[15px]">{{ showForm ? 'close' : 'add' }}</span>
+            {{ showForm ? 'Cancel' : 'New Rate' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- New/Revise Rate form -->
+      <div *ngIf="showForm" class="border-b border-[#e2e8f0] bg-[#fffdf7] px-5 py-4">
+        <div class="flex flex-wrap items-end gap-3">
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-[#555]">Meal Type *</label>
+            <select [(ngModel)]="formSubcodeId"
+              class="w-44 rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-sm focus:border-[#2d8a7e] focus:outline-none">
+              <option [value]="0">— Select —</option>
+              <option *ngFor="let m of mealTypes" [value]="m.Subcode_id">{{ m.Vals }}</option>
+            </select>
+          </div>
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-[#555]">Rate (Rs.) *</label>
+            <input type="number" [(ngModel)]="formRate" min="0" step="0.01"
+              class="w-28 rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-sm focus:border-[#2d8a7e] focus:outline-none" />
+          </div>
+          <div>
+            <label class="mb-1 block text-xs font-semibold text-[#555]">Effective From *</label>
+            <input type="date" [(ngModel)]="formWefDt"
+              class="rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-sm focus:border-[#2d8a7e] focus:outline-none" />
+          </div>
+          <div *ngIf="formPrevPkId" class="text-xs text-[#888]">Revising Pk_id {{ formPrevPkId }}</div>
+          <button type="button" (click)="submitRate()"
+            class="rounded-lg bg-[#2d8a7e] px-4 py-2 text-sm font-medium text-white hover:bg-[#256f65]">
+            Submit
+          </button>
+        </div>
+      </div>
+
+      <!-- List -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-[#e2e8f0] text-left text-xs uppercase tracking-wide text-[#888]">
+              <th class="px-5 py-2">Meal</th>
+              <th class="px-5 py-2">Rate</th>
+              <th class="px-5 py-2">Effective From</th>
+              <th class="px-5 py-2">Valid Upto</th>
+              <th class="px-5 py-2">Status</th>
+              <th class="px-5 py-2">Created By</th>
+              <th class="px-5 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of rates" class="border-b border-[#f0f0f0]">
+              <td class="px-5 py-2">{{ mealLabel(r.subcode_id) }}</td>
+              <td class="px-5 py-2">{{ r.rate }}</td>
+              <td class="px-5 py-2">{{ r.wef_dt | date:'dd-MMM-yyyy' }}</td>
+              <td class="px-5 py-2">{{ r.valid_upto ? (r.valid_upto | date:'dd-MMM-yyyy') : (isActive(r) ? 'Active' : '—') }}</td>
+              <td class="px-5 py-2">
+                <span class="rounded-full px-2 py-0.5 text-xs font-medium"
+                  [class.bg-amber-100]="r.status === 'P'" [class.text-amber-700]="r.status === 'P'"
+                  [class.bg-green-100]="r.status === 'A'" [class.text-green-700]="r.status === 'A'"
+                  [class.bg-red-100]="r.status === 'R'" [class.text-red-700]="r.status === 'R'">
+                  {{ statusLabel(r.status) }}
+                </span>
+              </td>
+              <td class="px-5 py-2">{{ r.created_by }}</td>
+              <td class="px-5 py-2">
+                <div *ngIf="r.status === 'P' && rights.Auth1 && rejectingId !== r.pk_id" class="flex gap-2">
+                  <button type="button" (click)="approve(r)" [disabled]="processing[r.pk_id]"
+                    class="rounded-md bg-green-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50">
+                    Approve
+                  </button>
+                  <button type="button" (click)="startReject(r.pk_id)" [disabled]="processing[r.pk_id]"
+                    class="rounded-md border border-red-300 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50">
+                    Reject
+                  </button>
+                </div>
+                <div *ngIf="rejectingId === r.pk_id" class="flex items-center gap-2">
+                  <input type="text" [(ngModel)]="rejectRemarks" placeholder="Reason…"
+                    class="w-36 rounded-md border border-[#e5e5e5] px-2 py-1 text-xs focus:border-red-400 focus:outline-none" />
+                  <button type="button" (click)="confirmReject(r)"
+                    class="rounded-md bg-red-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-red-700">Confirm</button>
+                  <button type="button" (click)="cancelReject()"
+                    class="rounded-md border border-[#e5e5e5] px-2.5 py-1 text-xs text-[#555] hover:bg-[#f5f5f5]">Cancel</button>
+                </div>
+                <button *ngIf="r.status === 'A' && isActive(r) && rights.Add" type="button" (click)="reviseRate(r)"
+                  class="rounded-md border border-[#e5e5e5] px-2.5 py-1 text-xs font-medium text-[#555] hover:bg-[#f5f5f5]">
+                  Revise
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="!loading && rates.length === 0">
+              <td colspan="7" class="px-5 py-6 text-center text-sm text-[#888]">No canteen rates yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
