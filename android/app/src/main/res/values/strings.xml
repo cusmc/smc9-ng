@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CUSMC Canteen Scanner</string>
+    <string name="title_activity_main">CUSMC Canteen Scanner</string>
+    <string name="package_name">org.cusmc.smc9</string>
+    <string name="custom_url_scheme">org.cusmc.smc9</string>
+</resources>

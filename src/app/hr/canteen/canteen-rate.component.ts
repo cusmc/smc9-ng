@@ -70,7 +70,7 @@ export class CanteenRateComponent implements OnInit {
   }
 
   isActive(rate: CanteenRate): boolean {
-    return rate.status === 'A' && !rate.valid_upto;
+    return rate.Status === 'A' && !rate.Valid_upto;
   }
 
   toggleForm(): void {
@@ -80,10 +80,10 @@ export class CanteenRateComponent implements OnInit {
 
   reviseRate(rate: CanteenRate): void {
     this.showForm = true;
-    this.formSubcodeId = rate.subcode_id;
+    this.formSubcodeId = rate.Subcode_id;
     this.formRate = null;
     this.formWefDt = '';
-    this.formPrevPkId = rate.pk_id;
+    this.formPrevPkId = rate.Pk_id;
   }
 
   private resetForm(): void {
@@ -99,10 +99,10 @@ export class CanteenRateComponent implements OnInit {
     if (!this.formWefDt) { this.toast.show('Select an effective-from date', { variant: 'warning' }); return; }
 
     const payload: Partial<CanteenRate> = {
-      subcode_id: this.formSubcodeId,
-      rate: this.formRate,
-      wef_dt: this.formWefDt,
-      prev_pk_id: this.formPrevPkId,
+      Subcode_id: this.formSubcodeId,
+      Rate: this.formRate,
+      Wef_dt: this.formWefDt,
+      Prev_pk_id: this.formPrevPkId,
     };
     this.service.saveRate(payload).subscribe({
       next: () => {
@@ -116,16 +116,16 @@ export class CanteenRateComponent implements OnInit {
   }
 
   approve(rate: CanteenRate): void {
-    this.processing[rate.pk_id] = true;
-    this.service.authRate(rate.pk_id).subscribe({
+    this.processing[rate.Pk_id] = true;
+    this.service.authRate(rate.Pk_id).subscribe({
       next: () => {
         this.toast.show('Rate approved', { variant: 'success' });
-        delete this.processing[rate.pk_id];
+        delete this.processing[rate.Pk_id];
         this.loadRates();
       },
       error: (err) => {
         this.toast.show(err?.error || 'Approval failed', { variant: 'error' });
-        delete this.processing[rate.pk_id];
+        delete this.processing[rate.Pk_id];
       },
     });
   }
@@ -142,17 +142,17 @@ export class CanteenRateComponent implements OnInit {
 
   confirmReject(rate: CanteenRate): void {
     if (!this.rejectRemarks.trim()) { this.toast.show('Enter a rejection reason', { variant: 'warning' }); return; }
-    this.processing[rate.pk_id] = true;
-    this.service.rejectRate(rate.pk_id, this.rejectRemarks).subscribe({
+    this.processing[rate.Pk_id] = true;
+    this.service.rejectRate(rate.Pk_id, this.rejectRemarks).subscribe({
       next: () => {
         this.toast.show('Rate rejected', { variant: 'info' });
         this.rejectingId = null;
-        delete this.processing[rate.pk_id];
+        delete this.processing[rate.Pk_id];
         this.loadRates();
       },
       error: (err) => {
         this.toast.show(err?.error || 'Rejection failed', { variant: 'error' });
-        delete this.processing[rate.pk_id];
+        delete this.processing[rate.Pk_id];
       },
     });
   }

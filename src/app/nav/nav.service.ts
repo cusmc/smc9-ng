@@ -6,6 +6,8 @@ import { NavModule, NavItem } from './nav.types';
 import { APP_NAV } from './nav-config';
 import { ApiService } from '../shared/api.service';
 
+const LAST_MODULE_KEY = 'smc9_last_module';
+
 @Injectable({ providedIn: 'root' })
 export class NavService {
   private activeModuleSubject = new BehaviorSubject<NavModule | null>(null);
@@ -15,6 +17,11 @@ export class NavService {
    *  resolve the active module so the sidebar reflects real, permission-filtered
    *  data. */
   private currentModules: NavModule[] = APP_NAV;
+
+  /** True when the active module was picked by fallback (last-used/first),
+   *  not by an actual URL match or user click — so a later re-sync (e.g. once
+   *  the real permission-filtered modules load) is allowed to replace it. */
+  private isFallback = true;
 
   constructor(private router: Router, private api: ApiService) {
     // Sync active module from route on every navigation
@@ -59,7 +66,9 @@ export class NavService {
 
   setActiveModule(moduleId: string): void {
     const mod = this.currentModules.find((m) => m.id === moduleId) ?? null;
+    this.isFallback = false;
     this.activeModuleSubject.next(mod);
+    if (mod) this.saveLastModule(mod.id);
   }
 
   navigateTo(item: NavItem): void {
@@ -73,6 +82,42 @@ export class NavService {
   private syncFromUrl(url: string): void {
     const clean = url.split('?')[0].split('#')[0];
     const match = this.currentModules.find((m) => clean.startsWith(m.baseRoute));
-    if (match) this.activeModuleSubject.next(match);
+    if (match) {
+      this.isFallback = false;
+      this.activeModuleSubject.next(match);
+      this.saveLastModule(match.id);
+      return;
+    }
+
+    // No module matches the current URL (e.g. landing on Home). Rather than
+    // show an empty "Select a module" sidebar, keep whatever's already
+    // active if it's a real selection; otherwise fall back to the last-used
+    // module (or the first visible one) so the sidebar is never empty.
+    if (!this.isFallback && this.activeModuleSubject.value) return;
+    if (this.currentModules.length === 0) return;
+
+    const lastId = this.getLastModule();
+    const fallback =
+      (lastId && this.currentModules.find((m) => m.id === lastId)) ||
+      this.currentModules[0];
+
+    this.isFallback = true;
+    this.activeModuleSubject.next(fallback);
+  }
+
+  private saveLastModule(moduleId: string): void {
+    try {
+      localStorage.setItem(LAST_MODULE_KEY, moduleId);
+    } catch {
+      /* localStorage unavailable (e.g. private mode) — ignore */
+    }
+  }
+
+  private getLastModule(): string | null {
+    try {
+      return localStorage.getItem(LAST_MODULE_KEY);
+    } catch {
+      return null;
+    }
   }
 }

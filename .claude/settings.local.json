@@ -6,7 +6,8 @@
       "Bash(Format-Table -AutoSize)",
       "Bash(Get-ChildItem -Path \"d:\\\\DotNet\\\\smc9-ng\\\\src\\\\app\\\\auth\\\\\" -Filter \"*.ts\" | Select-Object -ExpandProperty Name)",
       "Bash(npx ng *)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(./build-playstore.bat *)"
     ],
     "additionalDirectories": [
       "d:\\DotNet\\smc9\\Controllers\\Common",

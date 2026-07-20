@@ -21,7 +21,7 @@ export class CanteenReportComponent {
   constructor(private service: CanteenService, private toast: ToastService) {}
 
   get total(): number {
-    return this.rows.reduce((sum, r) => sum + (r.foodDed || 0), 0);
+    return this.rows.reduce((sum, r) => sum + (r.FoodDed || 0), 0);
   }
 
   runReport(): void {

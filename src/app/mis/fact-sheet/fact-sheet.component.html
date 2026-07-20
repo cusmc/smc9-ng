@@ -1,0 +1,224 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-slate-100 to-slate-200">
+  <!-- ═══════════════════════════ PAGE HEADER ═══════════════════════════════ -->
+  <header class="bg-gradient-to-r from-slate-900 via-[#1e3a5f] to-blue-900 shadow-lg rounded-xl overflow-hidden">
+    <div class="px-5 py-3 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center">
+        <span class="material-icons text-white text-[20px]">fact_check</span>
+      </div>
+      <h1 class="text-lg font-bold text-white tracking-wide">CUSMC FACT SHEET</h1>
+    </div>
+  </header>
+
+  <div class="p-6 space-y-6 max-w-[1800px] mx-auto">
+    <!-- ── Filter bar ─────────────────────────────────────────────────── -->
+    <div class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/70 p-6">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 items-end">
+        <div class="flex flex-col gap-1">
+          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">From</label>
+          <input type="date" [(ngModel)]="fromDate" [max]="toDate"
+                 class="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">To</label>
+          <input type="date" [(ngModel)]="toDate" [min]="fromDate" [max]="todayIso"
+                 class="h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-100 focus:outline-none" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">&nbsp;</label>
+          <button (click)="load()" [disabled]="loading"
+                  class="h-11 inline-flex items-center justify-center gap-2 rounded-xl border border-green-200 bg-green-50 px-5 text-sm font-semibold text-green-700 hover:bg-green-100 transition-all duration-300">
+            <span class="material-icons text-[16px]">{{ loading ? 'hourglass_top' : 'play_arrow' }}</span>
+            {{ loading ? 'Loading…' : 'Get Report' }}
+          </button>
+        </div>
+        <div class="flex flex-col gap-1" *ngIf="loaded">
+          <label class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">&nbsp;</label>
+          <div class="flex gap-2">
+            <button (click)="exportPdf()"
+                    class="h-11 inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 text-sm font-semibold text-red-700 hover:bg-red-100 transition-all duration-300">
+              <span class="material-icons text-[16px]">picture_as_pdf</span> PDF
+            </button>
+            <button (click)="exportExcel()"
+                    class="h-11 inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-100 transition-all duration-300">
+              <span class="material-icons text-[16px]">grid_on</span> Excel
+            </button>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="error" class="mt-3 text-sm text-red-600">{{ error }}</div>
+    </div>
+
+    <ng-container *ngIf="loaded">
+      <!-- ── Numbers Treated ────────────────────────────────────────────── -->
+      <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-3">
+            <span class="material-icons text-[16px] text-teal-600">groups</span>
+            Numbers Treated
+          </h2>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm border-separate border-spacing-0">
+            <thead>
+              <tr class="bg-gradient-to-r from-slate-100 to-slate-50 sticky top-0 z-10">
+                <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left">Label</th>
+                <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">Monthly</th>
+                <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">Annualized Est.</th>
+                <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left">Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of groupARows" [class.font-bold]="r.Label === 'Total'" [class.bg-blue-50]="r.Label === 'Total'">
+                <td class="px-4 py-2 border-t border-slate-100">{{ r.Label }}</td>
+                <td class="px-4 py-2 border-t border-slate-100 text-right">{{ r.MonthlyValue }}</td>
+                <td class="px-4 py-2 border-t border-slate-100 text-right">{{ r.AnnualizedEstimate }}</td>
+                <td class="px-4 py-2 border-t border-slate-100 text-slate-500">{{ r.Remarks }}</td>
+              </tr>
+              <tr>
+                <td colspan="4" class="px-4 py-1 bg-slate-50 border-t border-b border-slate-200 text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Breakdown</td>
+              </tr>
+              <tr *ngFor="let r of groupBRows">
+                <td class="px-4 py-2 border-t border-slate-100">{{ r.Label }}</td>
+                <td class="px-4 py-2 border-t border-slate-100 text-right">{{ r.MonthlyValue }}</td>
+                <td class="px-4 py-2 border-t border-slate-100 text-right">{{ r.AnnualizedEstimate }}</td>
+                <td class="px-4 py-2 border-t border-slate-100 text-slate-500">{{ r.Remarks }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Beds / Staff (side by side) ─────────────────────────────────── -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+          <div class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200 flex items-center justify-between">
+            <h2 class="text-base font-bold text-slate-800 flex items-center gap-3">
+              <span class="material-icons text-[16px] text-teal-600">hotel</span>
+              Hospital Beds by ICU Type
+            </h2>
+            <span class="text-[10px] font-semibold text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">best-effort, verify</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm border-separate border-spacing-0">
+              <thead>
+                <tr class="bg-gradient-to-r from-slate-100 to-slate-50">
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left">Ward</th>
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">Beds</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let b of bedRows" [class.font-bold]="b.WardLabel.startsWith('Total')" [class.bg-blue-50]="b.WardLabel.startsWith('Total')">
+                  <td class="px-4 py-2 border-t border-slate-100">{{ b.WardLabel }}</td>
+                  <td class="px-4 py-2 border-t border-slate-100 text-right">{{ b.BedCount }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+          <div class="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+            <h2 class="text-base font-bold text-slate-800 flex items-center gap-3">
+              <span class="material-icons text-[16px] text-teal-600">badge</span>
+              Staff Strength
+            </h2>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm border-separate border-spacing-0">
+              <thead>
+                <tr class="bg-gradient-to-r from-slate-100 to-slate-50">
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-left">Category</th>
+                  <th class="px-4 py-3 font-bold text-slate-600 text-xs uppercase tracking-wide text-right">Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let s of staffRows">
+                  <td class="px-4 py-2 border-t border-slate-100">{{ s.Category }}</td>
+                  <td class="px-4 py-2 border-t border-slate-100 text-right">{{ s.EmpCount }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Cathlab tile ───────────────────────────────────────────────── -->
+      <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 flex flex-col gap-1 w-fit min-w-[180px]">
+        <span class="text-[10px] font-medium text-slate-500 uppercase tracking-wide">Cathlab</span>
+        <span class="text-2xl font-bold text-indigo-700">{{ cathlab.CathlabCount }}</span>
+      </div>
+
+      <!-- ── Raw data / verify mappings (collapsible) ─────────────────────── -->
+      <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        <button (click)="toggleRawData()"
+                class="w-full px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200 flex items-center justify-between text-left">
+          <h2 class="text-base font-bold text-slate-800 flex items-center gap-3">
+            <span class="material-icons text-[16px] text-slate-500">rule</span>
+            Raw Data — Verify Best-Effort Mappings
+          </h2>
+          <span class="material-icons text-slate-500">{{ showRawData ? 'expand_less' : 'expand_more' }}</span>
+        </button>
+
+        <div *ngIf="showRawData" class="p-6 space-y-6">
+          <p class="text-xs text-slate-500">These tables are not part of the Fact Sheet document itself — use them to spot-check the ICU bed-name matching above and to complete the Operation Theatre master mapping (only 5 of ~9 OT codes are confirmed by name).</p>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">Wards (Nustmast)</h3>
+              <div class="overflow-x-auto overflow-y-auto max-h-[320px] border border-slate-200 rounded-lg">
+                <table class="w-full text-xs border-separate border-spacing-0">
+                  <thead>
+                    <tr class="bg-slate-100 sticky top-0">
+                      <th class="px-3 py-2 text-left">Nustno</th>
+                      <th class="px-3 py-2 text-left">Ward Name</th>
+                      <th class="px-3 py-2 text-left">Dept</th>
+                      <th class="px-3 py-2 text-left">Type</th>
+                      <th class="px-3 py-2 text-right">Beds</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let w of wardsRaw">
+                      <td class="px-3 py-1.5 border-t border-slate-100">{{ w.Nustno }}</td>
+                      <td class="px-3 py-1.5 border-t border-slate-100">{{ w.Nustname }}</td>
+                      <td class="px-3 py-1.5 border-t border-slate-100">{{ w.Deptid }}</td>
+                      <td class="px-3 py-1.5 border-t border-slate-100">{{ w.Nusttype }}</td>
+                      <td class="px-3 py-1.5 border-t border-slate-100 text-right">{{ w.BedCapa }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">Operation Theatres (Otplace)</h3>
+              <div class="overflow-x-auto overflow-y-auto max-h-[320px] border border-slate-200 rounded-lg">
+                <table class="w-full text-xs border-separate border-spacing-0">
+                  <thead>
+                    <tr class="bg-slate-100 sticky top-0">
+                      <th class="px-3 py-2 text-left">Place</th>
+                      <th class="px-3 py-2 text-left">Dept</th>
+                      <th class="px-3 py-2 text-center">Major</th>
+                      <th class="px-3 py-2 text-center">Minor</th>
+                      <th class="px-3 py-2 text-center">Supra</th>
+                      <th class="px-3 py-2 text-center">Procx</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let o of otMaster">
+                      <td class="px-3 py-1.5 border-t border-slate-100">{{ o.Place }}</td>
+                      <td class="px-3 py-1.5 border-t border-slate-100">{{ o.DeptId }}</td>
+                      <td class="px-3 py-1.5 border-t border-slate-100 text-center">{{ o.Major ? '✓' : '' }}</td>
+                      <td class="px-3 py-1.5 border-t border-slate-100 text-center">{{ o.Minor ? '✓' : '' }}</td>
+                      <td class="px-3 py-1.5 border-t border-slate-100 text-center">{{ o.Supra ? '✓' : '' }}</td>
+                      <td class="px-3 py-1.5 border-t border-slate-100 text-center">{{ o.Procx ? '✓' : '' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

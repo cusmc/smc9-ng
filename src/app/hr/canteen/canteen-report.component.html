@@ -49,8 +49,8 @@
             </thead>
             <tbody>
               <tr *ngFor="let r of rows" class="border-b border-[#f0f0f0]">
-                <td class="px-5 py-2">{{ r.empid }}</td>
-                <td class="px-5 py-2">{{ r.foodDed | number:'1.2-2' }}</td>
+                <td class="px-5 py-2">{{ r.Empid }}</td>
+                <td class="px-5 py-2">{{ r.FoodDed | number:'1.2-2' }}</td>
               </tr>
               <tr *ngIf="searched && rows.length === 0">
                 <td colspan="2" class="px-5 py-6 text-center text-sm text-[#888]">No canteen charges in this date range.</td>

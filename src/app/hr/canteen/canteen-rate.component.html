@@ -80,31 +80,31 @@
           </thead>
           <tbody>
             <tr *ngFor="let r of rates" class="border-b border-[#f0f0f0]">
-              <td class="px-5 py-2">{{ mealLabel(r.subcode_id) }}</td>
-              <td class="px-5 py-2">{{ r.rate }}</td>
-              <td class="px-5 py-2">{{ r.wef_dt | date:'dd-MMM-yyyy' }}</td>
-              <td class="px-5 py-2">{{ r.valid_upto ? (r.valid_upto | date:'dd-MMM-yyyy') : (isActive(r) ? 'Active' : '—') }}</td>
+              <td class="px-5 py-2">{{ mealLabel(r.Subcode_id) }}</td>
+              <td class="px-5 py-2">{{ r.Rate }}</td>
+              <td class="px-5 py-2">{{ r.Wef_dt | date:'dd-MMM-yyyy' }}</td>
+              <td class="px-5 py-2">{{ r.Valid_upto ? (r.Valid_upto | date:'dd-MMM-yyyy') : (isActive(r) ? 'Active' : '—') }}</td>
               <td class="px-5 py-2">
                 <span class="rounded-full px-2 py-0.5 text-xs font-medium"
-                  [class.bg-amber-100]="r.status === 'P'" [class.text-amber-700]="r.status === 'P'"
-                  [class.bg-green-100]="r.status === 'A'" [class.text-green-700]="r.status === 'A'"
-                  [class.bg-red-100]="r.status === 'R'" [class.text-red-700]="r.status === 'R'">
-                  {{ statusLabel(r.status) }}
+                  [class.bg-amber-100]="r.Status === 'P'" [class.text-amber-700]="r.Status === 'P'"
+                  [class.bg-green-100]="r.Status === 'A'" [class.text-green-700]="r.Status === 'A'"
+                  [class.bg-red-100]="r.Status === 'R'" [class.text-red-700]="r.Status === 'R'">
+                  {{ statusLabel(r.Status) }}
                 </span>
               </td>
-              <td class="px-5 py-2">{{ r.created_by }}</td>
+              <td class="px-5 py-2">{{ r.Created_by }}</td>
               <td class="px-5 py-2">
-                <div *ngIf="r.status === 'P' && rights.Auth1 && rejectingId !== r.pk_id" class="flex gap-2">
-                  <button type="button" (click)="approve(r)" [disabled]="processing[r.pk_id]"
+                <div *ngIf="r.Status === 'P' && rights.Auth1 && rejectingId !== r.Pk_id" class="flex gap-2">
+                  <button type="button" (click)="approve(r)" [disabled]="processing[r.Pk_id]"
                     class="rounded-md bg-green-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50">
                     Approve
                   </button>
-                  <button type="button" (click)="startReject(r.pk_id)" [disabled]="processing[r.pk_id]"
+                  <button type="button" (click)="startReject(r.Pk_id)" [disabled]="processing[r.Pk_id]"
                     class="rounded-md border border-red-300 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50">
                     Reject
                   </button>
                 </div>
-                <div *ngIf="rejectingId === r.pk_id" class="flex items-center gap-2">
+                <div *ngIf="rejectingId === r.Pk_id" class="flex items-center gap-2">
                   <input type="text" [(ngModel)]="rejectRemarks" placeholder="Reason…"
                     class="w-36 rounded-md border border-[#e5e5e5] px-2 py-1 text-xs focus:border-red-400 focus:outline-none" />
                   <button type="button" (click)="confirmReject(r)"
@@ -112,7 +112,7 @@
                   <button type="button" (click)="cancelReject()"
                     class="rounded-md border border-[#e5e5e5] px-2.5 py-1 text-xs text-[#555] hover:bg-[#f5f5f5]">Cancel</button>
                 </div>
-                <button *ngIf="r.status === 'A' && isActive(r) && rights.Add" type="button" (click)="reviseRate(r)"
+                <button *ngIf="r.Status === 'A' && isActive(r) && rights.Add" type="button" (click)="reviseRate(r)"
                   class="rounded-md border border-[#e5e5e5] px-2.5 py-1 text-xs font-medium text-[#555] hover:bg-[#f5f5f5]">
                   Revise
                 </button>
