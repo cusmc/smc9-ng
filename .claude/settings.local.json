@@ -7,7 +7,10 @@
       "Bash(Get-ChildItem -Path \"d:\\\\DotNet\\\\smc9-ng\\\\src\\\\app\\\\auth\\\\\" -Filter \"*.ts\" | Select-Object -ExpandProperty Name)",
       "Bash(npx ng *)",
       "Bash(npm install *)",
-      "Bash(./build-playstore.bat *)"
+      "Bash(./build-playstore.bat *)",
+      "Bash(sed -i 's/$/\\\\r/' /tmp/test3.bat)",
+      "Bash(cp /tmp/test3.bat /d/DotNet/smc9-ng/test3.bat)",
+      "Bash(cmd //c \"D:\\\\DotNet\\\\smc9-ng\\\\test3.bat\")"
     ],
     "additionalDirectories": [
       "d:\\DotNet\\smc9\\Controllers\\Common",

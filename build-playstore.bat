@@ -89,8 +89,11 @@ echo Building versionCode=%NEW_VERSION_CODE% versionName=%NEW_VERSION_NAME%
 
 echo.
 echo [5/5] Building signed release bundle (.aab)...
+if exist "C:\Program Files\Android\Android Studio\jbr" (
+  set "JAVA_HOME=C:\Program Files\Android\Android Studio\jbr"
+)
 pushd android
-call gradlew.bat bundleRelease
+call .\gradlew.bat bundleRelease
 set GRADLE_RESULT=%errorlevel%
 popd
 if %GRADLE_RESULT% neq 0 (
