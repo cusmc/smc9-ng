@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { DocuAuthComponent } from './docu-auth/docu-auth.component';
-import { DeclarationFormComponent } from './declaration-form/declaration-form.component';
+import { DeclarationFormComponent } from '../shared/declaration-form/declaration-form.component';
 import { CanteenScanComponent } from './canteen/canteen-scan.component';
 import { CanteenRateComponent } from './canteen/canteen-rate.component';
 import { CanteenReportComponent } from './canteen/canteen-report.component';

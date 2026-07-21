@@ -12,8 +12,10 @@
       <!-- Card header -->
       <div class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-5 py-4">
         <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#c8a96a] to-[#2d8a7e]"></div>
-        <h3 class="font-serif text-lg text-[#1e293b]">Generate Declaration Form</h3>
-        <p class="mt-0.5 text-xs text-[#888]">Select an employee to generate their MCI/NMC declaration form as a Word document.</p>
+        <h3 class="font-serif text-lg text-[#1e293b]">{{ lockToSelf ? 'Generate My Declaration Form' : 'Generate Declaration Form' }}</h3>
+        <p class="mt-0.5 text-xs text-[#888]">
+          {{ lockToSelf ? 'Generate your own MCI/NMC declaration form as a Word document.' : 'Select an employee to generate their MCI/NMC declaration form as a Word document.' }}
+        </p>
       </div>
 
       <div class="flex flex-col gap-4 px-5 py-5">
@@ -23,6 +25,7 @@
             <app-autocomplete
               [items]="empItems"
               placeholder="Select employee (type to search)…"
+              [disabled]="lockToSelf"
               [(ngModel)]="selectedEmpId">
             </app-autocomplete>
           </div>

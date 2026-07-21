@@ -273,16 +273,24 @@ export class DocuAuthComponent implements OnInit {
       return;
     }
     this.processing[rec.documast_id] = true;
-    this.service.authorizeDocument({ Documast_id: rec.documast_id, Decision: 'R', RejReason: this.rejReason }).subscribe({
+    const wasApproved = rec.auth_status === 'A';
+    const reason = this.rejReason;
+    this.service.authorizeDocument({ Documast_id: rec.documast_id, Decision: 'R', RejReason: reason }).subscribe({
       next: () => {
         this.toast.show(`Rejected document for ${rec.empnm}`, { variant: 'info' });
-        this.updateLocalRecord(rec.documast_id, { auth_status: 'R', rejreason: this.rejReason, authdt: new Date().toISOString() });
         this.rejectingId = null;
         this.rejReason = '';
         delete this.processing[rec.documast_id];
+        // Rejecting an approved doc may have restored a predecessor on the server —
+        // reload to reflect the correct state rather than doing a local-only update.
+        if (wasApproved) {
+          this.loadAll();
+        } else {
+          this.updateLocalRecord(rec.documast_id, { auth_status: 'R', rejreason: reason, authdt: new Date().toISOString() });
+        }
       },
-      error: (err) => {
-        this.toast.show(err?.error || 'Rejection failed', { variant: 'error' });
+      error: (err: any) => {
+        this.toast.show((err && err.error) || 'Rejection failed', { variant: 'error' });
         delete this.processing[rec.documast_id];
       },
     });
