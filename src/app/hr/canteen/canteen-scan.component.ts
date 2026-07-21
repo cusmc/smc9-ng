@@ -160,7 +160,7 @@ export class CanteenScanComponent implements OnInit, OnDestroy {
       const result = await BarcodeScanner.scan({ formats: [BarcodeFormat.QrCode] });
       this.scanning = false;
       const barcode = result.barcodes[0];
-      if (barcode) {
+      if (barcode?.rawValue) {
         this.onScanSuccess(barcode.rawValue);
       }
     } catch (err) {
