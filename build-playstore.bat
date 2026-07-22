@@ -7,7 +7,7 @@ set VERSION_PROPS=android\version.properties
 set OUT_DIR=dist-mobile
 
 echo ==========================================
-echo  CUSMC Canteen Scanner - Play Store Build
+echo  CUSMC APP  - Play Store Build
 echo ==========================================
 echo.
 

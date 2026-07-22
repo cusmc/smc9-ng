@@ -35,7 +35,7 @@ export class WebModulesService {
   }
 
   saveUserRights(wmoduleId: number, rights: UserWright[]): Observable<any> {
-    return this.api.post<any>(`${BASE}/SaveUserData`, { wmodule_id: wmoduleId, data: rights });
+    return this.api.post<any>(`${BASE}/SaveUserDataNg`, { wmodule_id: wmoduleId, data: rights });
   }
 
   saveRoleRights(roleId: string, rights: GroupWright[]): Observable<any> {

@@ -32,7 +32,7 @@ export class CmsModulesService {
   }
 
   saveUserRights(moduleId: number, rights: UserWright[]): Observable<any> {
-    return this.api.post<any>(`${WRIGHTS_BASE}/SaveUserData`, { wmodule_id: moduleId, data: rights });
+    return this.api.post<any>(`${WRIGHTS_BASE}/SaveUserDataNg`, { wmodule_id: moduleId, data: rights });
   }
 
   saveRoleRights(roleId: string, rights: GroupWright[]): Observable<any> {
