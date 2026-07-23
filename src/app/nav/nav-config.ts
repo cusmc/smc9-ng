@@ -65,6 +65,7 @@ export const APP_NAV: NavModule[] = [
         icon: 'settings',
         items: [
           { label: 'Masters', icon: 'tune', externalUrl: '/HMSmast/Index' },
+          { label: 'OT Place', icon: 'meeting_room', route: '/hims/ot-place' },
         ],
       },
     ],
@@ -194,6 +195,7 @@ export const APP_NAV: NavModule[] = [
           { label: 'Family Members', icon: 'group', externalUrl: '/HR/FamilyMember' },
           { label: 'Reports', icon: 'bar_chart', externalUrl: '/HR/Report' },
           { label: 'Document Authorization', icon: 'approval', route: '/hr/docu-auth' },
+          { label: 'Publication Approval', icon: 'approval', route: '/hr/publication-auth' },
           { label: 'Declaration Form', icon: 'description', route: '/hr/declaration-form' },
           { label: 'Canteen', icon: 'restaurant', route: '/hr/canteen' },
         ],

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';
 import { Capacitor } from '@capacitor/core';
 import { BarcodeFormat, BarcodeScanner } from '@capacitor-mlkit/barcode-scanning';
 import { CanteenService, MealTypeItem, ScanResult } from './canteen.service';
@@ -227,10 +227,23 @@ export class CanteenScanComponent implements OnInit, OnDestroy {
     this.html5Qrcode = null;
     this.scanning = false;
     if (scanner) {
-      scanner
-        .stop()
-        .catch(() => {})
-        .finally(() => scanner.clear());
+      // stop() throws SYNCHRONOUSLY (not a rejected promise) if the scanner
+      // isn't actually in the SCANNING state yet (e.g. still starting up, or
+      // called a second time) - guard with getState() and a try/catch rather
+      // than relying on .catch(), which never attaches if stop() throws
+      // before returning a promise at all.
+      try {
+        if (scanner.getState() === Html5QrcodeScannerState.SCANNING || scanner.getState() === Html5QrcodeScannerState.PAUSED) {
+          scanner
+            .stop()
+            .catch(() => {})
+            .finally(() => scanner.clear());
+        } else {
+          scanner.clear();
+        }
+      } catch {
+        // best-effort cleanup only
+      }
     }
   }
 

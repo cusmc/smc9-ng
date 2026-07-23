@@ -66,7 +66,7 @@ export class CmsModulesUsersDialogComponent implements OnInit {
   loadUsers(): void {
     this.loading = true;
     this.service.getAllUsers(this.data.Module_id).subscribe({
-      next: (data) => { this.users = data; this.loading = false; },
+      next: (data) => { this.users = data.map(u => ({ ...u, Old_permission: u.Permission })); this.loading = false; },
       error: () => {
         this.toast.show('Error loading users', { variant: 'error', duration: 3000 });
         this.loading = false;

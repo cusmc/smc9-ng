@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { DocuAuthComponent } from './docu-auth/docu-auth.component';
+import { PublicationAuthComponent } from './publication-auth/publication-auth.component';
 import { DeclarationFormComponent } from '../shared/declaration-form/declaration-form.component';
 import { CanteenScanComponent } from './canteen/canteen-scan.component';
 import { CanteenRateComponent } from './canteen/canteen-rate.component';
@@ -12,6 +13,11 @@ export const HR_ROUTES: Routes = [
     component: DocuAuthComponent,
     canActivate: [rightsGuard],
   data: { cont: 'HR', view: 'DocuAuth' },
+  },
+  { path: 'publication-auth',
+    component: PublicationAuthComponent,
+    canActivate: [rightsGuard],
+  data: { cont: 'HR', view: 'PublicationAuth' },
   },
   { path: 'declaration-form',
     component: DeclarationFormComponent,

@@ -18,7 +18,9 @@ export class DeclarationFormService {
 
   // Self-service: no empid parameter -- the backend resolves the caller's own employee
   // identity from the auth token, so there is nothing here for a client to tamper with.
-  generateMyWord(withSign: boolean, withAtt: boolean): Observable<Blob> {
-    return this.api.getBlob(`${BASE}/GenerateMyWord`, { withSign, withAtt });
+  // No withSign parameter either -- signatures are HR-only; the backend endpoint doesn't
+  // accept one at all, so there's nothing to pass or override here.
+  generateMyWord(withAtt: boolean): Observable<Blob> {
+    return this.api.getBlob(`${BASE}/GenerateMyWord`, { withAtt });
   }
 }

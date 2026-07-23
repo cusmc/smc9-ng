@@ -60,6 +60,7 @@ export interface UserWright {
   Deptnm: string;
   category: string;
   checks?: boolean[];
+  Old_permission?: string;
 }
 
 export interface GroupWright {

@@ -1,0 +1,148 @@
+<div class="flex min-h-0 flex-1 flex-col bg-page">
+
+  <!-- Page header -->
+  <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
+    <span class="material-icons text-xl opacity-80">approval</span>
+    <h2 class="text-lg font-semibold">Publication Approval</h2>
+    <span class="flex-1"></span>
+    <button type="button"
+      class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-3 py-1.5 text-sm hover:bg-white/20"
+      (click)="loadAll()">
+      <span class="material-icons text-[18px]">refresh</span>
+      Refresh
+    </button>
+  </div>
+
+  <div class="flex flex-1 flex-col gap-5 p-4">
+    <div class="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm">
+
+      <!-- Card header -->
+      <div class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-5 py-4">
+        <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#c8a96a] to-[#2d8a7e]"></div>
+        <div>
+          <h3 class="font-serif text-lg text-[#1e293b]">Publications Submitted for Promotion</h3>
+          <p class="mt-0.5 text-xs text-[#888]">Review each publication and its supporting documents, then approve or reject.</p>
+        </div>
+      </div>
+
+      <!-- Search row + Tabs -->
+      <div class="border-b border-[#e2e8f0] bg-[#fafbff]">
+        <div class="flex flex-wrap items-center gap-2 px-5 pt-3 pb-2">
+          <input type="text" [(ngModel)]="search.empid" placeholder="Emp ID"
+            class="w-24 rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-xs focus:border-[#2d8a7e] focus:outline-none" />
+          <input type="text" [(ngModel)]="search.empnm" placeholder="Employee name"
+            class="w-40 rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-xs focus:border-[#2d8a7e] focus:outline-none" />
+          <input type="text" [(ngModel)]="search.title" placeholder="Publication title"
+            class="w-56 rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-xs focus:border-[#2d8a7e] focus:outline-none" />
+          <input *ngIf="activeTab === 'R' || activeTab === 'ALL'" type="text" [(ngModel)]="search.reason" placeholder="Rejection reason"
+            class="w-48 rounded-lg border border-[#e5e5e5] px-2 py-1.5 text-xs focus:border-[#2d8a7e] focus:outline-none" />
+        </div>
+
+        <div class="flex gap-0 px-5">
+          <button *ngFor="let tab of tabs" type="button"
+            (click)="setTab(tab.id)"
+            [class]="'flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-medium transition ' +
+              (activeTab === tab.id ? tab.activeClass + ' bg-white' : 'border-transparent text-[#888] hover:text-[#444]')">
+            {{ tab.label }}
+            <span [class]="'rounded-full px-1.5 py-0.5 text-[11px] font-semibold ' + tab.badgeClass">
+              {{ tabCount(tab.id) }}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="flex items-center justify-center gap-3 py-14 text-[#777]">
+        <div class="h-8 w-8 animate-spin rounded-full border-2 border-[#e8dfd0] border-t-[#2d8a7e]"></div>
+        <span class="text-sm">Loading&hellip;</span>
+      </div>
+
+      <!-- Empty -->
+      <div *ngIf="!loading && filteredRecords.length === 0"
+        class="flex flex-col items-center gap-3 py-16 text-center text-[#bbb]">
+        <span class="material-icons text-5xl">task_alt</span>
+        <p class="text-sm">No publications match this view.</p>
+      </div>
+
+      <!-- Cards -->
+      <div *ngIf="!loading && filteredRecords.length > 0" class="flex flex-col divide-y divide-[#f0ebe3]">
+        <div *ngFor="let rec of filteredRecords" class="px-5 py-4">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex gap-3">
+              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f3eadb] text-sm font-bold text-[#8c6b2f]">
+                {{ initials(rec.Empnm) }}
+              </div>
+              <div>
+                <div class="text-sm font-semibold text-[#1e293b]">{{ rec.Empnm }}</div>
+                <div class="text-xs text-[#888]">Emp #{{ rec.Empid }}</div>
+                <div class="mt-2 text-sm text-[#333]">{{ rec.Pubc_nm }}</div>
+                <div class="mt-0.5 text-xs text-[#888]">
+                  {{ rec.Pubc_tp }} &middot; {{ rec.Pubc_dt | date:'dd MMM yyyy' }} &middot;
+                  Grade claimed: <strong class="text-[#555]">{{ gradeLabel(rec.Promotion_Grade) }}</strong>
+                </div>
+              </div>
+            </div>
+
+            <span class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+              [class.bg-amber-100]="rec.Auth_Status === 'P'" [class.text-amber-700]="rec.Auth_Status === 'P'"
+              [class.bg-green-100]="rec.Auth_Status === 'A'" [class.text-green-700]="rec.Auth_Status === 'A'"
+              [class.bg-red-100]="rec.Auth_Status === 'R'" [class.text-red-700]="rec.Auth_Status === 'R'">
+              <span class="material-icons text-[12px]">{{ rec.Auth_Status === 'A' ? 'check_circle' : (rec.Auth_Status === 'R' ? 'cancel' : 'schedule') }}</span>
+              {{ rec.Auth_Status === 'A' ? 'Approved' : (rec.Auth_Status === 'R' ? 'Rejected' : 'Pending') }}
+            </span>
+          </div>
+
+          <!-- Attached files -->
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span *ngFor="let att of attachmentsFor(rec.Pubc_id)" (click)="viewFile(att)"
+              class="flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#e5e5e5] bg-[#fafafa] px-2.5 py-1.5 text-xs text-[#555] hover:border-[#2d8a7e]">
+              <span class="material-icons text-[15px] text-[#c8a96a]">description</span>
+              {{ baseName(att.filename) }}
+            </span>
+            <span *ngIf="attachmentsFor(rec.Pubc_id).length === 0" class="text-xs text-[#bbb]">No documents attached.</span>
+          </div>
+
+          <!-- Rejected reason -->
+          <div *ngIf="rec.Auth_Status === 'R' && rec.RejReason" class="mt-3 flex items-start gap-2 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
+            <span class="material-icons text-[15px]">error</span>
+            <span>{{ rec.RejReason }} — {{ rec.AuthBy }}, {{ rec.AuthDt | date:'dd MMM yyyy' }}</span>
+          </div>
+
+          <!-- Approved footer -->
+          <div *ngIf="rec.Auth_Status === 'A'" class="mt-3 text-xs text-[#aaa]">
+            Approved by {{ rec.AuthBy }} on {{ rec.AuthDt | date:'dd MMM yyyy' }}
+          </div>
+
+          <!-- Actions (pending only) -->
+          <div *ngIf="rec.Auth_Status === 'P' && rejectingId !== rec.Pubc_id" class="mt-3 flex gap-2">
+            <button type="button" (click)="approve(rec)" [disabled]="processing[rec.Pubc_id]"
+              class="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-green-700 disabled:opacity-50">
+              <span class="material-icons text-[15px]">check_circle</span> Approve
+            </button>
+            <button type="button" (click)="startReject(rec.Pubc_id)" [disabled]="processing[rec.Pubc_id]"
+              class="inline-flex items-center gap-1.5 rounded-lg border border-red-300 px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50">
+              <span class="material-icons text-[15px]">cancel</span> Reject
+            </button>
+          </div>
+
+          <!-- Inline rejection reason -->
+          <div *ngIf="rejectingId === rec.Pubc_id" class="mt-3 flex flex-col gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+            <textarea [(ngModel)]="rejReason" placeholder="Reason for rejection — visible to the employee…" rows="2"
+              class="w-full rounded border border-red-200 px-2 py-1.5 text-xs focus:border-red-400 focus:outline-none"></textarea>
+            <div class="flex gap-2">
+              <button type="button" (click)="confirmReject(rec)" [disabled]="processing[rec.Pubc_id]"
+                class="inline-flex items-center gap-1.5 rounded bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50">
+                <span class="material-icons text-[14px]">send</span> Confirm Reject
+              </button>
+              <button type="button" (click)="cancelReject()"
+                class="rounded border border-[#ccc] px-3 py-1.5 text-xs text-[#666] hover:bg-[#f0f2f5]">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

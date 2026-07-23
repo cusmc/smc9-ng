@@ -31,7 +31,8 @@
           </div>
         </div>
 
-        <label class="flex items-center gap-2 text-sm text-[#444]">
+        <!-- Signatures are an HR-only option -- never shown for self-service generation. -->
+        <label *ngIf="!lockToSelf" class="flex items-center gap-2 text-sm text-[#444]">
           <input type="checkbox" [(ngModel)]="withSign" />
           Include signatures (employee / HOD / Dean)
         </label>

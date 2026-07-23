@@ -72,7 +72,7 @@ export class WebModulesUsersDialogComponent implements OnInit {
     this.loading = true;
     this.service.getAllUsers(this.data.Wmodule_id).subscribe({
       next: (data) => {
-        this.users = data.map(u => ({ ...u, checks: permToChecks(u.Permission) }));
+        this.users = data.map(u => ({ ...u, checks: permToChecks(u.Permission), Old_permission: u.Permission }));
         this.loading = false;
       },
       error: () => {

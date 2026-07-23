@@ -62,7 +62,7 @@ export class DeclarationFormComponent implements OnInit {
     }
     this.loading = true;
     const request$ = this.lockToSelf
-      ? this.service.generateMyWord(this.withSign, this.withAtt)
+      ? this.service.generateMyWord(this.withAtt)
       : this.service.generateWord(this.selectedEmpId!, this.withSign, this.withAtt);
 
     request$.subscribe({

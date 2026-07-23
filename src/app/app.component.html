@@ -115,6 +115,16 @@
             >
             My Declaration
           </a>
+          <a
+            [routerLink]="['/profile/publications']"
+            (click)="profileMenuOpen = false"
+            class="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+          >
+            <span class="material-icons text-base text-gray-500"
+              >menu_book</span
+            >
+            My Publication
+          </a>
           <div class="border-t border-gray-100"></div>
           <button
             type="button"

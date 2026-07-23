@@ -17,6 +17,7 @@ export interface UserWright {
   Permission: string;
   Deptnm: string;
   category: string;
+  Old_permission?: string;
 }
 
 export interface GroupWright {
