@@ -1,4 +1,4 @@
 export const environment = {
-  apiUrl: 'https://smc.cusmc.org',
+  apiUrl: 'http://localhost:1734',
   production: false
 };
