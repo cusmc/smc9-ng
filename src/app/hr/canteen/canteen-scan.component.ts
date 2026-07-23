@@ -31,7 +31,7 @@ export class CanteenScanComponent implements OnInit, OnDestroy {
   private lastToken: string | null = null;
   private readonly elementId = 'canteen-qr-reader';
 
-  constructor(private service: CanteenService, private toast: ToastService) {}
+  constructor(private service: CanteenService, private toast: ToastService) { }
 
   ngOnInit(): void {
     this.service.getMealTypes().subscribe({
@@ -229,7 +229,7 @@ export class CanteenScanComponent implements OnInit, OnDestroy {
     if (scanner) {
       scanner
         .stop()
-        .catch(() => {})
+        .catch(() => { })
         .finally(() => scanner.clear());
     }
   }
@@ -268,5 +268,15 @@ export class CanteenScanComponent implements OnInit, OnDestroy {
         this.processing = false;
       },
     });
+  }
+
+  // Returns a Font Awesome icon class name for a meal label used by the template.
+  mealIcon(val: string): string {
+    const v = (val || '').toLowerCase();
+    if (v.includes('break')) return 'fa-sun';
+    if (v.includes('lunch') || v.includes('noon')) return 'fa-bowl-food';
+    if (v.includes('dinner') || v.includes('supper')) return 'fa-moon';
+    if (v.includes('snack')) return 'fa-cookie-bite';
+    return 'fa-utensils';
   }
 }

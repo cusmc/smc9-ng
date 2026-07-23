@@ -1,113 +1,301 @@
-<div class="flex min-h-0 flex-1 flex-col bg-page">
-
-  <!-- Page header -->
-  <div class="flex flex-wrap items-center gap-3 border-b border-border bg-primary px-4 py-3 text-[var(--app-toolbar-fg)]">
-    <span class="material-icons text-xl opacity-80">restaurant</span>
-    <h2 class="text-lg font-semibold">Canteen</h2>
+<div class="flex min-h-0 flex-1 flex-col bg-[#f4f7fc]">
+  <!-- Top nav bar -->
+  <div
+    class="flex flex-wrap items-center gap-3 bg-[#2f6bff] px-5 py-3.5 text-white"
+  >
+    <i class="fa-solid fa-utensils text-lg opacity-90"></i>
+    <h2 class="text-lg font-bold">Canteen</h2>
     <nav class="ml-4 flex gap-1 text-sm">
-      <a routerLink="/hr/canteen" class="rounded-md bg-white/15 px-2.5 py-1">Scan</a>
-      <a routerLink="/hr/canteen-rates" class="rounded-md px-2.5 py-1 hover:bg-white/10">Rates</a>
-      <a routerLink="/hr/canteen-report" class="rounded-md px-2.5 py-1 hover:bg-white/10">Report</a>
+      <a
+        routerLink="/hr/canteen"
+        class="rounded-lg bg-white/20 px-3 py-1.5 font-semibold"
+        >Scan</a
+      >
+      <a
+        routerLink="/hr/canteen-rates"
+        class="rounded-lg px-3 py-1.5 font-medium hover:bg-white/10"
+        >Rates</a
+      >
+      <a
+        routerLink="/hr/canteen-report"
+        class="rounded-lg px-3 py-1.5 font-medium hover:bg-white/10"
+        >Report</a
+      >
     </nav>
   </div>
 
-  <div class="flex flex-1 flex-col gap-5 p-4">
-    <div class="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm">
-
+  <div class="flex flex-1 flex-col gap-5 p-6">
+    <div
+      class="overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-[0_8px_30px_rgba(70,128,255,0.10)]"
+    >
       <!-- Card header -->
-      <div class="relative border-b border-[#e2e8f0] bg-gradient-to-r from-[#f7f9ff] via-white to-[#f8faff] px-5 py-4">
-        <div class="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#c8a96a] to-[#2d8a7e]"></div>
-        <h3 class="font-serif text-lg text-[#1e293b]">Scan Employee QR</h3>
-        <p class="mt-0.5 text-xs text-[#888]">Select the meal, scan the employee's QR code, then confirm to charge.</p>
+      <div
+        class="flex items-center gap-4 border-b border-[#eef1f6] px-8 pt-7 pb-6"
+      >
+        <div
+          class="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-[#e8f0ff]"
+        >
+          <!-- <i class="fa-solid fa-qrcode text-2xl text-[#2f6bff]"></i> -->
+           <i class="fa-solid text-2xl text-[#2f6bff] fa-qrcode"></i>
+        </div>
+        <div>
+          <h3 class="text-[1.4rem] font-bold text-[#111827]">
+            Scan Employee QR
+          </h3>
+          <p class="mt-0.5 text-sm text-[#6b7280]">
+            Select the meal, scan the employee's QR code, then confirm to
+            charge.
+          </p>
+        </div>
       </div>
 
-      <div class="p-5">
-
-        <!-- Meal type selector -->
-        <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-[#888]">Meal Type</p>
-        <div class="mb-5 flex flex-wrap gap-2">
-          <button *ngFor="let m of mealTypes" type="button" (click)="selectMealType(m.Subcode_id)"
-            class="rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
-            [class.border-[#2d8a7e]]="selectedSubcodeId === m.Subcode_id"
-            [class.bg-[#2d8a7e]]="selectedSubcodeId === m.Subcode_id"
-            [class.text-white]="selectedSubcodeId === m.Subcode_id"
-            [class.border-[#e5e5e5]]="selectedSubcodeId !== m.Subcode_id"
-            [class.text-[#555]]="selectedSubcodeId !== m.Subcode_id">
-            {{ m.Vals }}
-          </button>
-        </div>
-
-        <!-- Scan control -->
-        <div *ngIf="!scanResult">
-          <div *ngIf="!scanning && !showManualEntry" class="flex flex-wrap gap-2">
-            <button type="button" (click)="startScan()" [disabled]="!selectedSubcodeId"
-              class="inline-flex items-center gap-2 rounded-lg bg-[#2d8a7e] px-4 py-2 text-sm font-medium text-white hover:bg-[#256f65] disabled:opacity-50">
-              <span class="material-icons text-[18px]">qr_code_scanner</span>
-              Start Scan
-            </button>
-            <button type="button" (click)="toggleManualEntry()"
-              class="inline-flex items-center gap-2 rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm font-medium text-[#555] hover:bg-[#f5f5f5]">
-              <span class="material-icons text-[18px]">keyboard</span>
-              Enter ID Manually
+      <div class="grid grid-cols-1 gap-6 p-8 lg:grid-cols-[1.4fr_1fr]">
+        <!-- LEFT: controls -->
+        <div>
+          <!-- Meal type selector -->
+          <p class="mb-3 text-sm font-bold text-[#111827]">Meal Type</p>
+          <div class="mb-6 flex flex-wrap gap-3">
+            <button
+              *ngFor="let m of mealTypes"
+              type="button"
+              (click)="selectMealType(m.Subcode_id)"
+              class="flex items-center gap-2 rounded-xl border-2 px-5 py-3 text-sm font-semibold transition-colors"
+              [class.border-[#2f6bff]]="selectedSubcodeId === m.Subcode_id"
+              [class.bg-[#eef3ff]]="selectedSubcodeId === m.Subcode_id"
+              [class.text-[#2f6bff]]="selectedSubcodeId === m.Subcode_id"
+              [class.border-[#e2e8f0]]="selectedSubcodeId !== m.Subcode_id"
+              [class.text-[#4b5563]]="selectedSubcodeId !== m.Subcode_id"
+            >
+              <i class="fa-solid" [ngClass]="mealIcon(m.Vals)"></i>
+              {{ m.Vals }}
             </button>
           </div>
 
-          <!-- Native (Capacitor APK): ML Kit opens its own full-screen camera UI, so
-               there's nothing to render in-page besides a brief "opening camera" state. -->
-          <p *ngIf="scanning && isNative" class="text-sm text-[#888]">Opening camera…</p>
+          <!-- Scan control -->
+          <div *ngIf="!scanResult">
+            <div *ngIf="!scanning && !showManualEntry">
+              <p class="mb-2 text-sm font-bold text-[#111827]">Employee ID</p>
+              <div class="flex max-w-md gap-2">
+                <input
+                  type="number"
+                  [(ngModel)]="manualEmpId"
+                  placeholder="e.g. 1024"
+                  (keyup.enter)="lookupManualEmpId()"
+                  class="w-full rounded-xl border border-[#e2e8f0] px-4 py-3 text-sm focus:border-[#2f6bff] focus:ring-2 focus:ring-[#2f6bff]/20 focus:outline-none transition"
+                />
+                <button
+                  type="button"
+                  (click)="lookupManualEmpId()"
+                  [disabled]="manualLoading || !selectedSubcodeId"
+                  class="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#2f6bff] px-5 py-3 text-sm font-bold text-white shadow-[0_4px_14px_rgba(47,107,255,0.35)] hover:bg-[#255bdb] disabled:opacity-50 transition"
+                >
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  {{ manualLoading ? "Looking up…" : "Lookup" }}
+                </button>
+              </div>
+              <p class="mt-2 text-xs text-[#9ca3af]">
+                Enter Employee ID and click Lookup, or scan their QR code below.
+              </p>
 
-          <!-- Web (browser): html5-qrcode renders into this div; show a Cancel button
-               since the camera preview stays inline on the page. -->
-          <ng-container *ngIf="scanning && !isNative">
-            <button type="button" (click)="stopScan()"
-              class="mb-3 inline-flex items-center gap-2 rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm font-medium text-[#555] hover:bg-[#f5f5f5]">
-              <span class="material-icons text-[18px]">close</span>
-              Cancel Scan
-            </button>
-            <div id="canteen-qr-reader" class="mt-3 max-w-sm"></div>
-          </ng-container>
+              <div class="mt-4 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  (click)="startScan()"
+                  [disabled]="!selectedSubcodeId"
+                  class="inline-flex items-center gap-2 rounded-xl border border-[#e2e8f0] bg-white px-4 py-2.5 text-sm font-semibold text-[#374151] hover:bg-[#f7f9ff] disabled:opacity-50 transition"
+                >
+                  <i class="fa-solid fa-qrcode text-[#2f6bff]"></i>
+                  Start Scan
+                </button>
+                <button
+                  type="button"
+                  (click)="toggleManualEntry()"
+                  class="inline-flex items-center gap-2 rounded-xl border border-[#e2e8f0] bg-white px-4 py-2.5 text-sm font-semibold text-[#374151] hover:bg-[#f7f9ff] transition"
+                >
+                  <i class="fa-solid fa-keyboard text-[#2f6bff]"></i>
+                  Manual Entry
+                </button>
+              </div>
+            </div>
 
-          <!-- Manual Empid fallback: no ID card, or a QR that won't scan -->
-          <div *ngIf="showManualEntry" class="max-w-sm">
-            <label class="mb-1 block text-xs font-semibold text-[#555]">Employee ID</label>
-            <div class="flex gap-2">
-              <input type="number" [(ngModel)]="manualEmpId" placeholder="e.g. 1024"
-                (keyup.enter)="lookupManualEmpId()"
-                class="w-full rounded-lg border border-[#e5e5e5] px-3 py-2 text-sm focus:border-[#2d8a7e] focus:outline-none" />
-              <button type="button" (click)="lookupManualEmpId()" [disabled]="manualLoading"
-                class="shrink-0 rounded-lg bg-[#2d8a7e] px-4 py-2 text-sm font-medium text-white hover:bg-[#256f65] disabled:opacity-50">
-                {{ manualLoading ? 'Looking up…' : 'Lookup' }}
+            <!-- Native (Capacitor APK): ML Kit opens its own full-screen camera UI -->
+            <p
+              *ngIf="scanning && isNative"
+              class="flex items-center gap-2 text-sm text-[#6b7280]"
+            >
+              <i class="fa-solid fa-circle-notch fa-spin text-[#2f6bff]"></i>
+              Opening camera…
+            </p>
+
+            <!-- Web: html5-qrcode renders inline -->
+            <ng-container *ngIf="scanning && !isNative">
+              <button
+                type="button"
+                (click)="stopScan()"
+                class="mb-3 inline-flex items-center gap-2 rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm font-semibold text-[#374151] hover:bg-[#f7f9ff] transition"
+              >
+                <i class="fa-solid fa-xmark"></i>
+                Cancel Scan
+              </button>
+              <div
+                id="canteen-qr-reader"
+                class="max-w-sm overflow-hidden rounded-xl border border-[#e2e8f0]"
+              ></div>
+            </ng-container>
+
+            <!-- Manual Empid fallback -->
+            <div *ngIf="showManualEntry" class="max-w-md">
+              <label class="mb-1 block text-sm font-bold text-[#111827]"
+                >Employee ID</label
+              >
+              <div class="flex gap-2">
+                <input
+                  type="number"
+                  [(ngModel)]="manualEmpId"
+                  placeholder="e.g. 1024"
+                  (keyup.enter)="lookupManualEmpId()"
+                  class="w-full rounded-xl border border-[#e2e8f0] px-4 py-3 text-sm focus:border-[#2f6bff] focus:ring-2 focus:ring-[#2f6bff]/20 focus:outline-none transition"
+                />
+                <button
+                  type="button"
+                  (click)="lookupManualEmpId()"
+                  [disabled]="manualLoading"
+                  class="shrink-0 rounded-xl bg-[#2f6bff] px-5 py-3 text-sm font-bold text-white hover:bg-[#255bdb] disabled:opacity-50 transition"
+                >
+                  {{ manualLoading ? "Looking up…" : "Lookup" }}
+                </button>
+              </div>
+              <button
+                type="button"
+                (click)="toggleManualEntry()"
+                class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[#2f6bff] hover:text-[#255bdb]"
+              >
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+                Back to QR scan
               </button>
             </div>
-            <button type="button" (click)="toggleManualEntry()"
-              class="mt-2 text-xs font-medium text-[#888] hover:text-[#555]">
-              &larr; Back to QR scan
-            </button>
+          </div>
+
+          <!-- Confirm card -->
+          <div
+            *ngIf="scanResult"
+            class="max-w-md rounded-2xl border border-[#e2e8f0] bg-[#f7f9ff] p-6"
+          >
+            <p class="text-xs font-bold uppercase tracking-wide text-[#6b7280]">
+              Confirm Meal
+            </p>
+            <p class="mt-2 text-lg font-bold text-[#111827]">
+              {{ scanResult.Empnm }}
+            </p>
+            <p class="text-sm text-[#6b7280]">
+              {{ scanResult.Deptnm }} &middot; {{ scanResult.Desgnm }}
+            </p>
+            <p class="mt-3 text-sm text-[#374151]">
+              Meal: <span class="font-bold">{{ selectedMealLabel }}</span>
+            </p>
+            <p
+              *ngIf="entryMethod === 'MANUAL'"
+              class="mt-2 flex items-center gap-1.5 text-xs font-semibold text-amber-700"
+            >
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              Entered manually — verify identity before charging.
+            </p>
+            <p
+              *ngIf="!scanResult.IsActive"
+              class="mt-2 flex items-center gap-1.5 text-xs font-bold text-red-700"
+            >
+              <i class="fa-solid fa-circle-xmark"></i>
+              This employee has resigned — cannot charge.
+            </p>
+
+            <div class="mt-5 flex gap-2">
+              <button
+                type="button"
+                (click)="chargeMeal()"
+                [disabled]="processing || !scanResult.IsActive"
+                class="inline-flex items-center gap-2 rounded-xl bg-[#2f6bff] px-5 py-2.5 text-sm font-bold text-white shadow-[0_4px_14px_rgba(47,107,255,0.35)] hover:bg-[#255bdb] disabled:opacity-50 transition"
+              >
+                <i class="fa-solid fa-circle-check"></i>
+                {{ processing ? "Charging…" : "Charge Meal" }}
+              </button>
+              <button
+                type="button"
+                (click)="cancelConfirm()"
+                [disabled]="processing"
+                class="rounded-xl border border-[#e2e8f0] bg-white px-5 py-2.5 text-sm font-semibold text-[#374151] hover:bg-[#f7f9ff] transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <!-- Info banner -->
+          <div
+            class="mt-6 flex max-w-md items-center justify-between gap-4 rounded-2xl border border-[#e8f0ff] bg-[#f7f9ff] px-5 py-4"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[#2f6bff]"
+              >
+                <i class="fa-solid fa-circle-info text-sm text-white"></i>
+              </div>
+              <p class="text-sm text-[#4b5563]">
+                Make sure the employee QR code is clearly visible and within the
+                scanner frame.
+              </p>
+            </div>
+            <i class="fa-solid fa-qrcode text-lg text-[#2f6bff]"></i>
           </div>
         </div>
 
-        <!-- Confirm card -->
-        <div *ngIf="scanResult" class="max-w-md rounded-lg border border-[#e2e8f0] bg-[#fafbfc] p-5">
-          <p class="text-xs font-semibold uppercase tracking-wide text-[#888]">Confirm Meal</p>
-          <p class="mt-2 text-lg font-semibold text-[#1e293b]">{{ scanResult.Empnm }}</p>
-          <p class="text-sm text-[#666]">{{ scanResult.Deptnm }} &middot; {{ scanResult.Desgnm }}</p>
-          <p class="mt-3 text-sm text-[#555]">Meal: <span class="font-medium">{{ selectedMealLabel }}</span></p>
-          <p *ngIf="entryMethod === 'MANUAL'" class="mt-1 text-xs text-amber-700">Entered manually — verify identity before charging.</p>
-          <p *ngIf="!scanResult.IsActive" class="mt-1 text-xs font-semibold text-red-700">This employee has resigned — cannot charge.</p>
-
-          <div class="mt-4 flex gap-2">
-            <button type="button" (click)="chargeMeal()" [disabled]="processing || !scanResult.IsActive"
-              class="inline-flex items-center gap-1.5 rounded-lg bg-[#2d8a7e] px-4 py-2 text-sm font-medium text-white hover:bg-[#256f65] disabled:opacity-50">
-              <span class="material-icons text-[18px]">check_circle</span>
-              {{ processing ? 'Charging…' : 'Charge Meal' }}
-            </button>
-            <button type="button" (click)="cancelConfirm()" [disabled]="processing"
-              class="rounded-lg border border-[#e5e5e5] px-4 py-2 text-sm font-medium text-[#555] hover:bg-[#f5f5f5]">
-              Cancel
-            </button>
+        <!-- RIGHT: QR visual panel -->
+        <div
+          class="flex flex-col items-center justify-center gap-5 rounded-2xl bg-[#eaf1ff] p-8"
+        >
+          <div
+            class="relative flex h-44 w-44 items-center justify-center rounded-2xl border-2 border-dashed border-[#2f6bff]/40 bg-white"
+          >
+            <!-- <i class="fa-solid fa-qrcode text-7xl text-[#111827]"></i> -->
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="130"
+              height="130"
+              fill="currentColor"
+              class="bi bi-qr-code"
+              viewBox="0 0 16 16"
+            >
+              <path d="M2 2h2v2H2z" />
+              <path d="M6 0v6H0V0zM5 1H1v4h4zM4 12H2v2h2z" />
+              <path d="M6 10v6H0v-6zm-5 1v4h4v-4zm11-9h2v2h-2z" />
+              <path
+                d="M10 0v6h6V0zm5 1v4h-4V1zM8 1V0h1v2H8v2H7V1zm0 5V4h1v2zM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8zm0 0v1H2V8H1v1H0V7h3v1zm10 1h-1V7h1zm-1 0h-1v2h2v-1h-1zm-4 0h2v1h-1v1h-1zm2 3v-1h-1v1h-1v1H9v1h3v-2zm0 0h3v1h-2v1h-1zm-4-1v1h1v-2H7v1z"
+              />
+              <path d="M7 12h1v3h4v1H7zm9 2v2h-3v-1h2v-1z" />
+            </svg>
+            <!-- corner brackets -->
+            <span
+              class="absolute -left-1 -top-1 h-6 w-6 rounded-tl-lg border-l-4 border-t-4 border-[#2f6bff]"
+            ></span>
+            <span
+              class="absolute -right-1 -top-1 h-6 w-6 rounded-tr-lg border-r-4 border-t-4 border-[#2f6bff]"
+            ></span>
+            <span
+              class="absolute -bottom-1 -left-1 h-6 w-6 rounded-bl-lg border-b-4 border-l-4 border-[#2f6bff]"
+            ></span>
+            <span
+              class="absolute -bottom-1 -right-1 h-6 w-6 rounded-br-lg border-b-4 border-r-4 border-[#2f6bff]"
+            ></span>
+            <!-- shield badge -->
+            <div
+              class="absolute -bottom-3 -right-3 flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#2f6bff] bg-white"
+            >
+              <i class="fa-solid fa-shield-halved text-[#2f6bff]"></i>
+            </div>
           </div>
+          <p class="text-center text-sm font-medium text-[#374151]">
+            Scan the employee's QR code<br />to record the meal
+          </p>
         </div>
-
       </div>
     </div>
   </div>
