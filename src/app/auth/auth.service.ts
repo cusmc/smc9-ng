@@ -9,11 +9,11 @@ import { RightsService } from './rights.service';
 })
 export class AuthService {
   private isLoggedInSubject = new BehaviorSubject<boolean>(this.checkLoggedIn());
- 
+
 
   private tokenUrl = environment.apiUrl ? `${environment.apiUrl}/token` : '/token';
 
-  constructor(private http: HttpClient, private rightsService: RightsService) {}
+  constructor(private http: HttpClient, private rightsService: RightsService) { }
 
   login(username: string, password: string): Observable<any> {
     const body = `grant_type=password&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
@@ -24,6 +24,7 @@ export class AuthService {
         next: (response: any) => {
           localStorage.setItem('access_token', response.access_token);
           localStorage.setItem('userName', username);
+          // localStorage.setItem('ProfileName', ProfileName)
           this.isLoggedInSubject.next(true);
           observer.next(response);
           observer.complete();
@@ -48,6 +49,10 @@ export class AuthService {
 
   getUsername(): string | null {
     return localStorage.getItem('userName');
+  }
+
+  getProfileName(): string | null {
+    return localStorage.getItem('ProfileName')
   }
 
   isLoggedIn(): boolean {
